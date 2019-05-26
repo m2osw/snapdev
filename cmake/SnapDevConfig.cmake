@@ -1,24 +1,26 @@
-# - Try to find LibUtf8
+# - Try to find SnapDev
 #
 # Once done this will define
 #
-# LIBUTF8_FOUND        - System has LibUtf8
-# LIBUTF8_INCLUDE_DIR  - The LibUtf8 include directories
-# LIBUTF8_LIBRARY      - The libraries needed to use LibUtf8 (none)
-# LIBUTF8_DEFINITIONS  - Compiler switches required for using LibUtf8 (none)
+# SNAPDEV_FOUND        - System has SnapDev
+# SNAPDEV_INCLUDE_DIR  - The SnapDev include directories
+# SNAPDEV_LIBRARY      - The libraries needed to use SnapDev (none)
+# SNAPDEV_DEFINITIONS  - Compiler switches required for using SnapDev (none)
 
-find_path( LIBUTF8_INCLUDE_DIR libutf8/libutf8.h
-		   PATHS $ENV{LIBUTF8_INCLUDE_DIR}
+find_path( SNAPDEV_INCLUDE_DIR snapdev/version.h
+		   PATHS $ENV{SNAPDEV_INCLUDE_DIR}
 		 )
-find_library( LIBUTF8_LIBRARY utf8
-		   PATHS $ENV{LIBUTF8_LIBRARY}
-		 )
-mark_as_advanced( LIBUTF8_INCLUDE_DIR LIBUTF8_LIBRARY )
+#find_library( SNAPDEV_LIBRARY snapdev
+#		   PATHS $ENV{SNAPDEV_LIBRARY}
+#		 )
+#mark_as_advanced( SNAPDEV_INCLUDE_DIR SNAPDEV_LIBRARY )
+mark_as_advanced( SNAPDEV_INCLUDE_DIR )
 
-set( LIBUTF8_INCLUDE_DIRS ${LIBUTF8_INCLUDE_DIR} )
-set( LIBUTF8_LIBRARIES    ${LIBUTF8_LIBRARY}     )
+set( SNAPDEV_INCLUDE_DIRS ${SNAPDEV_INCLUDE_DIR} )
+#set( SNAPDEV_LIBRARIES    ${SNAPDEV_LIBRARY}     )
 
 include( FindPackageHandleStandardArgs )
-# handle the QUIETLY and REQUIRED arguments and set LIBUTF8_FOUND to TRUE
+# handle the QUIETLY and REQUIRED arguments and set SNAPDEV_FOUND to TRUE
 # if all listed variables are TRUE
-find_package_handle_standard_args( LibUtf8 DEFAULT_MSG LIBUTF8_INCLUDE_DIR LIBUTF8_LIBRARY )
+#find_package_handle_standard_args( SnapDev DEFAULT_MSG SNAPDEV_INCLUDE_DIR SNAPDEV_LIBRARY )
+find_package_handle_standard_args( SnapDev DEFAULT_MSG SNAPDEV_INCLUDE_DIR )
