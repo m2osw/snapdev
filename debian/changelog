@@ -1,0 +1,5 @@
+snapdev (1.0.0.0~xenial) xenial; urgency=high
+
+  * A project with our header only C++ files which are useful everywhere.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sat, 25 May 2019 23:53:00 -0800
