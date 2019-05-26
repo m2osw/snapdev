@@ -1,3 +1,9 @@
+snapdev (1.0.0.1~xenial) xenial; urgency=high
+
+  * Added boost as a dependency.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 25 May 2019 02:37:20 -0800
+
 snapdev (1.0.0.0~xenial) xenial; urgency=high
 
   * A project with our header only C++ files which are useful everywhere.
