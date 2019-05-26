@@ -1,7 +1,7 @@
 
 <p align="center">
 <img alt="snapdev" title="SnapDev is a project of C++ headers we use throughout our Snap! C++ projects"
-src="https://snapwebsites.org/sites/all/modules/mo_m2osw/snap-medium-icon.png" width="277" height="277"/>
+src="https://snapwebsites.org/sites/all/modules/mo_m2osw/snap-medium-icon.png" width="70" height="70"/>
 </p>
 
 # Introduction
