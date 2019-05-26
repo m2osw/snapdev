@@ -48,9 +48,9 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-add_subdirectory(cmake)
-add_subdirectory(src  )
-add_subdirectory(doc  )
-add_subdirectory(tests)
+add_subdirectory(cmake  )
+add_subdirectory(snapdev)
+add_subdirectory(doc    )
+add_subdirectory(tests  )
 
 # vim: ts=4 sw=4 et nocindent
