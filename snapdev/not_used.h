@@ -18,14 +18,25 @@
 
 namespace snap
 {
-    template <class T>
-        inline void NOTUSED( T const & result )
-        {
+
+
+inline constexpr void NOTUSED()
+{
+}
+
+
+template <class T, class ...ARGS>
+inline constexpr void NOTUSED( T && first, ARGS && ...args )
+{
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-result"
-            static_cast<void>( result );
+    static_cast<void>( first );
 #pragma GCC diagnostic pop
-        }
+    NOTUSED(args...);
+}
+
+
+
 }
 //namespace snap
 

@@ -1,3 +1,9 @@
+snapdev (1.1.0.0~xenial) xenial; urgency=high
+
+  * Made the NOTUSED() template support variadic arguments.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Mon, 27 May 2019 01:10:50 -0800
+
 snapdev (1.0.0.1~xenial) xenial; urgency=high
 
   * Added boost as a dependency.
