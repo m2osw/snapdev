@@ -16,16 +16,34 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
+// libexcept
+//
+#include <libexcept/exception.h>
+
+// C++ lib
+//
 #include <iostream>
+
+// C lib
+//
 #include <stdlib.h>
+
+
 
 namespace snap
 {
 
 [[noreturn]] inline void NOTREACHED()
 {
-    // TODO: add call to print stack trace
     std::cerr << "NOTREACHED called, process will abort." << std::endl;
+
+    std::cerr << "Stack trace:" << std::endl;
+    libexcept::stack_trace_t trace(libexcept::collect_stack_trace_with_line_numbers());
+    for(auto l : trace)
+    {
+        std::cerr << "  " << l << std::endl;
+    }
+
     abort();
 }
 

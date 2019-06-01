@@ -16,22 +16,24 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
-#include "snapwebsites/snap_exception.h"
+// libexcept lib
+//
+#include "libexcept/exception.h"
 
-//#include <memory>
-
+// C lib
+//
 #include <sys/file.h>
 
 
 namespace snap
 {
 
-class snap_lockfile_exception : public snap_exception
+class snap_lockfile_exception : public libexcept::exception_t
 {
 public:
-    explicit snap_lockfile_exception(const char *        whatmsg) : snap_exception("snap_process", whatmsg) {}
-    explicit snap_lockfile_exception(const std::string & whatmsg) : snap_exception("snap_process", whatmsg) {}
-    explicit snap_lockfile_exception(const QString &     whatmsg) : snap_exception("snap_process", whatmsg) {}
+    explicit snap_lockfile_exception(const char *        whatmsg) : exception_t("snap_process", whatmsg) {}
+    explicit snap_lockfile_exception(const std::string & whatmsg) : exception_t("snap_process", whatmsg) {}
+    explicit snap_lockfile_exception(const QString &     whatmsg) : exception_t("snap_process", whatmsg) {}
 };
 
 class snap_process_exception_file_error : public snap_lockfile_exception

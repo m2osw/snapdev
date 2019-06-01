@@ -41,38 +41,6 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/version.h
 )
 
-#include_directories(
-#    ${LIBEXCEPT_INCLUDE_DIRS}
-#    ${BOOST_INCLUDE_DIRS}
-#)
-#
-#add_library( ${PROJECT_NAME} SHARED
-#    ...
-#)
-#
-#
-#target_link_libraries(${PROJECT_NAME}
-#    ${LIBEXCEPT_LIBRARIES}
-#)
-#
-#
-#set_target_properties( ${PROJECT_NAME} PROPERTIES
-#    VERSION
-#        ${SNAPDEV_VERSION_MAJOR}.${SNAPDEV_VERSION_MINOR}
-#    SOVERSION
-#        ${SNAPDEV_VERSION_MAJOR}
-#)
-#
-#install(
-#    TARGETS
-#        ${PROJECT_NAME}
-#    RUNTIME DESTINATION
-#        bin
-#    LIBRARY DESTINATION
-#        lib
-#    ARCHIVE DESTINATION
-#        lib
-#)
 
 install(
     FILES
@@ -86,6 +54,7 @@ install(
         poison.h
         raii_generic_deleter.h
         reverse_cstring.h
+        safe_setenv.h
         string_pathinfo.h
         string_replace_many.h
         tokenize_string.h

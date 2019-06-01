@@ -1,3 +1,12 @@
+snapdev (1.1.1.0~xenial) xenial; urgency=high
+
+  * Added the safe_setenv.h header.
+  * Replaced the #ifndef/#endif with #pragma once in caseinsensitivestring.h.
+  * Added a stack trace in case NOTREACHED() gets called.
+  * Fixed the exception derivation with libexcept for snap_lockfile exceptions.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sat,  1 Jun 2019 00:16:24 -0800
+
 snapdev (1.1.0.0~xenial) xenial; urgency=high
 
   * Made the NOTUSED() template support variadic arguments.
