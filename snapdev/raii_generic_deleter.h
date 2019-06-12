@@ -316,7 +316,7 @@ public:
      * The function gets called only if p does not represent nullptr
      * and the handle gets cleaned in the unique_ptr<>() as required.
      *
-     * \param[in] h  The pointer to delete.
+     * \param[in] p  The pointer to delete.
      */
     void operator () (pointer p)
     {
@@ -368,7 +368,7 @@ public:
      * The function gets called only if p does not represent nullptr
      * and the pointer gets cleaned in the unique_ptr<>() as required.
      *
-     * \param[in] h  The pointer to delete.
+     * \param[in] p  The pointer to delete.
      */
     void operator () (T * p)
     {
