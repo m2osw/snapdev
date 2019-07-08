@@ -19,13 +19,90 @@
 //
 #pragma once
 
-#include "snapwebsites/reverse_cstring.h"
+#include "snapdev/reverse_cstring.h"
 
 #include <string>
 #include <algorithm>
 
 namespace snap
 {
+
+
+/** \brief Search for characters.
+ *
+ * This function is the default predicate which sees the delimiters
+ * as an array of characters so the tokenization happens on any one
+ * character that matches the characters in the list of delimiters.
+ *
+ * When none of the delimiters are found in the rest of the string,
+ * the function returns ContainerT::value_type::npos which means
+ * that the rest of the string is a token on its own.
+ *
+ * \param[in] str  The string being tokenized.
+ * \param[in] delimiters  The string of delimiters.
+ * \param[in] last_pos  Last position with a match.
+ *
+ * \return The position of another match or ContainerT::value_type::npos.
+ */
+template<typename ContainerT>
+typename ContainerT::value_type::size_type character_predicate(
+          typename ContainerT::value_type const & str
+        , typename ContainerT::value_type const & delimiters
+        , typename ContainerT::value_type::size_type & last_pos)
+{
+    typename ContainerT::value_type::size_type const pos(str.find_first_of(delimiters, last_pos));
+    if(pos == ContainerT::value_type::npos)
+    {
+        last_pos = pos;
+    }
+    else
+    {
+        last_pos = pos + 1;
+    }
+    return pos;
+}
+
+
+/** \brief Search for the delimiter string.
+ *
+ * This function is the another predicate you can use with the
+ * tokenize_string() function.
+ *
+ * This one views the \p delimiters as a one string delimiter. In
+ * other words, there is only one delimiter in this case.
+ *
+ * When the string delimiter is not found in the rest of the string,
+ * the function returns ContainerT::value_type::npos which means
+ * that the rest of the string is a token on its own.
+ *
+ * \note
+ * This is not the default, you must pass this function explicitely if
+ * you want to use it.
+ *
+ * \param[in] str  The string being tokenized.
+ * \param[in] delimiter  The string delimiter.
+ * \param[in] last_pos  Last position with a match.
+ *
+ * \return The position of another match or ContainerT::value_type::npos.
+ */
+template<typename ContainerT>
+typename ContainerT::value_type::size_type string_predicate(
+          typename ContainerT::value_type const & str
+        , typename ContainerT::value_type const & delimiter
+        , typename ContainerT::value_type::size_type & last_pos)
+{
+    typename ContainerT::value_type::size_type const pos(str.find(delimiter, last_pos));
+    if(pos == ContainerT::value_type::npos)
+    {
+        last_pos = pos;
+    }
+    else
+    {
+        last_pos = pos + delimiter.length();
+    }
+    return pos;
+}
+
 
 /** \brief Transform a string in a vector of strings.
  *
@@ -35,34 +112,48 @@ namespace snap
  * The trim_empty parameter can be used to avoid empty entries,
  * either at the start, middle, or end.
  *
+ * The default predicate, character_predicate(), searches the
+ * input string for characters as found in the delimiters string.
+ * If you need a more robust predicate, you can declare your own
+ * function and pass it as the last parameter of the
+ * tokenize_string() function.
+ *
  * \note
  * If the tokens vector is not empty, the items of the string
  * being tokenized will be appended to the existing vector.
  *
+ * \todo
+ * Add support for quotation. Quoted sections may include delimiters.
+ *
+ * \tparam ContainterT  The type of container where the result is saved.
+ * \tparam PredicateT  The type of the predicate function.
  * \param[in,out] tokens  The container receiving the resulting strings.
  * \param[in] str  The string to tokenize.
  * \param[in] delimiters  The list of character delimiters.
  * \param[in] trim_empty  Whether to keep empty entries or not.
  * \param[in] trim_string  Trim those characters from the start/end before saving.
+ * \param[in] compare_function  The function used to search for tokens.
  *
  * \return the number of items in the resulting container.
  */
-template < class ContainerT >
+template<class ContainerT, typename PredicateT = decltype(character_predicate<ContainerT>)>
 size_t tokenize_string(ContainerT & tokens
                      , typename ContainerT::value_type const & str
                      , typename ContainerT::value_type const & delimiters
                      , bool const trim_empty = false
-                     , typename ContainerT::value_type const & trim_string = typename ContainerT::value_type())
+                     , typename ContainerT::value_type const & trim_string = typename ContainerT::value_type()
+                     , PredicateT compare_function = &character_predicate<ContainerT>)
 {
     for(typename ContainerT::value_type::size_type pos(0),
                                                    last_pos(0);
         pos != ContainerT::value_type::npos;
-        last_pos = pos + 1)
+        )
     {
-        pos = str.find_first_of(delimiters, last_pos);
+        typename ContainerT::value_type::size_type const start_pos(last_pos);
+        pos = (*compare_function)(str, delimiters, last_pos);
 
-        char const * start(str.data() + last_pos);
-        char const * end(start + ((pos == ContainerT::value_type::npos ? str.length() : pos) - last_pos));
+        char const * start(str.data() + start_pos);
+        char const * end(start + ((pos == ContainerT::value_type::npos ? str.length() : pos) - start_pos));
 
         if(start != end                 // if not (already) empty
         && !trim_string.empty())        // and there are characters to trim

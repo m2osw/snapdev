@@ -1,5 +1,8 @@
 snapdev (1.1.2.0~xenial) xenial; urgency=high
 
+  * Enhanced the tokenize_string to support a function predicate.
+  * Added the safe_variable.h header.
+  * Fixed #include folder from snapwebsites to snapdev.
   * Fixed a couple of mistakes in the docs (parameter names).
   * Added in=C++ to the MAPPING_EXTENSION.
   * Updated the doxy file to 1.8.11.

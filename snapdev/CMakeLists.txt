@@ -1,6 +1,6 @@
 #
 # File:
-#      src/CMakeLists.txt
+#      snapdev/CMakeLists.txt
 #
 # Description:
 #      Build the snapdev library
@@ -55,6 +55,7 @@ install(
         raii_generic_deleter.h
         reverse_cstring.h
         safe_setenv.h
+        safe_variable.h
         string_pathinfo.h
         string_replace_many.h
         tokenize_string.h
