@@ -51,6 +51,7 @@ install(
         matrix.h
         not_reached.h
         not_used.h
+        ostream_to_buf.h
         poison.h
         raii_generic_deleter.h
         reverse_cstring.h

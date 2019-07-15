@@ -6,6 +6,7 @@ snapdev (1.1.2.0~xenial) xenial; urgency=high
   * Fixed a couple of mistakes in the docs (parameter names).
   * Added in=C++ to the MAPPING_EXTENSION.
   * Updated the doxy file to 1.8.11.
+  * Added the ostream_to_buf.h to allow capturing ostream output in a buffer.
 
  -- Alexis Wilke <alexis@m2osw.com>  Tue, 11 Jun 2019 23:58:58 -0800
 
