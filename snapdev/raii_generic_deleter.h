@@ -16,6 +16,28 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
+/** \file
+ * \brief A set of templates to help with RAII.
+ *
+ * Resources that are pointers to C++ objects can easily be managed
+ * with std::unique_ptr<>() and std::shared_ptr<>().
+ *
+ * Pointers to objects which are not C++ objects can be managed
+ * by std::unique_ptr<>() and a deleter. To help with that case,
+ * though, we add a template class which allows us to create a
+ * typedef. Otherwise you have to specify the deleter to the
+ * std::unique_ptr<>() each time you allocate such an object!
+ *
+ * Finally, many resources use a variable type which is not
+ * a pointer at all. For those, it becomes very annoying to use
+ * an std::unique_ptr<>() _by hand_ each time. Each instance
+ * need to have access to that resource type deleter. Instead,
+ * we offer a template which incorporates the deleter in one
+ * typedef and it handles all the work of whether the value
+ * is considered to be nullptr (i.e. a file descriptor obtained
+ * with `open(2)` returns -1 as an equivalent to a nullptr.)
+ */
+
 // snapwebsites lib
 //
 #include <snapdev/not_used.h>
@@ -92,10 +114,10 @@ namespace snap
  * This template class is based on code found in this answer on Stackoverflow:
  * https://stackoverflow.com/questions/15756960/using-unique-ptr-to-control-a-file-descriptor#48575395
  *
- * \param[in] T  The type being managed such as 'int'.
+ * \tparam T  The type being managed such as 'int'.
  * \param[in] null_value  The value representing "nullptr" for that type. For
  *                        a file descriptor this is -1.
- * \param[in] D  The type of the deleter function.
+ * \tparam D  The type of the deleter function.
  * \param[in] deleter  The deleter function (i.e. 'deleter(p)' gets rid of `T p`).
  */
 template<class T, T null_value, class D, D deleter>
@@ -326,6 +348,15 @@ public:
         deleter(static_cast<T>(p));
     }
 };
+
+
+/** \brief Define a smart pointer for `fd`.
+ *
+ * The Unix system uses many file descriptors. This declaration
+ * automatically handles the close() of the specified `fd` resource.
+ *
+ * It is expected that the "null pointer" is -1.
+ */
 typedef std::unique_ptr<int, raii_generic_deleter<int, -1, decltype(&::close), &::close>>     raii_fd_t;
 
 
@@ -351,8 +382,8 @@ typedef std::unique_ptr<int, raii_generic_deleter<int, -1, decltype(&::close), &
  *      raii_file f(fopen("/tmp/test.tmp", "rw")); // f is automatically closed on a return or an interrupt
  * \endcode
  *
- * \param[in] T  The type being managed such as 'int'.
- * \param[in] D  The type of the deleter function.
+ * \tparam T  The type being managed such as 'int'.
+ * \tparam D  The type of the deleter function.
  * \param[in] deleter  The deleter function (i.e. 'deleter(p)' gets rid of `T * p`).
  */
 template<class T, class D, D deleter>
@@ -375,6 +406,19 @@ public:
         deleter(p);
     }
 };
+
+
+/** \brief Handle the closure of a FILE handle.
+ *
+ * One of the common type of file handle is the FILE object. It manages
+ * a file including an efficient client side buffering mechanism.
+ *
+ * This typedef makes sure that the file gets closed whenever the
+ * handle goes out of scope.
+ *
+ * This is a pointer so the null (a.k.a. closed, already released) is
+ * expected to be represented by a nullptr.
+ */
 typedef std::unique_ptr<FILE, raii_pointer_deleter<FILE, decltype(&::fclose), &::fclose>>     raii_file_t;
 
 
