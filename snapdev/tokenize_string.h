@@ -19,10 +19,24 @@
 //
 #pragma once
 
+/** \file
+ * \brief Template used to transform a string in tokens.
+ *
+ * This file includes a template used to search for delimiters used to
+ * break a string in tokens. Each token is further trimmed and optionally
+ * empty tokens are dropped.
+ */
+
+// self
+//
 #include "snapdev/reverse_cstring.h"
 
+// C++ lib
+//
 #include <string>
 #include <algorithm>
+
+
 
 namespace snap
 {
@@ -38,6 +52,7 @@ namespace snap
  * the function returns ContainerT::value_type::npos which means
  * that the rest of the string is a token on its own.
  *
+ * \tparam ContainerT  The type of string.
  * \param[in] str  The string being tokenized.
  * \param[in] delimiters  The string of delimiters.
  * \param[in] last_pos  Last position with a match.
@@ -125,7 +140,7 @@ typename ContainerT::value_type::size_type string_predicate(
  * \todo
  * Add support for quotation. Quoted sections may include delimiters.
  *
- * \tparam ContainterT  The type of container where the result is saved.
+ * \tparam ContainterT  The type of container used to output the tokens.
  * \tparam PredicateT  The type of the predicate function.
  * \param[in,out] tokens  The container receiving the resulting strings.
  * \param[in] str  The string to tokenize.
@@ -153,7 +168,7 @@ size_t tokenize_string(ContainerT & tokens
         pos = (*compare_function)(str, delimiters, last_pos);
 
         char const * start(str.data() + start_pos);
-        char const * end(start + ((pos == ContainerT::value_type::npos ? str.length() : pos) - start_pos));
+        char const * end(str.data() + (pos == ContainerT::value_type::npos ? str.length() : pos));
 
         if(start != end                 // if not (already) empty
         && !trim_string.empty())        // and there are characters to trim
