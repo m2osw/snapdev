@@ -25,7 +25,7 @@
 namespace snap
 {
 
-/** \brief Transform a vector string in a string.
+/** \brief Transform a vector of strings in a string.
  *
  * This function concatenate all the strings from a vector adding a separator
  * in between each. In effect, it does:
@@ -37,6 +37,11 @@ namespace snap
  * If you do not need a separator, you can use the std::accumulate() function
  * although it is going to be slower (i.e. it will do a lot of realloc() since
  * it does not know how long the final string is going to be.)
+ *
+ * \note
+ * You may also be interested by the boost::string::join algorithm. Like
+ * the accumulate, it won't reserve the space first, but it works with
+ * pretty much any kind of container, not just vectors.
  *
  * \param[in] tokens  The container of strings.
  * \param[in] separator  The separator to add between each string.

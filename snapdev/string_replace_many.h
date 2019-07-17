@@ -50,7 +50,8 @@ namespace snap
  * Add another version which compares case insensitively.
  *
  * \param[in] input  The input string where replacements will occur.
- * \param[in] search  The search parameters, the vector of needles/replacement strings.
+ * \param[in] search  The search parameters, the vector of needles/replacement
+ *                    strings.
  *
  * \return A new string with the search applied to the input string.
  */
