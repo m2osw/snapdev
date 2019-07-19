@@ -1,4 +1,4 @@
-// Snap Websites Servers -- retrieve a list of nodes from a QDomDocument based on an XPath
+// Snap Websites Servers -- a string extension with all compare functions made case insensitive
 // Copyright (c) 2013-2019  Made to Order Software Corp.  All Rights Reserved
 //
 // This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,13 @@
  * functions that have a Qt::CaseSensitivity parameter to default to
  * Qt::CaseInsensitive (which would make sense to have a really complete
  * implementation...)
+ *
+ * \note
+ * We are looking into removing all Qt functions, including QString
+ * related ones. For an std::string version, look at the libutf8 library.
+ * The libutf8 library offers a u8casecmp() function and a
+ * case_insensitive_basic_string class template which handles all the
+ * comparison operators (==, !=, etc.) in a case insensitive manner.
  */
 class QCaseInsensitiveString : public QString
 {
