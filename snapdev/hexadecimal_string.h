@@ -19,9 +19,11 @@
 //
 #pragma once
 
-// snapwebsites lib
+
+// libexcept lib
 //
-#include "snapdev/snap_exception.h"
+#include "libexcept/exception.h"
+
 
 // C++ lib
 //
@@ -38,8 +40,8 @@ class string_exception_invalid_parameter : public snap::snap_exception
 public:
     string_exception_invalid_parameter(char const *        what_msg) : snap_exception(what_msg) {}
     string_exception_invalid_parameter(std::string const & what_msg) : snap_exception(what_msg) {}
-    string_exception_invalid_parameter(QString const &     what_msg) : snap_exception(what_msg) {}
 };
+
 
 
 /** \brief Transform a binary string to hexadecimal.

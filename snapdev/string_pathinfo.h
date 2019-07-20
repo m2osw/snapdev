@@ -19,7 +19,7 @@
 //
 #pragma once
 
-#include "snapwebsites/reverse_cstring.h"
+#include "snapdev/reverse_cstring.h"
 
 #include <string>
 

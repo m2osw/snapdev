@@ -18,7 +18,7 @@
 
 // libexcept lib
 //
-#include "libexcept/exception.h"
+#include <libexcept/exception.h>
 
 // C lib
 //
@@ -28,36 +28,33 @@
 namespace snap
 {
 
-class snap_lockfile_exception : public libexcept::exception_t
+class snap_lockfile_exception
+    : public libexcept::exception_t
 {
 public:
-    explicit snap_lockfile_exception(const char *        whatmsg) : exception_t("snap_process", whatmsg) {}
-    explicit snap_lockfile_exception(const std::string & whatmsg) : exception_t("snap_process", whatmsg) {}
-    explicit snap_lockfile_exception(const QString &     whatmsg) : exception_t("snap_process", whatmsg) {}
+    explicit snap_lockfile_exception(char const *        whatmsg) : exception_t(std::string("snap_process: ") + whatmsg) {}
+    explicit snap_lockfile_exception(std::string const & whatmsg) : exception_t("snap_process: " + whatmsg) {}
 };
 
 class snap_process_exception_file_error : public snap_lockfile_exception
 {
 public:
-    explicit snap_process_exception_file_error(const char *        whatmsg) : snap_lockfile_exception(whatmsg) {}
-    explicit snap_process_exception_file_error(const std::string & whatmsg) : snap_lockfile_exception(whatmsg) {}
-    explicit snap_process_exception_file_error(const QString &     whatmsg) : snap_lockfile_exception(whatmsg) {}
+    explicit snap_process_exception_file_error(char const *        whatmsg) : snap_lockfile_exception(whatmsg) {}
+    explicit snap_process_exception_file_error(std::string const & whatmsg) : snap_lockfile_exception(whatmsg) {}
 };
 
 class snap_process_exception_lock_error : public snap_lockfile_exception
 {
 public:
-    explicit snap_process_exception_lock_error(const char *        whatmsg) : snap_lockfile_exception(whatmsg) {}
-    explicit snap_process_exception_lock_error(const std::string & whatmsg) : snap_lockfile_exception(whatmsg) {}
-    explicit snap_process_exception_lock_error(const QString &     whatmsg) : snap_lockfile_exception(whatmsg) {}
+    explicit snap_process_exception_lock_error(char const *        whatmsg) : snap_lockfile_exception(whatmsg) {}
+    explicit snap_process_exception_lock_error(std::string const & whatmsg) : snap_lockfile_exception(whatmsg) {}
 };
 
 class snap_process_exception_not_locked_error : public snap_lockfile_exception
 {
 public:
-    explicit snap_process_exception_not_locked_error(const char *        whatmsg) : snap_lockfile_exception(whatmsg) {}
-    explicit snap_process_exception_not_locked_error(const std::string & whatmsg) : snap_lockfile_exception(whatmsg) {}
-    explicit snap_process_exception_not_locked_error(const QString &     whatmsg) : snap_lockfile_exception(whatmsg) {}
+    explicit snap_process_exception_not_locked_error(char const *        whatmsg) : snap_lockfile_exception(whatmsg) {}
+    explicit snap_process_exception_not_locked_error(std::string const & whatmsg) : snap_lockfile_exception(whatmsg) {}
 };
 
 
@@ -92,6 +89,10 @@ public:
      * \warning
      * The file is not locked once the lockfile is initializes by
      * the constructor. You must call the lock() function.
+     *
+     * \exception snap_process_exception_file_error
+     * This exception is raised if the file at \p path can't be opened or
+     * created.
      *
      * \param[in] path  The path to the lockfile.
      * \param[in] mode  The lock can be either shared or exclusive.
@@ -128,6 +129,9 @@ public:
      * On return, the file in \p rhs is locked by one more instance
      * and the file that was in \p this is one instance closer to
      * get unlocked.
+     *
+     * \exception snap_process_exception_not_locked_error
+     * This exception gets raised in the event the lock is not active.
      *
      * \param[in] rhs  The right hand side.
      */
@@ -169,6 +173,9 @@ public:
      * On return, the file in \p rhs is locked by one more instance
      * and the file that was in \p this is one instance closer to
      * get unlocked, unless (&rhs == this) is true.
+     *
+     * \exception snap_process_exception_not_locked_error
+     * This exception gets raised in the event the lock is not active.
      *
      * \param[in] rhs  The source to copy in this lockfile.
      */

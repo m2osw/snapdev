@@ -1,3 +1,12 @@
+snapdev (1.1.3.0~xenial) xenial; urgency=high
+
+  * Removed all references to QString.
+  * Fixed includes of exceptions.
+  * Fixed some exception definitions.
+  * Fixed the include in the string_pathinfo.h.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sat, 20 Jul 2019 05:07:17 -0800
+
 snapdev (1.1.2.0~xenial) xenial; urgency=high
 
   * Enhanced the tokenize_string to support a function predicate.
