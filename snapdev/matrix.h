@@ -1597,9 +1597,6 @@ std::cerr << "this " << f_rows << "x" << f_columns
             //
             matrix<T, SIZE> hue_matrix(4, 4);
 
-            value_type const c(std::cos(h));
-            value_type const s(std::sin(h));
-
             hue_matrix[0][0] =  0.97667266520552899 * rot_cos + 0.35888772800180165 * rot_sin + 0.02332733479447109;
             hue_matrix[0][1] = -0.02332733479447109 * rot_cos + 0.93623799719142759 * rot_sin + 0.02332733479447109;
             hue_matrix[0][2] = -0.02332733479447108 * rot_cos - 0.21846254118782418 * rot_sin + 0.02332733479447109;
@@ -1627,9 +1624,6 @@ std::cerr << "this " << f_rows << "x" << f_columns
             // (in other words, it makes no luma correction at all)
             //
             matrix<T, SIZE> hue_matrix(4, 4);
-
-            value_type const c(std::cos(h));
-            value_type const s(std::sin(h));
 
             hue_matrix[0][0] =  1.88796748671567113 * rot_cos + 0.76774179094706859 * rot_sin - 0.88796748671567094;
             hue_matrix[0][1] =  0.88796748671567144 * rot_cos + 1.34509206013669466 * rot_sin - 0.88796748671567149;
