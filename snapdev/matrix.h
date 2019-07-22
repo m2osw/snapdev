@@ -19,6 +19,7 @@
 // C++ lib
 //
 #include <cctype>
+#include <cmath>
 #include <iostream>
 #include <stdexcept>
 #include <vector>
@@ -515,8 +516,8 @@ std::cerr << "this " << f_rows << "x" << f_columns
         temp[3][3] = f_vector[3 + 3 * 4];
 
         // can we do it?!
-        value_type abs_a = fabsf(r[3][0]);
-        value_type abs_b = fabsf(r[2][0]);
+        value_type abs_a = std::fabsf(r[3][0]);
+        value_type abs_b = std::fabsf(r[2][0]);
         if(abs_a > abs_b) {
             value_type *swap = r[3];
             r[3] = r[2];
@@ -524,7 +525,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
             abs_b = abs_a;
         }
 
-        abs_a = fabsf(r[1][0]);
+        abs_a = std::fabsf(r[1][0]);
         if(abs_b > abs_a)
         {
             value_type *swap = r[2];
@@ -533,7 +534,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
             abs_a = abs_b;
         }
 
-        abs_b = fabsf(r[0][0]);
+        abs_b = std::fabsf(r[0][0]);
         if(abs_a > abs_b)
         {
             value_type *swap = r[1];
@@ -626,8 +627,8 @@ std::cerr << "this " << f_rows << "x" << f_columns
         }
 
         // can we do it?!
-        abs_a = fabsf(r[3][1]);
-        abs_b = fabsf(r[2][1]);
+        abs_a = std::fabsf(r[3][1]);
+        abs_b = std::fabsf(r[2][1]);
         if(abs_a > abs_b)
         {
             value_type *swap = r[3];
@@ -635,7 +636,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
             r[2] = swap;
             abs_b = abs_a;
         }
-        abs_a = fabsf(r[1][1]);
+        abs_a = std::fabsf(r[1][1]);
         if(abs_b > abs_a)
         {
             value_type *swap = r[2];
@@ -696,8 +697,8 @@ std::cerr << "this " << f_rows << "x" << f_columns
         }
 
         // can we do it?!
-        abs_a = fabsf(r[3][2]);
-        abs_b = fabsf(r[2][2]);
+        abs_a = std::fabsf(r[3][2]);
+        abs_b = std::fabsf(r[2][2]);
         if(abs_a > abs_b)
         {
             value_type *swap = r[3];
@@ -1504,12 +1505,12 @@ std::cerr << "this " << f_rows << "x" << f_columns
             throw std::runtime_error("scale() is only for 4x4 matrices at this time");
         }
 
-        value_type const rot_cos(cos(static_cast<value_type>(h)));
-        value_type const rot_sin(sin(static_cast<value_type>(h)));
+        value_type const rot_cos(std::cos(static_cast<value_type>(h)));
+        value_type const rot_sin(std::sin(static_cast<value_type>(h)));
 
-        if(fabs(f_luma_red   - HDTV_LUMA_RED  ) < 0.0001
-        && fabs(f_luma_green - HDTV_LUMA_GREEN) < 0.0001
-        && fabs(f_luma_blue  - HDTV_LUMA_BLUE ) < 0.0001)
+        if(std::fabs(f_luma_red   - HDTV_LUMA_RED  ) < 0.0001
+        && std::fabs(f_luma_green - HDTV_LUMA_GREEN) < 0.0001
+        && std::fabs(f_luma_blue  - HDTV_LUMA_BLUE ) < 0.0001)
         {
             // this matrice make use of the HDTV luma
             //
@@ -1534,9 +1535,9 @@ std::cerr << "this " << f_rows << "x" << f_columns
             return *this * hue_matrix;
         }
 
-        if(fabs(f_luma_red   - LED_LUMA_RED  ) < 0.0001
-        && fabs(f_luma_green - LED_LUMA_GREEN) < 0.0001
-        && fabs(f_luma_blue  - LED_LUMA_BLUE ) < 0.0001)
+        if(std::fabs(f_luma_red   - LED_LUMA_RED  ) < 0.0001
+        && std::fabs(f_luma_green - LED_LUMA_GREEN) < 0.0001
+        && std::fabs(f_luma_blue  - LED_LUMA_BLUE ) < 0.0001)
         {
             // this matrice make use of the LED luma
             //
@@ -1561,9 +1562,9 @@ std::cerr << "this " << f_rows << "x" << f_columns
             return *this * hue_matrix;
         }
 
-        if(fabs(f_luma_red   - CRT_LUMA_RED  ) < 0.0001
-        && fabs(f_luma_green - CRT_LUMA_GREEN) < 0.0001
-        && fabs(f_luma_blue  - CRT_LUMA_BLUE ) < 0.0001)
+        if(std::fabs(f_luma_red   - CRT_LUMA_RED  ) < 0.0001
+        && std::fabs(f_luma_green - CRT_LUMA_GREEN) < 0.0001
+        && std::fabs(f_luma_blue  - CRT_LUMA_BLUE ) < 0.0001)
         {
             // this matrice make use of the CRT luma
             //
@@ -1588,16 +1589,16 @@ std::cerr << "this " << f_rows << "x" << f_columns
             return *this * hue_matrix;
         }
 
-        if(fabs(f_luma_red   - NTSC_LUMA_RED  ) < 0.0001
-        && fabs(f_luma_green - NTSC_LUMA_GREEN) < 0.0001
-        && fabs(f_luma_blue  - NTSC_LUMA_BLUE ) < 0.0001)
+        if(std::fabs(f_luma_red   - NTSC_LUMA_RED  ) < 0.0001
+        && std::fabs(f_luma_green - NTSC_LUMA_GREEN) < 0.0001
+        && std::fabs(f_luma_blue  - NTSC_LUMA_BLUE ) < 0.0001)
         {
             // this matrice make use of the NTSC luma
             //
             matrix<T, SIZE> hue_matrix(4, 4);
 
-            value_type const c(cos(h));
-            value_type const s(sin(h));
+            value_type const c(std::cos(h));
+            value_type const s(std::sin(h));
 
             hue_matrix[0][0] =  0.97667266520552899 * rot_cos + 0.35888772800180165 * rot_sin + 0.02332733479447109;
             hue_matrix[0][1] = -0.02332733479447109 * rot_cos + 0.93623799719142759 * rot_sin + 0.02332733479447109;
@@ -1618,17 +1619,17 @@ std::cerr << "this " << f_rows << "x" << f_columns
             return *this * hue_matrix;
         }
 
-        if(fabs(f_luma_red   - AVERAGE_LUMA_RED  ) < 0.0001
-        && fabs(f_luma_green - AVERAGE_LUMA_GREEN) < 0.0001
-        && fabs(f_luma_blue  - AVERAGE_LUMA_BLUE ) < 0.0001)
+        if(std::fabs(f_luma_red   - AVERAGE_LUMA_RED  ) < 0.0001
+        && std::fabs(f_luma_green - AVERAGE_LUMA_GREEN) < 0.0001
+        && std::fabs(f_luma_blue  - AVERAGE_LUMA_BLUE ) < 0.0001)
         {
             // this matrice make use of the average luma
             // (in other words, it makes no luma correction at all)
             //
             matrix<T, SIZE> hue_matrix(4, 4);
 
-            value_type const c(cos(h));
-            value_type const s(sin(h));
+            value_type const c(std::cos(h));
+            value_type const s(std::sin(h));
 
             hue_matrix[0][0] =  1.88796748671567113 * rot_cos + 0.76774179094706859 * rot_sin - 0.88796748671567094;
             hue_matrix[0][1] =  0.88796748671567144 * rot_cos + 1.34509206013669466 * rot_sin - 0.88796748671567149;
@@ -1661,7 +1662,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
             // $R_r$ -- rotation around red axis (inverse rotation around X axis)
             //
             matrix<T, SIZE> r_r(4, 4);
-            value_type const inv_sqrt_2 = static_cast<value_type>(1) / sqrt(static_cast<value_type>(2));
+            value_type const inv_sqrt_2 = static_cast<value_type>(1) / std::sqrt(static_cast<value_type>(2));
             r_r[1][1] =  inv_sqrt_2;
             r_r[1][2] =  inv_sqrt_2;
             r_r[2][1] = -inv_sqrt_2;
@@ -1672,8 +1673,8 @@ std::cerr << "this " << f_rows << "x" << f_columns
             // $R_g$ -- rotation around green axis (inverse rotation around Y axis)
             //
             matrix<T, SIZE> r_g(4, 4);
-            value_type const inv_sqrt_3 = static_cast<value_type>(1) / sqrt(static_cast<value_type>(3));
-            value_type const sqrt_2_over_sqrt_3 = sqrt(static_cast<value_type>(2)) / sqrt(static_cast<value_type>(3));
+            value_type const inv_sqrt_3 = static_cast<value_type>(1) / std::sqrt(static_cast<value_type>(3));
+            value_type const sqrt_2_over_sqrt_3 = std::sqrt(static_cast<value_type>(2)) / std::sqrt(static_cast<value_type>(3));
             r_g[0][0] =  sqrt_2_over_sqrt_3;
             r_g[0][2] =  inv_sqrt_3;
             r_g[2][0] = -inv_sqrt_3;
