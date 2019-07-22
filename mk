@@ -18,7 +18,7 @@ case $1 in
 	(
 		if make -C ../../../BUILD/contrib/snapdev
 		then
-			../../../BUILD/contrib/snapdev/tests/unittest
+			../../../BUILD/contrib/snapdev/tests/snapdevtests --progress
 		fi
 	) 2>&1 | less -SR
 	;;

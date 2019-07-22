@@ -516,8 +516,8 @@ std::cerr << "this " << f_rows << "x" << f_columns
         temp[3][3] = f_vector[3 + 3 * 4];
 
         // can we do it?!
-        value_type abs_a = std::fabsf(r[3][0]);
-        value_type abs_b = std::fabsf(r[2][0]);
+        value_type abs_a = std::abs(r[3][0]);
+        value_type abs_b = std::abs(r[2][0]);
         if(abs_a > abs_b) {
             value_type *swap = r[3];
             r[3] = r[2];
@@ -525,7 +525,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
             abs_b = abs_a;
         }
 
-        abs_a = std::fabsf(r[1][0]);
+        abs_a = std::abs(r[1][0]);
         if(abs_b > abs_a)
         {
             value_type *swap = r[2];
@@ -534,7 +534,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
             abs_a = abs_b;
         }
 
-        abs_b = std::fabsf(r[0][0]);
+        abs_b = std::abs(r[0][0]);
         if(abs_a > abs_b)
         {
             value_type *swap = r[1];
@@ -627,8 +627,8 @@ std::cerr << "this " << f_rows << "x" << f_columns
         }
 
         // can we do it?!
-        abs_a = std::fabsf(r[3][1]);
-        abs_b = std::fabsf(r[2][1]);
+        abs_a = std::abs(r[3][1]);
+        abs_b = std::abs(r[2][1]);
         if(abs_a > abs_b)
         {
             value_type *swap = r[3];
@@ -636,7 +636,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
             r[2] = swap;
             abs_b = abs_a;
         }
-        abs_a = std::fabsf(r[1][1]);
+        abs_a = std::abs(r[1][1]);
         if(abs_b > abs_a)
         {
             value_type *swap = r[2];
@@ -697,8 +697,8 @@ std::cerr << "this " << f_rows << "x" << f_columns
         }
 
         // can we do it?!
-        abs_a = std::fabsf(r[3][2]);
-        abs_b = std::fabsf(r[2][2]);
+        abs_a = std::abs(r[3][2]);
+        abs_b = std::abs(r[2][2]);
         if(abs_a > abs_b)
         {
             value_type *swap = r[3];
