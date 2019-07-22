@@ -34,11 +34,7 @@
 
 #include <boost/preprocessor/stringize.hpp>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wctor-dtor-privacy"
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
-#include <catch2/catch.hpp>
+#include <catch2/snapcatch2.hpp>
 
 // The message() can be used to verify that version
 //
@@ -46,16 +42,10 @@
 
 #pragma GCC diagnostic pop
 
-#ifdef _MSC_VER
-// The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: ... See online help for details.
-// This is because of the putenv() and strdup() used in the class below
-#pragma warning(disable: 4996)
-#endif
 
 namespace unittest
 {
 
-extern bool             g_verbose;
 
 class obj_setenv
 {
@@ -101,11 +91,6 @@ inline char32_t rand_char(bool full_range = false)
     return wc;
 }
 
-
-#define CATCH_START_SECTION(name) \
-    CATCH_SECTION(name) { if(unittest::g_verbose) { std::cout << name << std::endl; }
-
-#define CATCH_END_SECTION() }
 
 
 

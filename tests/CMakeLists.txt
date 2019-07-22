@@ -54,7 +54,9 @@ if(Catch2_FOUND)
     )
 
     add_executable( ${PROJECT_NAME}
-        catch2_main.cpp
+        main.cpp
+
+        matrix.cpp
     )
 
     target_link_libraries( ${PROJECT_NAME}

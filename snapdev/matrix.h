@@ -23,10 +23,6 @@
 #include <stdexcept>
 #include <vector>
 
-// QImage
-//
-#include <QImage>
-
 #include <sstream>
 
 
