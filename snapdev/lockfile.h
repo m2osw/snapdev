@@ -23,6 +23,7 @@
 // C lib
 //
 #include <sys/file.h>
+#include <unistd.h>
 
 
 namespace snap
@@ -308,6 +309,57 @@ private:
     std::string         f_path;
     int                 f_mode = LOCK_EX;
     int                 f_fd = -1;
+    bool                f_locked = false;
+};
+
+
+
+class lockfd
+{
+public:
+    enum class mode_t
+    {
+        LOCKFILE_EXCLUSIVE,
+        LOCKFILE_SHARED
+    };
+
+    lockfd(int fd, mode_t mode)
+        : f_fd(fd)
+        , f_mode(mode == mode_t::LOCKFILE_EXCLUSIVE ? LOCK_EX : LOCK_SH)
+    {
+        if(f_fd != -1)
+        {
+            flock(f_fd, f_mode);
+            f_locked = true;
+        }
+    }
+
+    ~lockfd()
+    {
+        unlock();
+    }
+
+    void lock()
+    {
+        if(!f_locked)
+        {
+            flock(f_fd, f_mode);
+            f_locked = true;
+        }
+    }
+
+    void unlock()
+    {
+        if(f_locked)
+        {
+            flock(f_fd, LOCK_UN);
+            f_locked = false;
+        }
+    }
+
+private:
+    int                 f_fd = -1;
+    int                 f_mode = LOCK_EX;
     bool                f_locked = false;
 };
 
