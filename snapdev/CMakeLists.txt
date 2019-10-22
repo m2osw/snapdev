@@ -45,6 +45,7 @@ configure_file(
 install(
     FILES
         empty_set_intersection.h
+        glob_to_list.h
         hexadecimal_string.h
         join_strings.h
         lockfile.h
