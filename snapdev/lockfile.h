@@ -314,6 +314,8 @@ private:
 
 
 
+
+
 class lockfd
 {
 public:
@@ -339,13 +341,14 @@ public:
         unlock();
     }
 
-    void lock()
+    bool lock()
     {
-        if(!f_locked)
+        if(!f_locked && f_fd != -1)
         {
             flock(f_fd, f_mode);
             f_locked = true;
         }
+        return f_locked;
     }
 
     void unlock()
@@ -355,6 +358,11 @@ public:
             flock(f_fd, LOCK_UN);
             f_locked = false;
         }
+    }
+
+    bool is_locked() const
+    {
+        return f_locked;
     }
 
 private:
