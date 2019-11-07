@@ -224,7 +224,7 @@ public:
         return f_last_error_path;
     }
 
-    std::string get_last_error_errno() const
+    int get_last_error_errno() const
     {
         return f_last_error_errno;
     }
