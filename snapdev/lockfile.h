@@ -18,46 +18,24 @@
 
 // libexcept lib
 //
-#include <libexcept/exception.h>
+#include    <libexcept/exception.h>
 
 // C lib
 //
-#include <sys/file.h>
-#include <unistd.h>
+#include    <sys/file.h>
+#include    <unistd.h>
+#include    <string.h>
+
 
 
 namespace snap
 {
 
-class snap_lockfile_exception
-    : public libexcept::exception_t
-{
-public:
-    explicit snap_lockfile_exception(char const *        whatmsg) : exception_t(std::string("snap_process: ") + whatmsg) {}
-    explicit snap_lockfile_exception(std::string const & whatmsg) : exception_t("snap_process: " + whatmsg) {}
-};
+DECLARE_MAIN_EXCEPTION(lockfile_error);
 
-class snap_process_exception_file_error : public snap_lockfile_exception
-{
-public:
-    explicit snap_process_exception_file_error(char const *        whatmsg) : snap_lockfile_exception(whatmsg) {}
-    explicit snap_process_exception_file_error(std::string const & whatmsg) : snap_lockfile_exception(whatmsg) {}
-};
-
-class snap_process_exception_lock_error : public snap_lockfile_exception
-{
-public:
-    explicit snap_process_exception_lock_error(char const *        whatmsg) : snap_lockfile_exception(whatmsg) {}
-    explicit snap_process_exception_lock_error(std::string const & whatmsg) : snap_lockfile_exception(whatmsg) {}
-};
-
-class snap_process_exception_not_locked_error : public snap_lockfile_exception
-{
-public:
-    explicit snap_process_exception_not_locked_error(char const *        whatmsg) : snap_lockfile_exception(whatmsg) {}
-    explicit snap_process_exception_not_locked_error(std::string const & whatmsg) : snap_lockfile_exception(whatmsg) {}
-};
-
+DECLARE_EXCEPTION(lockfile_error, lockfile_file_error);
+DECLARE_EXCEPTION(lockfile_error, lockfile_lock_error);
+DECLARE_EXCEPTION(lockfile_error, lockfile_not_locked_error);
 
 
 
@@ -112,7 +90,7 @@ public:
         if(f_fd == -1)
         {
             int const e(errno);
-            throw snap_process_exception_file_error("error creating lock file " + f_path + " (" + std::to_string(e) + ", " + strerror(e) + ")");
+            throw lockfile_file_error("error creating lock file \"" + f_path + "\" (errno: " + std::to_string(e) + ", " + strerror(e) + ")");
         }
     }
 
@@ -144,7 +122,7 @@ public:
     {
         if(!f_locked)
         {
-            throw snap_process_exception_not_locked_error("only locked files can be copied (path: \"" + f_path + "\")");
+            throw lockfile_not_locked_error("only locked files can be copied (path: \"" + f_path + "\")");
         }
         f_fd = dup(rhs.f_fd);
     }
@@ -186,7 +164,7 @@ public:
         {
             if(!rhs.f_locked)
             {
-                throw snap_process_exception_not_locked_error("only locked files can be assigned to other lockfile objects (path: \"" + f_path + "\")");
+                throw lockfile_not_locked_error("only locked files can be assigned to other lockfile objects (path: \"" + f_path + "\")");
             }
 
             ::close(f_fd);
@@ -229,10 +207,10 @@ public:
             if(r != 0)
             {
                 int const e(errno);
-                throw snap_process_exception_lock_error(
+                throw lockfile_lock_error(
                                   "lock \""
                                 + f_path
-                                + "\" could not be obtained ("
+                                + "\" could not be obtained (errno: "
                                 + std::to_string(e)
                                 + ", "
                                 + strerror(e)
@@ -279,10 +257,10 @@ public:
                     return false;
                 }
                 int const e(errno);
-                throw snap_process_exception_lock_error(
+                throw lockfile_lock_error(
                                   "lock \""
                                 + f_path
-                                + "\" could not be obtained ("
+                                + "\" could not be obtained (errno: "
                                 + std::to_string(e)
                                 + ", "
                                 + strerror(e)
@@ -293,16 +271,35 @@ public:
         return true;
     }
 
+    /** \brief Release the lock.
+     *
+     * This function releases the lock and keeps the file open.
+     *
+     * If the file was not currently locked, nothing happens.
+     */
+    void unlock()
+    {
+        if(f_locked && f_fd != -1)
+        {
+            ::flock(f_fd, LOCK_UN);
+            f_locked = false;
+        }
+    }
+
     /** \brief Check whether the lock is in effect.
      *
      * This function returns true if a previous call to lock() or
      * try_lock() actually locked the file.
      *
+     * \note
+     * When a lock function fails, the file is likely going to be closed
+     * automatically. Once the file is closed, it always remains unlocked.
+     *
      * \return true if the file is currently locked, false otherwise.
      */
     bool is_locked() const
     {
-        return f_locked;
+        return f_locked && f_fd != -1;
     }
 
 private:
