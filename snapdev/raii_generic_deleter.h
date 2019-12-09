@@ -38,9 +38,9 @@
  * with `open(2)` returns -1 as an equivalent to a nullptr.)
  */
 
-// snapwebsites lib
+// snapdev lib
 //
-#include <snapdev/not_used.h>
+#include "snapdev/not_used.h"
 
 // C++ lib
 //
