@@ -1,5 +1,8 @@
 # - Try to find SnapDev
 #
+# https://snapwebsites.org/
+# contact@m2osw.com
+#
 # Once done this will define
 #
 # SNAPDEV_FOUND        - System has SnapDev

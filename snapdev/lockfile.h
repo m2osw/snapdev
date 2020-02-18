@@ -82,7 +82,9 @@ public:
     lockfile(std::string const & path, mode_t mode)
         : f_path(path)
         , f_mode(mode == mode_t::LOCKFILE_EXCLUSIVE ? LOCK_EX : LOCK_SH)
-        , f_fd(::open(f_path.c_str(), O_WRONLY | O_CREAT, S_IRUSR | S_IRGRP | S_IROTH))
+        , f_fd(::open(f_path.c_str()
+             , O_WRONLY | O_CREAT
+             , S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH))
     {
         // if we cannot open/create the file we cannot handle the lock
         // at all so we throw
@@ -90,7 +92,14 @@ public:
         if(f_fd == -1)
         {
             int const e(errno);
-            throw lockfile_file_error("error creating lock file \"" + f_path + "\" (errno: " + std::to_string(e) + ", " + strerror(e) + ")");
+            throw lockfile_file_error(
+                      "Error creating lock file \""
+                    + f_path
+                    + "\" (errno: "
+                    + std::to_string(e)
+                    + ", "
+                    + strerror(e)
+                    + ")");
         }
     }
 
@@ -117,14 +126,28 @@ public:
     lockfile(lockfile const & rhs)
         : f_path(rhs.f_path)
         , f_mode(rhs.f_mode)
-        //, f_fd(dup(rhs.f_fd))
         , f_locked(rhs.f_locked)
     {
         if(!f_locked)
         {
-            throw lockfile_not_locked_error("only locked files can be copied (path: \"" + f_path + "\")");
+            throw lockfile_not_locked_error(
+                      "Only locked files can be copied. \""
+                    + f_path
+                    + "\" is not currently locked.");
         }
         f_fd = dup(rhs.f_fd);
+        if(f_fd == -1)
+        {
+            int const e(errno);
+            throw lockfile_not_locked_error(
+                      "Copying file \""
+                    + f_path
+                    + "\" failed (errno: "
+                    + std::to_string(e)
+                    + ", "
+                    + strerror(e)
+                    + ")");
+        }
     }
 
     /** \brief Make sure that the lock file gets closed.
@@ -164,7 +187,10 @@ public:
         {
             if(!rhs.f_locked)
             {
-                throw lockfile_not_locked_error("only locked files can be assigned to other lockfile objects (path: \"" + f_path + "\")");
+                throw lockfile_not_locked_error(
+                          "Only locked files can be assigned to other lockfile objects (file \""
+                        + f_path
+                        + "\" is not current locked).");
             }
 
             ::close(f_fd);
@@ -172,7 +198,20 @@ public:
             f_path = rhs.f_path;
             f_mode = rhs.f_mode;
             f_fd = dup(rhs.f_fd);
-            f_locked = rhs.f_locked;
+            f_locked = true;
+
+            if(f_fd == -1)
+            {
+                int const e(errno);
+                throw lockfile_not_locked_error(
+                          "Copying file \""
+                        + f_path
+                        + "\" failed (errno: "
+                        + std::to_string(e)
+                        + ", "
+                        + strerror(e)
+                        + ").");
+            }
         }
 
         return *this;
@@ -208,13 +247,13 @@ public:
             {
                 int const e(errno);
                 throw lockfile_lock_error(
-                                  "lock \""
+                                  "Lock \""
                                 + f_path
                                 + "\" could not be obtained (errno: "
                                 + std::to_string(e)
                                 + ", "
                                 + strerror(e)
-                                + ")");
+                                + ").");
             }
             f_locked = true;
         }
@@ -258,13 +297,13 @@ public:
                 }
                 int const e(errno);
                 throw lockfile_lock_error(
-                                  "lock \""
+                                  "Lock \""
                                 + f_path
                                 + "\" could not be obtained (errno: "
                                 + std::to_string(e)
                                 + ", "
                                 + strerror(e)
-                                + ")");
+                                + ").");
             }
             f_locked = true;
         }

@@ -1,41 +1,27 @@
 #
-# File:
-#      tests/CMakeLists.txt
+# Copyright (c) 2006-2019  Made to Order Software Corp.  All Rights Reserved
 #
-# Description:
-#      Definitions to create all the unit tests of the snapdev environment.
+# https://snapwebsites.org/
+# contact@m2osw.com
 #
-# Documentation:
-#      See the CMake documentation.
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
 #
-# License:
-#      Copyright (c) 2006-2019  Made to Order Software Corp.  All Rights Reserved
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-#      https://sourceforge.net/projects/unigw/
-#      contact@m2osw.com
-#
-#      Permission is hereby granted, free of charge, to any person obtaining a
-#      copy of this software and associated documentation files (the
-#      "Software"), to deal in the Software without restriction, including
-#      without limitation the rights to use, copy, modify, merge, publish,
-#      distribute, sublicense, and/or sell copies of the Software, and to
-#      permit persons to whom the Software is furnished to do so, subject to
-#      the following conditions:
-#
-#      The above copyright notice and this permission notice shall be included
-#      in all copies or substantial portions of the Software.
-#
-#      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-#      OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-#      MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-#      IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-#      CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-#      TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-#      SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
-# Note that if user does not have Catch then this does not get included
+# Note that when user does not have Catch then this does not get included
 # in the final output
+#
 project(snapdevtests)
 
 find_package( Catch2 )
@@ -56,6 +42,7 @@ if(Catch2_FOUND)
     add_executable( ${PROJECT_NAME}
         main.cpp
 
+        log2.cpp
         matrix.cpp
     )
 
