@@ -1,3 +1,9 @@
+snapdev (1.1.5.2~bionic) bionic; urgency=high
+
+  * Create a bionic version.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Thu, 30 Apr 2020 21:00:26 -0800
+
 snapdev (1.1.5.0~xenial) xenial; urgency=high
 
   * Added the log2.h to have quickly calculate log2() of integers.
