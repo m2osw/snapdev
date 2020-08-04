@@ -1,3 +1,9 @@
+snapdev (1.1.6.0~bionic) bionic; urgency=high
+
+  * Added the shared_ptr_with_deleter<> template class.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Mon, 03 Aug 2020 17:09:43 -0700
+
 snapdev (1.1.5.3~bionic) bionic; urgency=high
 
   * Create an ARM version.

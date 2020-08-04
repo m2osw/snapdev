@@ -408,6 +408,57 @@ public:
 };
 
 
+/** \brief A shared pointer with a deleter.
+ *
+ * A big problem with the std::shared_ptr<> is that it does not accept a
+ * deleter, somehow. Yet, there should be no reason for such a limitation.
+ * This class allows you to create generic deleter typedefs of smart
+ * pointers with deleters.
+ *
+ * \code
+ *     // we need a special deleter because of the required pointer to pointer
+ *     void av_frame_free_ptr(AVFrame * ptr)
+ *     {
+ *         ::av_frame_free(&ptr);
+ *     }
+ *     typedef snap::raii_pointer_deleter<AVFrame, decl(&av_frame_free_ptr), &av_frame_free_ptr> av_frame_deleter_t;
+ *     typedef snap::shared_ptr_with_deleter<AVFrame, av_frame_deleter_t> av_frame_t;
+ * \endcode
+ *
+ * Source:
+ *
+ * https://stackoverflow.com/questions/27331315
+ */
+template<class T, class D = std::default_delete<T>>
+struct shared_ptr_with_deleter
+    : public std::shared_ptr<T>
+{
+    /** \brief The constructor accepts a type t.
+     *
+     * Create the shared pointer with the deleter as specified in the
+     * template.
+     *
+     * \param[in] t  The bare pointer to save in this smart pointer.
+     */
+    explicit shared_ptr_with_deleter(T * t = nullptr)
+        : std::shared_ptr<T>(t, D())
+    {
+    }
+
+    /** \brief Call the reset function with the deleter.
+     *
+     * The std::shared_ptr<>() reset function also doesn't know anything
+     * about the deleter and it has to be specified on the call.
+     *
+     * \param[in] t  Another bare pointer to save in this smart pointer.
+     */
+    void reset(T* t = nullptr)
+    {
+        std::shared_ptr<T>::reset(t, D());
+    }
+};
+
+
 /** \brief Handle the closure of a FILE handle.
  *
  * One of the common type of file handle is the FILE object. It manages
