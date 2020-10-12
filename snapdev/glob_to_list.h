@@ -50,7 +50,7 @@ namespace snap
  * Usage:
  *
  * \code
- *     snap::glob_to_list<std::vector<string>> glob;
+ *     snap::glob_to_list<std::vector<std::tring>> glob;
  *     if(glob.read_path<
  *              snap::glob_to_list_flag_t::GLOB_FLAG_IGNORE_ERRORS,
  *              snap::glob_to_list_flag_t::GLOB_FLAG_PERIOD>(pattern))
@@ -154,8 +154,8 @@ public:
      *
      * \param[in] path  The path with glob patterns.
      */
-	template<glob_to_list_flag_t ...args>
-	bool read_path(std::string const & path)
+    template<glob_to_list_flag_t ...args>
+    bool read_path(std::string const & path)
     {
         int const flags = GLOB_NOSORT;// | flags_merge<args...>();
 
