@@ -54,7 +54,7 @@ public:
     // linear RGB as we manage in software.
     //
     // The AVERAGE luma factors are present because they may be useful
-    // in some situation, but they aree definitely wrong and should
+    // in some situation, but they are definitely wrong and should
     // very rarely be used.
     //
     // see https://en.wikipedia.org/wiki/Luma_%28video%29
