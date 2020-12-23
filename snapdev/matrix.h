@@ -1174,6 +1174,54 @@ std::cerr << "this " << f_rows << "x" << f_columns
     }
 
 
+    static matrix<T, SIZE> rotation_matrix_4x4_x(double angle)
+    {
+        matrix<T, SIZE> result(4, 4);
+
+        double const c(cos(angle));
+        double const s(sin(angle)); 
+
+        result[1][1] = c;
+        result[1][2] = -s;
+        result[2][1] = s;
+        result[2][2] = c;
+
+        return result;
+    }
+
+
+    static matrix<T, SIZE> rotation_matrix_4x4_y(double angle)
+    {
+        matrix<T, SIZE> result(4, 4);
+
+        double const c(cos(angle));
+        double const s(sin(angle)); 
+
+        result[0][0] = c;
+        result[0][2] = s;
+        result[2][0] = -s;
+        result[2][2] = c;
+
+        return result;
+    }
+
+
+    static matrix<T, SIZE> rotation_matrix_4x4_z(double angle)
+    {
+        matrix<T, SIZE> result(4, 4);
+
+        double const c(cos(angle));
+        double const s(sin(angle)); 
+
+        result[0][0] = c;
+        result[0][1] = -s;
+        result[2][0] = s;
+        result[2][1] = c;
+
+        return result;
+    }
+
+
     /** \brief Apply a scaling factor to this matrix.
      *
      * This function multiplies 'this' matrix by a scaling factor and
@@ -1207,7 +1255,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
         if(f_rows    != 4
         || f_columns != 4)
         {
-            throw std::runtime_error("scale() is only for 4x4 matrices at this time");
+            throw std::runtime_error("brightness() is only for 4x4 matrices at this time");
         }
 
         matrix<T, SIZE> m(4, 4);
@@ -1502,7 +1550,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
         if(f_rows    != 4
         || f_columns != 4)
         {
-            throw std::runtime_error("scale() is only for 4x4 matrices at this time");
+            throw std::runtime_error("hue() is only for 4x4 matrices at this time");
         }
 
         value_type const rot_cos(std::cos(static_cast<value_type>(h)));
@@ -1512,7 +1560,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
         && std::fabs(f_luma_green - HDTV_LUMA_GREEN) < 0.0001
         && std::fabs(f_luma_blue  - HDTV_LUMA_BLUE ) < 0.0001)
         {
-            // this matrice make use of the HDTV luma
+            // this matrice makes use of the HDTV luma
             //
             matrix<T, SIZE> hue_matrix(4, 4);
 
