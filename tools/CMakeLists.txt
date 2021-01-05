@@ -27,10 +27,16 @@ project(snapmatrix)
 
 include_directories(
     ${SNAPDEV_INCLUDE_DIRS}
+    ${BOOST_INCLUDE_DIRS}
+    ${LIBEXCEPT_INCLUDE_DIRS}
 )
 
 add_executable(${PROJECT_NAME}
     snapmatrix.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}
+    ${LIBEXCEPT_LIBRARIES}
 )
 
 install(
