@@ -93,6 +93,36 @@ public:
     {
     }
 
+    QCaseInsensitiveString & operator = (QChar ch)
+    {
+        QString::operator = (ch);
+        return *this;
+    }
+
+    QCaseInsensitiveString & operator = (QLatin1String const & str)
+    {
+        QString::operator = (str);
+        return *this;
+    }
+
+    QCaseInsensitiveString & operator = (QString const & other)
+    {
+        QString::operator = (other);
+        return *this;
+    }
+
+    QCaseInsensitiveString & operator = (QCaseInsensitiveString const & other)
+    {
+        QString::operator = (other);
+        return *this;
+    }
+
+    QCaseInsensitiveString & operator = (char const * str)
+    {
+        QString::operator = (str);
+        return *this;
+    }
+
     bool operator == (QString const & rhs) const
     {
         return compare(rhs, Qt::CaseInsensitive) == 0;
