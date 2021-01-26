@@ -43,19 +43,12 @@ namespace snap
 #pragma GCC diagnostic ignored "-Wpedantic"
 std::string to_string(__int128 x)
 {
-    char buf[64];
+    char buf[42];
 
-    int idx(sizeof(buf) - 1);
-    buf[idx] = '\0';
-    unsigned __int128 y;
-    if(x < 0)
-    {
-        y = static_cast<unsigned __int128>(-x);
-    }
-    else
-    {
-        y = static_cast<unsigned __int128>(x);
-    }
+    int idx(sizeof(buf));
+    unsigned __int128 y(x < 0
+        ? static_cast<unsigned __int128>(-x)
+        : static_cast<unsigned __int128>(x));
     while(y > 9)
     {
         --idx;
@@ -70,7 +63,7 @@ std::string to_string(__int128 x)
         buf[idx] = '-';
     }
 
-    return std::string(buf + idx);
+    return std::string(buf + idx, sizeof(buf) - idx);
 }
 #pragma GCC diagnostic pop
 
@@ -87,10 +80,9 @@ std::string to_string(__int128 x)
 #pragma GCC diagnostic ignored "-Wpedantic"
 std::string to_string(unsigned __int128 x)
 {
-    char buf[64];
+    char buf[42];
 
-    int idx(sizeof(buf) - 1);
-    buf[idx] = '\0';
+    int idx(sizeof(buf));
     while(x > 9)
     {
         --idx;
@@ -100,7 +92,7 @@ std::string to_string(unsigned __int128 x)
     --idx;
     buf[idx] = x + '0';
 
-    return std::string(buf + idx);
+    return std::string(buf + idx, sizeof(buf) - idx);
 }
 #pragma GCC diagnostic pop
 
