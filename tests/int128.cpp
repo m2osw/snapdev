@@ -80,6 +80,16 @@ CATCH_TEST_CASE("ostream_int128", "[ostream][int128]")
     }
     CATCH_END_SECTION()
 
+    CATCH_START_SECTION("most positive number")
+    {
+        unsigned __int128 l(0);
+        l = ~l;
+        std::stringstream ss;
+        ss << l;
+        CATCH_REQUIRE(ss.str() == "340282366920938463463374607431768211455");
+    }
+    CATCH_END_SECTION()
+
     CATCH_START_SECTION("most negative number")
     {
         __int128 l(1);
