@@ -43,6 +43,7 @@ install(
         matrix.h
         not_reached.h
         not_used.h
+        ostream_int128.h
         ostream_to_buf.h
         poison.h
         qcaseinsensitivestring.h

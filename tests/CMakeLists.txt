@@ -44,6 +44,7 @@ if(Catch2_FOUND)
 
         log2.cpp
         matrix.cpp
+        int128.cpp
     )
 
     target_link_libraries( ${PROJECT_NAME}

@@ -1,3 +1,9 @@
+snapdev (1.1.10.0~bionic) bionic; urgency=high
+
+  * Added support to convert 128 bit integers to string.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Tue, 26 Jan 2021 09:28:35 -0800
+
 snapdev (1.1.9.2~bionic) bionic; urgency=high
 
   * Bump version again as snapcatch2 was not yet properly installed to support
