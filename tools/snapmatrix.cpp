@@ -896,6 +896,16 @@ int main(int argc, char * argv[])
         {
             switch(argv[i][1])
             {
+            case 'h':
+                std::cout << "Usage: "
+                          << argv[0]
+                          << " <filename>"
+                          << std::endl;
+                std::cout << std::endl;
+                std::cout << "where <filename> is a forth like script."
+                          << std::endl;
+                break;
+
             case '\0':
                 {
                     matrix_expr m(std::cin);
@@ -908,8 +918,18 @@ int main(int argc, char * argv[])
         else
         {
             std::ifstream in(argv[i]);
-            matrix_expr m(in);
-            m.run();
+            if(!in.is_open())
+            {
+                std::cerr << "error: could not open input file \""
+                          << argv[i]
+                          << "\"."
+                          << std::endl;
+            }
+            else
+            {
+                matrix_expr m(in);
+                m.run();
+            }
         }
     }
 
