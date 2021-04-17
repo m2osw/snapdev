@@ -50,7 +50,7 @@ namespace snap
  * Usage:
  *
  * \code
- *     snap::glob_to_list<std::vector<std::tring>> glob;
+ *     snap::glob_to_list<std::vector<std::string>> glob;
  *     if(glob.read_path<
  *              snap::glob_to_list_flag_t::GLOB_FLAG_IGNORE_ERRORS,
  *              snap::glob_to_list_flag_t::GLOB_FLAG_PERIOD>(pattern))
