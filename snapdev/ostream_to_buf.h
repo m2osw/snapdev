@@ -32,7 +32,7 @@ namespace snap
 
 /** \brief Swap the output of an std::basic_ostream to a buffer.
  *
- * This RAII class is used to temporarilly switch the output buffer
+ * This RAII class is used to temporarily switch the output buffer
  * of an std::basic_ostream to an std::stringbuf. The original is
  * saved while the object exists and restored on destruction.
  *

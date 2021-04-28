@@ -43,7 +43,7 @@ namespace snap
 class safe_setenv
 {
 public:
-    /** \brief Defint the name and value of the environment variable.
+    /** \brief Define the name and value of the environment variable.
      *
      * This function sets an environment variable. By default, the value
      * of the variable gets overwritten even if it is already set.
@@ -129,7 +129,7 @@ private:
 class transparent_setenv
 {
 public:
-    /** \brief Defint the name and value of the environment variable.
+    /** \brief Define the name and value of the environment variable.
      *
      * This function sets an environment variable. By default, the value
      * of the variable gets overwritten even if it is already set.

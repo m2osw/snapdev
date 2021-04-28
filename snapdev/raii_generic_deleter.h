@@ -95,7 +95,7 @@ namespace snap
  * \warning
  * This class doesn't properly handle a case where an invalid resource can
  * be represented by more than one value. For a file descriptor, we expect
- * the invalid value to be exactlly -1. If a function call may return other
+ * the invalid value to be exactly -1. If a function call may return other
  * negative values, then this implementation currently fails to handle such.
  * It is your responsibility to fix the return value of the function or
  * use a two step initialization such as in:
@@ -221,7 +221,7 @@ public:
         /** \brief Convert pointer to "not bool".
          *
          * This operator allows for converting the pointer to a bool
-         * when preceeded by a Boolean NOT operator, which is often
+         * when preceded by a Boolean NOT operator, which is often
          * done in an `if(!ptr)` or equivalent statement.
          *
          * \return true if the pointer is `null_value`.
@@ -283,7 +283,7 @@ public:
         /** \brief Compare this pointer against nullptr for inequality.
          *
          * This function is used whenever this pointer gets compared
-         * against the special value `nullptr` for inquality.
+         * against the special value `nullptr` for inequality.
          *
          * \note
          * This function gets called in many circumstances where the

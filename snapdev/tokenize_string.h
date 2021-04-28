@@ -91,7 +91,7 @@ typename ContainerT::value_type::size_type character_predicate(
  * that the rest of the string is a token on its own.
  *
  * \note
- * This is not the default, you must pass this function explicitely if
+ * This is not the default, you must pass this function explicitly if
  * you want to use it.
  *
  * \param[in] str  The string being tokenized.

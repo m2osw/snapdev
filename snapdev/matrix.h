@@ -877,7 +877,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
      * $$det(A) = \sum_{\sigma \in S_n} \Big( sgn(\sigma) \prod_{i=1}^{n} a_{i,\sigma_i} \Big)$$
      *
      * The function is implemented using a recursive set of calls. It
-     * knows how to calculate a 2x2 matrix. All the ohers use recursive
+     * knows how to calculate a 2x2 matrix. All the others use recursive
      * calls to calculate the final result.
      *
      * Let's say you have a 3x3 matrix like this:
@@ -919,7 +919,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
      * 3x3 matrix.
      *
      * The determinant of a 4x4 matrix will be calculated in a similar
-     * way by also calculating the determin of all the 3x3 matrices
+     * way by also calculating the determinant of all the 3x3 matrices
      * defined under the first row.
      *
      * Source: https://en.wikipedia.org/wiki/Determinant
@@ -1333,7 +1333,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
      * This function applies a hue correction to 'this' matrix.
      *
      * The hue correction makes use of the rotation around the red
-     * and green axis, then a skew to take luminace in account.
+     * and green axis, then a skew to take luminance in account.
      * At that point it rotates the color. Finally, the function
      * reverses the skew and rotate back around the green and red
      * axis.
@@ -1415,7 +1415,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
      * \end{bmatrix}
      * $$
      *
-     * Now we have all the matrices to caculate the hue rotation
+     * Now we have all the matrices to calculate the hue rotation
      * of all the components of an image:
      *
      * $$
@@ -1449,11 +1449,11 @@ std::cerr << "this " << f_rows << "x" << f_columns
      * $$
      *
      * Where C is the cosine matrix, S is the sine matrix and T is an
-     * additonal translation.
+     * additional translation.
      *
      * I found an example on Microsoft (see link below) which I suspect
      * does not include the color skewing. In other word, it completely
-     * ignores the color lumence weights which gives invalid results
+     * ignores the color luminance weights which gives invalid results
      * (albeit in most cases relatively good.)
      *
      * $$
@@ -1484,7 +1484,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *
      * IMPORTANT: the weights change depending on the selected luma.
      * If the user makes use of a luma which is not one supported by
-     * defaut, the algorithm falls back to the fully dynamic version
+     * default, the algorithm falls back to the fully dynamic version
      * of the hue computation.
      *
      * $$
@@ -1515,7 +1515,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *
      * This is exactly the matrix we use below, although we directly apply the
      * matrix additions and multiplications to generate the matrix as quickly
-     * as possible (we calculte just the necessary component and avoid many
+     * as possible (we calculate just the necessary component and avoid many
      * copies so it ought to be much faster.)
      *
      * \note
@@ -1560,7 +1560,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
         && std::fabs(f_luma_green - HDTV_LUMA_GREEN) < 0.0001
         && std::fabs(f_luma_blue  - HDTV_LUMA_BLUE ) < 0.0001)
         {
-            // this matrice makes use of the HDTV luma
+            // this matrix makes use of the HDTV luma
             //
             matrix<T, SIZE> hue_matrix(4, 4);
 
@@ -1587,7 +1587,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
         && std::fabs(f_luma_green - LED_LUMA_GREEN) < 0.0001
         && std::fabs(f_luma_blue  - LED_LUMA_BLUE ) < 0.0001)
         {
-            // this matrice make use of the LED luma
+            // this matrix make use of the LED luma
             //
             matrix<T, SIZE> hue_matrix(4, 4);
 
@@ -1614,7 +1614,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
         && std::fabs(f_luma_green - CRT_LUMA_GREEN) < 0.0001
         && std::fabs(f_luma_blue  - CRT_LUMA_BLUE ) < 0.0001)
         {
-            // this matrice make use of the CRT luma
+            // this matrix make use of the CRT luma
             //
             matrix<T, SIZE> hue_matrix(4, 4);
 
@@ -1641,7 +1641,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
         && std::fabs(f_luma_green - NTSC_LUMA_GREEN) < 0.0001
         && std::fabs(f_luma_blue  - NTSC_LUMA_BLUE ) < 0.0001)
         {
-            // this matrice make use of the NTSC luma
+            // this matrix make use of the NTSC luma
             //
             matrix<T, SIZE> hue_matrix(4, 4);
 
@@ -1668,7 +1668,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
         && std::fabs(f_luma_green - AVERAGE_LUMA_GREEN) < 0.0001
         && std::fabs(f_luma_blue  - AVERAGE_LUMA_BLUE ) < 0.0001)
         {
-            // this matrice make use of the average luma
+            // this matrix make use of the average luma
             // (in other words, it makes no luma correction at all)
             //
             matrix<T, SIZE> hue_matrix(4, 4);
@@ -1837,7 +1837,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
 
     /** \brief Change the luma vector.
      *
-     * This function seets the luminance vector to the three weights
+     * This function sets the luminance vector to the three weights
      * you are passing here.
      *
      * The current luminance vector can be retrieved as a 4x1 matrix using
@@ -1916,7 +1916,7 @@ private:
 /** \brief Output a matrix to a basic_ostream.
  *
  * This function allows one to print out a matrix. The function attempts
- * to properly format the matrix inorder o mak readable.
+ * to properly format the matrix in order to make it readable.
  *
  * \param[in] out  The output stream where the matrix gets written.
  * \param[in] matrix  The actual matrix that is to be printed.

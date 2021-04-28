@@ -38,7 +38,7 @@ constexpr std::int64_t num_digits(std::int64_t x)
 }
 
 
-// metaprogramming string type: each different string is a unique type
+// meta-programming string type: each different string is a unique type
 template<char... args>
 struct metastring
 {

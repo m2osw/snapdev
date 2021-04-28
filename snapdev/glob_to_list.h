@@ -104,7 +104,7 @@ enum class glob_to_list_flag_t
 {
     GLOB_FLAG_BRACE,              // allow {a,b,c}...
     GLOB_FLAG_IGNORE_ERRORS,      // read as much as possible
-    GLOB_FLAG_MARK_DIRECTORY,     // add "/" to dirctory names
+    GLOB_FLAG_MARK_DIRECTORY,     // add "/" to directory names
     GLOB_FLAG_NO_ESCAPE,          // ignore '\'
     GLOB_FLAG_ONLY_DIRECTORIES,   // only return directories
     GLOB_FLAG_PERIOD,             // allow period at the start (i.e. pattern ".*")
@@ -182,7 +182,7 @@ public:
                 f_last_error_message =
                           "glob(\""
                         + path
-                        + "\") did not have enough memory to alllocate its buffers.";
+                        + "\") did not have enough memory to allocate its buffers.";
                 break;
 
             case GLOB_ABORTED:

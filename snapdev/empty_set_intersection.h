@@ -17,7 +17,7 @@
 #pragma once
 
 /** \file
- * \brief Check whether the intersetion of two sets is empty.
+ * \brief Check whether the intersection of two sets is empty.
  *
  * This function simulates the computation of an intersection between two
  * sets to determine whether the intersection is empty or not.

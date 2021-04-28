@@ -39,7 +39,7 @@ namespace snap
  *
  * This function lets you iterate a standard C string, such as "12345",
  * in reverse order. The begin() and end() functions return a reverse
- * iterator (watch out!) We do not offer a rbeing() and rend() since
+ * iterator (watch out!) We do not offer a rbegin() and rend() since
  * in most cases, using the string pointers as is would have to exact
  * same effect.
  *

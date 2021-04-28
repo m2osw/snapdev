@@ -22,7 +22,7 @@
  * Whenever you initialize a structure, it is much better to make use of
  * the proper type, ensure valid data inter-dependency, etc. This can
  * be accomplished with C++ functions, however, you generally don't
- * initialie structures that way.
+ * initialize structures that way.
  *
  * With the templates found in this file, you can create classes you
  * use to initialize your structures in a much safer manner than with
@@ -132,7 +132,7 @@
  *
  * Here is an example of an `end_foo()` function. The main idea is to
  * setup one of the fields to a value which means this is the end of
- * your array. Here we set the name to `nullptr`. Remembed that the
+ * your array. Here we set the name to `nullptr`. Remember that the
  * `FieldName()` is a required field. This is why it has to appear in
  * the end_foo() function.
  *
@@ -214,7 +214,7 @@ private:
  * first argument matches the type being searched (`T`). This is the
  * function which returns the value we have been looking for.
  *
- * \param[in] first  The first of the ARGS arguments, the arguement we're
+ * \param[in] first  The first of the ARGS arguments, the argument we're
  * trying to match.
  * \param[in] args  The arguments being searched.
  *
@@ -241,7 +241,7 @@ constexpr typename std::enable_if<std::is_same<T, F>::value, typename T::value_t
  * This instance is used whenever the first argument doesn't match. This
  * means we want to try the next field.
  *
- * \param[in] first  The first of the ARGS arguments, the arguement we're
+ * \param[in] first  The first of the ARGS arguments, the argument we're
  * trying to match.
  * \param[in] args  The arguments being searched.
  *

@@ -44,7 +44,7 @@
  *
  *         ...your statements while my_`var = 123`...
  *
- *     } // here my_var gets retored to the value it had on entry of this block
+ *     } // here my_var gets restored to the value it had on entry of this block
  * \endcode
  *
  * The value used to restore your safe variable can be specified on
