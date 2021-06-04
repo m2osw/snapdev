@@ -181,7 +181,7 @@ public:
         pointer(std::nullptr_t p = nullptr)
             : f_pointer(null_value)
         {
-            NOTUSED(p);
+            NOT_USED(p);
         }
 
 
@@ -199,7 +199,7 @@ public:
 //         */
 //        pointer & operator = (std::nullptr_t h)
 //        {
-//            NOTUSED(h);
+//            NOT_USED(h);
 //
 //            f_pointer = null_value;
 //
@@ -276,7 +276,7 @@ public:
          */
         bool operator == (std::nullptr_t rhs) const
         {
-            NOTUSED(rhs);
+            NOT_USED(rhs);
             return f_pointer == null_value;
         }
 
@@ -297,7 +297,7 @@ public:
          */
         bool operator != (std::nullptr_t rhs) const
         {
-            NOTUSED(rhs);
+            NOT_USED(rhs);
             return f_pointer != null_value;
         }
 

@@ -227,7 +227,7 @@ private:
 template<typename T, typename F, class ...ARGS>
 constexpr typename std::enable_if<std::is_same<T, F>::value, typename T::value_t>::type find_field(F first, ARGS ...args)
 {
-    snap::NOTUSED(args...);
+    snap::NOT_USED(args...);
     return first.get();
 }
 
@@ -254,7 +254,7 @@ constexpr typename std::enable_if<std::is_same<T, F>::value, typename T::value_t
 template<typename T, typename F, class ...ARGS>
 constexpr typename std::enable_if<!std::is_same<T, F>::value, typename T::value_t>::type find_field(F first, ARGS ...args)
 {
-    snap::NOTUSED(first);
+    snap::NOT_USED(first);
     return find_field<T>(args...);
 }
 
