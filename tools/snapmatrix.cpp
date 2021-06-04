@@ -279,7 +279,7 @@ matrix_expr::token_t matrix_expr::get_token()
             return t;
         }
     }
-    snap::NOTREACHED();
+    snap::NOT_REACHED();
 }
 
 

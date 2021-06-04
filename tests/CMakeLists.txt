@@ -22,9 +22,9 @@
 # Note that when user does not have Catch then this does not get included
 # in the final output
 #
-project(snapdevtests)
+project(unittest)
 
-find_package( Catch2 )
+find_package(Catch2)
 
 if(Catch2_FOUND)
 
@@ -39,7 +39,7 @@ if(Catch2_FOUND)
         ${LIBEXCEPT_INCLUDE_DIRS}
     )
 
-    add_executable( ${PROJECT_NAME}
+    add_executable(${PROJECT_NAME}
         main.cpp
 
         log2.cpp
@@ -47,11 +47,11 @@ if(Catch2_FOUND)
         int128.cpp
     )
 
-    target_link_libraries( ${PROJECT_NAME}
+    target_link_libraries(${PROJECT_NAME}
         ${LIBEXCEPT_LIBRARY}
     )
 
-    add_test(snapdevtests ${PROJECT_NAME})
+    add_test(unitest ${PROJECT_NAME})
 
 else(Catch2_FOUND)
 

@@ -1,3 +1,12 @@
+snapdev (1.1.13.0~bionic) bionic; urgency=high
+
+  * Deprecated the NOTUSED and NOTREACHED functions, use NOT_USED and
+    NOT_REACHED instead.
+  * Updated the mk script with the default in cmake/scripts.
+  * Renamed the unit tests as "unittest" so it works in the default mk script.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Fri, 04 Jun 2021 12:59:04 -0700
+
 snapdev (1.1.12.0~bionic) bionic; urgency=high
 
   * Added better help about the snapmatrix tool.
