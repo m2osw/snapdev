@@ -19,16 +19,18 @@
 //
 #pragma once
 
-#include <string>
+#include    <algorithm>
+#include    <numeric>
+#include    <string>
 
 
 namespace snap
 {
 
-/** \brief Transform a vector of strings in a string.
+/** \brief Transform a set of strings in a string.
  *
- * This function concatenate all the strings from a vector adding a separator
- * in between each. In effect, it does:
+ * This function concatenate all the strings from a container adding a
+ * separator in between each. In effect, it does:
  *
  * \code
  *      s1 + sep + s2 + sep + s3...
@@ -48,7 +50,7 @@ namespace snap
  *
  * \return the number of items in the resulting container.
  */
-template < class ContainerT >
+template<class ContainerT>
 typename ContainerT::value_type join_strings(ContainerT & tokens
                                             , typename ContainerT::value_type const & separator)
 {
@@ -73,7 +75,7 @@ typename ContainerT::value_type join_strings(ContainerT & tokens
         // avoid special case in the loop
         // (i.e. no separator before the first token)
         //
-        result += tokens[0];
+        result += *tokens.begin();
 
         std::for_each(
                   tokens.begin() + 1
