@@ -159,16 +159,16 @@ public:
     {
         int const flags = GLOB_NOSORT;// | flags_merge<args...>();
 
-        glob_pointer_t dir(new glob_t);
-        *dir = glob_t();
+        glob_t dir = glob_t();
         g_self = this;
-        int const r(glob(path.c_str(), flags, glob_err_callback, dir.get()));
+        int const r(glob(path.c_str(), flags, glob_err_callback, &dir)));
         g_self = nullptr;       // to detect if glob_err_callback gets called improperly
         if(r == 0)
         {
-            for(size_t idx(0); idx < dir->gl_pathc; ++idx)
+            glob_pointer_t auto_release_dir(&dir);
+            for(size_t idx(0); idx < dir.gl_pathc; ++idx)
             {
-                C::insert(C::end(), typename glob_to_list::value_type(std::string(dir->gl_pathv[idx])));
+                C::insert(C::end(), typename glob_to_list::value_type(std::string(dir.gl_pathv[idx])));
             }
         }
         else
