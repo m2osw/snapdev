@@ -161,7 +161,7 @@ public:
 
         glob_t dir = glob_t();
         g_self = this;
-        int const r(glob(path.c_str(), flags, glob_err_callback, &dir)));
+        int const r(glob(path.c_str(), flags, glob_err_callback, &dir));
         g_self = nullptr;       // to detect if glob_err_callback gets called improperly
         if(r == 0)
         {
