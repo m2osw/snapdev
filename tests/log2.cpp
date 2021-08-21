@@ -41,11 +41,17 @@
 
 CATCH_TEST_CASE("log2", "[math]")
 {
+    CATCH_START_SECTION("zero")
+    {
+        CATCH_REQUIRE(snap::log2(0) == -1);
+    }
+    CATCH_END_SECTION()
+
     CATCH_START_SECTION("powers of 2")
     {
         for(int i = 0; i < 64; ++i)
         {
-            std::uint64_t v = 1ULL << i;
+            std::uint64_t const v = 1ULL << i;
             CATCH_REQUIRE(snap::log2(v) == i);
         }
     }
@@ -57,7 +63,7 @@ CATCH_TEST_CASE("log2", "[math]")
         {
             std::uint64_t r = (static_cast<std::uint64_t>(rand()) << 32) ^ static_cast<std::uint64_t>(rand());
             r &= (1ULL << i) - 1ULL;
-            std::uint64_t v = (1ULL << i) | r;
+            std::uint64_t const v = (1ULL << i) | r;
 
             // same difference, all the lower bits are ignored in the
             // computation

@@ -68,7 +68,7 @@ int log2(std::uint64_t v)
 {
     if(v == 0)
     {
-        return 0;
+        return -1;
     }
 
     return 63 - __builtin_clzll(v);
