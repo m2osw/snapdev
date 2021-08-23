@@ -1,7 +1,6 @@
+# Copyright (c) 2006-2021  Made to Order Software Corp.  All Rights Reserved
 #
-# Copyright (c) 2006-2019  Made to Order Software Corp.  All Rights Reserved
-#
-# https://snapwebsites.org/
+# https://snapwebsites.org/project/snapdev
 # contact@m2osw.com
 #
 # This program is free software; you can redistribute it and/or modify
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-#
 
 # Note that when user does not have Catch then this does not get included
 # in the final output
@@ -32,19 +30,25 @@ if(Catch2_FOUND)
         -DCATCH_CONFIG_PREFIX_ALL
     )
 
-    include_directories(
-        ${CMAKE_BINARY_DIR}
-        ${PROJECT_SOURCE_DIR}
-        ${CATCH_INCLUDE_DIR}
-        ${LIBEXCEPT_INCLUDE_DIRS}
+    add_executable(${PROJECT_NAME}
+        catch_main.cpp
+
+        catch_change_owner.cpp
+        catch_file_contents.cpp
+        catch_int128.cpp
+        catch_log2.cpp
+        catch_matrix.cpp
+        catch_mkdir_p.cpp
+        catch_timespec_operations.cpp
+        catch_user_groups.cpp
     )
 
-    add_executable(${PROJECT_NAME}
-        main.cpp
-
-        log2.cpp
-        matrix.cpp
-        int128.cpp
+    target_include_directories(${PROJECT_NAME}
+        PUBLIC
+            ${CMAKE_BINARY_DIR}
+            ${PROJECT_SOURCE_DIR}
+            ${CATCH_INCLUDE_DIR}
+            ${LIBEXCEPT_INCLUDE_DIRS}
     )
 
     target_link_libraries(${PROJECT_NAME}

@@ -1,7 +1,6 @@
+# Copyright (c) 2006-2021  Made to Order Software Corp.  All Rights Reserved.
 #
-# Copyright (c) 2006-2019  Made to Order Software Corp.  All Rights Reserved.
-#
-# https://snapwebsites.org/
+# https://snapwebsites.org/project/snapdev
 # contact@m2osw.com
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -17,7 +16,6 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-#
 
 ##
 ## SnapDev headers
@@ -33,7 +31,9 @@ configure_file(
 
 install(
     FILES
+        chownnm.h
         empty_set_intersection.h
+        file_contents.h
         glob_to_list.h
         hexadecimal_string.h
         init_structure.h
@@ -41,6 +41,7 @@ install(
         lockfile.h
         log2.h
         matrix.h
+        mkdir_p.h
         not_reached.h
         not_used.h
         ostream_int128.h

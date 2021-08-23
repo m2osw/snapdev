@@ -1,5 +1,7 @@
-// Snap Websites Server -- wrap functions where we don't care about the return value
-// Copyright (c) 2011-2019  Made to Order Software Corp.  All Rights Reserved
+// Copyright (c) 2011-2021  Made to Order Software Corp.  All Rights Reserved
+//
+// https://snapwebsites.org/project/snapdev
+// contact@m2osw.com
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

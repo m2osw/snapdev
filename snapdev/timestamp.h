@@ -1,5 +1,7 @@
-// Snap Websites Server -- statically compute a Unix timestamp
 // Copyright (c) 2011-2021  Made to Order Software Corp.  All Rights Reserved
+//
+// https://snapwebsites.org/project/snapdev
+// contact@m2osw.com
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

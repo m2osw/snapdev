@@ -1,5 +1,7 @@
-// Snap Websites Servers -- matrix class
-// Copyright (c) 2018-2019  Made to Order Software Corp.  All Rights Reserved
+// Copyright (c) 2018-2021  Made to Order Software Corp.  All Rights Reserved
+//
+// https://snapwebsites.org/project/snapdev
+// contact@m2osw.com
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -11,20 +13,20 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+// You should have received a copy of the GNU General Public License along
+// with this program; if not, write to the Free Software Foundation, Inc.,
+// 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
 // C++ lib
 //
-#include <cctype>
-#include <cmath>
-#include <iostream>
-#include <stdexcept>
-#include <vector>
+#include    <cctype>
+#include    <cmath>
+#include    <iostream>
+#include    <sstream>
+#include    <stdexcept>
+#include    <vector>
 
-#include <sstream>
 
 
 namespace snap
@@ -1919,7 +1921,7 @@ private:
  * to properly format the matrix in order to make it readable.
  *
  * \param[in] out  The output stream where the matrix gets written.
- * \param[in] matrix  The actual matrix that is to be printed.
+ * \param[in] m  The actual matrix that is to be printed.
  *
  * \return A reference to the basic_ostream object.
  */

@@ -1,5 +1,7 @@
-// Snap Websites Servers -- replace needles in string
-// Copyright (c) 2016-2019  Made to Order Software Corp.  All Rights Reserved
+// Copyright (c) 2016-2021  Made to Order Software Corp.  All Rights Reserved
+//
+// https://snapwebsites.org/project/snapdev
+// contact@m2osw.com
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -11,12 +13,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-//
-// Based on: http://stackoverflow.com/questions/236129/split-a-string-in-c#1493195
-//
+// You should have received a copy of the GNU General Public License along
+// with this program; if not, write to the Free Software Foundation, Inc.,
+// 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
 #include <algorithm>
@@ -32,7 +31,7 @@ namespace snap
  * representing a needle (first) and a replacement (second).
  *
  * The algorithm checks each needle at the current position, starting at
- * position 0. The first match get replaced. What was replaced is not
+ * position 0. The first match gets replaced. What was replaced is not
  * checked any further (it is part of the output.)
  *
  * Therefore, if you have two needles one after another such as: "car" and
@@ -43,12 +42,15 @@ namespace snap
  * the correct order (i.e. probably longest first.)
  *
  * \todo
- * Look into whether we can find a way to find all the possible replacement
- * in order to compute the output string without having to do many
+ * Look into whether we can find a way to find all the possible replacements
+ * in order to compute the output string length without having to do many
  * reallocations.
  *
  * \todo
  * Add another version which compares case insensitively.
+ *
+ * \todo
+ * Add another version which uses regex to do the compares.
  *
  * \param[in] input  The input string where replacements will occur.
  * \param[in] search  The search parameters, the vector of needles/replacement

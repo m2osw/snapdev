@@ -1,5 +1,7 @@
-// Snap Websites Servers -- tokenize a string to a container
-// Copyright (c) 2011-2019  Made to Order Software Corp.  All Rights Reserved
+// Copyright (c) 2011-2021  Made to Order Software Corp.  All Rights Reserved
+//
+// https://snapwebsites.org/project/snapdev
+// contact@m2osw.com
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -203,7 +205,7 @@ size_t tokenize_string(ContainerT & tokens
         if(start != end     // if not empty
         || !trim_empty)     // or user accepts empty
         {
-            tokens.push_back(typename ContainerT::value_type(start, end - start));
+            tokens.insert(tokens.end(), typename ContainerT::value_type(start, end - start));
         }
     }
 

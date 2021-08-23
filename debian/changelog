@@ -1,6 +1,18 @@
 snapdev (1.1.16.0~bionic) bionic; urgency=high
 
   * Fixed log2(0), it has to return -1, not 0.
+  * Moved the chownnm.cpp/h from libsnapwebsites to snapdev.
+  * Moved the mkdr_p.cpp/h from libsnapwebsites to snapdev.
+  * Moved the file_contents.cpp/h from libsnapwebsites to snapdev.
+  * Added a user_groups function to read the list of groups a user is part of.
+  * Added support for a temporary directory to test OS functions.
+  * Enhanced the join_string so it works with containers other than vector.
+  * Enhanced the tokenize_string so it works with containers other than vector.
+  * Enhanced the CMakeLists.txt (use `target_include_directories()`).
+  * Renamed all the tests so the filename starts with `catch_...`.
+  * Fixed the snap::log2(0), it was supposed to return -1.
+  * Added a dirname function to the string_pathinfo.h header.
+  * Many clean ups of comments, copyright notes, docs, etc.
 
  -- Alexis Wilke <alexis@m2osw.com>  Sat, 21 Aug 2021 10:29:20 -0700
 

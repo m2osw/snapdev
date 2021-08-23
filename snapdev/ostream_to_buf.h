@@ -1,5 +1,7 @@
-// Snap Websites Server -- divert ostream output to a stringbuf for a while
-// Copyright (c) 2019  Made to Order Software Corp.  All Rights Reserved
+// Copyright (c) 2019-2021  Made to Order Software Corp.  All Rights Reserved
+//
+// https://snapwebsites.org/project/snapdev
+// contact@m2osw.com
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -11,18 +13,21 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+// You should have received a copy of the GNU General Public License along
+// with this program; if not, write to the Free Software Foundation, Inc.,
+// 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
 // C++ lib
 //
-#include <ostream>
+#include    <ostream>
+#include    <sstream>
+#include    <string>
+
 
 // C lib
 //
-#include <stdlib.h>
+//#include    <stdlib.h>
 
 
 
@@ -52,8 +57,8 @@ namespace snap
  * }
  * \endcode
  *
- * The class itself is an std::stringbuf so you can access all the
- * usual std::stringbuf functions (such as `str()`).
+ * The class itself is an std::stringbuf so you can access all the usual
+ * std::stringbuf functions (such as `str()`).
  *
  * \warning
  * This class is not thread safe.
