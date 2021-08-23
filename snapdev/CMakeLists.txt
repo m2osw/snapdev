@@ -44,6 +44,7 @@ install(
         mkdir_p.h
         not_reached.h
         not_used.h
+        numeric_string.h
         ostream_int128.h
         ostream_to_buf.h
         poison.h
@@ -54,8 +55,10 @@ install(
         safe_variable.h
         string_pathinfo.h
         string_replace_many.h
+        timespec_operations.h
+        timestamp.h
         tokenize_string.h
-        version.h.in
+        user_groups.h
         ${CMAKE_CURRENT_BINARY_DIR}/version.h
 
     DESTINATION
