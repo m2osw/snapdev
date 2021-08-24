@@ -18,6 +18,7 @@
 // C++ lib
 //
 #include    <set>
+#include    <string>
 #include    <vector>
 
 
