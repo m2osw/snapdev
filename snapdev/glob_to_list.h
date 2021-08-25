@@ -155,6 +155,8 @@ public:
      * patterns (i.e. `*.txt`, `0?.mp3`, etc.)
      *
      * \param[in] path  The path with glob patterns.
+     *
+     * \return true if no error occurred.
      */
     template<glob_to_list_flag_t ...args>
     bool read_path(std::string const & path)
