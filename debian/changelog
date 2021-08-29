@@ -1,3 +1,9 @@
+snapdev (1.1.17.0~bionic) bionic; urgency=high
+
+  * Added functions to convert between hexadecimal strings & integers.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 29 Aug 2021 12:23:31 -0700
+
 snapdev (1.1.16.1~bionic) bionic; urgency=high
 
   * Added a missing #include.
