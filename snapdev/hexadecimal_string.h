@@ -34,12 +34,9 @@ namespace snap
 {
 
 
-class string_exception_invalid_parameter : public snap::snap_exception
-{
-public:
-    string_exception_invalid_parameter(char const *        what_msg) : snap_exception(what_msg) {}
-    string_exception_invalid_parameter(std::string const & what_msg) : snap_exception(what_msg) {}
-};
+DECLARE_MAIN_EXCEPTION(string_exception);
+
+DECLARE_EXCEPTION(string_exception, string_invalid_parameter);
 
 
 
@@ -92,7 +89,7 @@ inline std::string bin_to_hex(std::string const & binary)
  *
  * The output will be exactly half the size of the input.
  *
- * \exception string_exception_invalid_parameter
+ * \exception string_invalid_parameter
  * If the input string is not considered valid, then this exception is
  * raised. To be valid every single character must be an hexadecimal
  * digit (0-9, a-f, A-F) and the length of the string must be even.
@@ -107,7 +104,7 @@ inline std::string hex_to_bin(std::string const & hex)
 
     if((hex.length() & 1) != 0)
     {
-        throw string_exception_invalid_parameter("the hex parameter must have an even size");
+        throw string_invalid_parameter("the hex parameter must have an even size");
     }
 
     for(char const * s(hex.c_str()); *s != '\0'; s += 2)
@@ -130,7 +127,7 @@ inline std::string hex_to_bin(std::string const & hex)
         }
         else
         {
-            throw string_exception_invalid_parameter("the hex parameter must only contain valid hexadecimal digits");
+            throw string_invalid_parameter("the hex parameter must only contain valid hexadecimal digits");
         }
 
         // second digit
@@ -149,7 +146,7 @@ inline std::string hex_to_bin(std::string const & hex)
         }
         else
         {
-            throw string_exception_invalid_parameter("the hex parameter must only contain valid hexadecimal digits");
+            throw string_invalid_parameter("the hex parameter must only contain valid hexadecimal digits");
         }
 
         result.push_back(value);
@@ -157,6 +154,48 @@ inline std::string hex_to_bin(std::string const & hex)
 
     return result;
 }
+
+
+/** \brief Transform an integer to a string of hexadecimal digits.
+ *
+ * This function transforms an integer to a string of hexadecimal digits.
+ *
+ * The output string is optimized to not include any unnecessary leading
+ * zeroes.
+ *
+ * \note
+ * The function does not add an introducer (so no "0x" at the start of
+ * the resulting string).
+ *
+ * \tparam T  The type of integer to convert to a string.
+ * \param[in] value  The input integer to convert.
+ *
+ * \return The hexademical representation of the input integer.
+ */
+template<class T>
+inline std::string int_to_hex(T value)
+{
+    // special case, without this, we'd get an empty string for zero
+    //
+    if(value == 0)
+    {
+        return std::string("0");
+    }
+
+    char buf[sizeof(T) * 2 + 1];
+    char * d(buf + sizeof(T) * 2);
+    *d = '\0';
+
+    for(; value != 0; value >>= 4)
+    {
+        --d;
+        int const v(value & 15);
+        *d = v < 10 ? v + '0' : v + ('a' - 10);
+    }
+
+    return std::string(d);
+}
+
 
 } // namespace snap
 // vim: ts=4 sw=4 et

@@ -135,7 +135,7 @@ int main(int argc, char * argv[])
             , SNAPDEV_VERSION_STRING
             , argc
             , argv
-            , []() { libexcept::set_collect_stack(false); }
+            , []() { libexcept::set_collect_stack(libexcept::collect_stack_t::COLLECT_STACK_NO); }
             , &add_command_line_options
             , &finish_init
         );
