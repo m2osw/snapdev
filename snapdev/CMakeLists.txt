@@ -40,6 +40,7 @@ install(
         join_strings.h
         lockfile.h
         log2.h
+        map_keyset.h
         matrix.h
         mkdir_p.h
         not_reached.h
