@@ -39,13 +39,14 @@ namespace snap
  *              , "in.") == "basename"
  * \endcode
  *
+ * \tparam StringT  The type of string to parse.
  * \param[in] path  The path from which basename gets retrieved.
  * \param[in] suffix  If the path ends with that suffix, remove it.
  * \param[in] prefix  If the path starts with that prefix, remove it.
  *
  * \return The basename of \p path.
  */
-template < class StringT >
+template<class StringT>
 StringT string_pathinfo_basename(StringT const & path
                                , typename std::decay<StringT>::type const & suffix = ""
                                , typename std::decay<StringT>::type const & prefix = "")
