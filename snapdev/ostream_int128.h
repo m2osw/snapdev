@@ -43,8 +43,7 @@ namespace snap
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-#pragma GCC diagnostic ignored "-Wstrict-overflow"
-std::string to_string(__int128 x)
+std::string __attribute__((optimize("-fno-strict-overflow"))) to_string(__int128 x)
 {
     char buf[42];
 

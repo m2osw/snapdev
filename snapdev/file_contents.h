@@ -26,6 +26,7 @@
 // C++ lib
 //
 #include    <fstream>
+#include    <iostream>
 #include    <ios>
 
 
@@ -43,6 +44,43 @@ namespace snap
 class file_contents
 {
 public:
+    /** \brief Define the way to determine the file size.
+     *
+     * The size of some files can't be determined ahead of time
+     * (sockets, FIFO, /proc files, etc.) and thus attempting to
+     * get the size of such files is not going to work.
+     *
+     * Before calling read_all(), you can change the size mode
+     * to one where the size will be determined once the file
+     * is read.
+     */
+    enum size_mode_t
+    {
+        /** \brief Seek to the end to determine the size of the file.
+         *
+         * This mode is the default. It tells the read_all() command
+         * to seek to the end of the file, get the position, which
+         * represents the size, then seek back to the start of the
+         * file. This works with all regular files.
+         */
+        SIZE_MODE_SEEK,
+
+        /** \brief Read the file, avoid the seek().
+         *
+         * This mode has to be used with any file which size can't be
+         * determine with a seek() function. It will read as much as it
+         * can and then return that contents. There is no real way to
+         * know whether the entire file was read in this mode.
+         *
+         * Although it is possible ot use this mode to read a regular
+         * file, it is not a good idea since (1) it will be slower and
+         * (2) it may re-allocate the contents buffer multiple times
+         * so the data fits in there.
+         */
+        SIZE_MODE_READ,
+    };
+
+
     /** \brief Initialize a content file.
      *
      * The constructor initialize the file content object with a filename.
@@ -147,6 +185,45 @@ public:
     }
 
 
+    /** \brief Change the size mode.
+     *
+     * Certain files do not have a size that can be read using the seek()
+     * function and tell(). This function can be used to change the mode
+     * to instead read the entire file little by little until the EOF is
+     * reached.
+     *
+     * By default, we expect you to be using a regular file so the mode
+     * is set to size_mode_t::SIZE_MODE_SEEK.
+     *
+     * \param[in] mode  The new size mode.
+     */
+    void size_mode(size_mode_t mode)
+    {
+        f_size_mode = mode;
+    }
+
+
+    /** \brief Retrieve the current size mode.
+     *
+     * This function returns the current size mode for this file. The
+     * mode is used to know whether we can use the seek() function or
+     * not. If not, we just read the file up to EOF and return from
+     * the read_all() function.
+     *
+     * \return The current size mode of this file_contents object
+     * This function returns the current size mode for this file. The
+     * mode is used to know whether we can use the seek() function or
+     * not. If not, we just read the file up to EOF and return from
+     * the read_all() function.
+     *
+     * \return The current size mode of this file_contents object.
+     */
+    size_mode_t size_mode() const
+    {
+        return f_size_mode;
+    }
+
+
     /** \brief Read the entire file in a buffer.
      *
      * This function reads the entire file in memory. It saves the data
@@ -179,37 +256,64 @@ public:
 
         // get size
         //
-        in.seekg(0, std::ios::end);
-        std::ifstream::pos_type const size(in.tellg());
-        in.seekg(0, std::ios::beg);
-        if(std::ifstream::pos_type(-1) == size)
+        std::ifstream::pos_type size(0);
+        size_mode_t mode(size_mode());
+        if(mode == size_mode_t::SIZE_MODE_SEEK)
         {
-            f_error = "could not get size of file \""           // LCOV_EXCL_LINE
-                + f_filename                                    // LCOV_EXCL_LINE
-                + "\".";                                        // LCOV_EXCL_LINE
-            return false;                                       // LCOV_EXCL_LINE
+            in.seekg(0, std::ios::end);
+            size = in.tellg();
+            in.seekg(0, std::ios::beg);
+            if(std::ifstream::pos_type(-1) == size)
+            {
+                // try again in READ mode
+                //
+                mode = size_mode_t::SIZE_MODE_READ;
+                in.clear();
+            }
         }
 
-        // resize the buffer accordingly
-        //
-        try
+        if(mode == size_mode_t::SIZE_MODE_READ)
         {
-            f_contents.resize(size, '\0');
+            // on certain files, the "get size" fails (i.e. "/proc/...",
+            // FIFO, socket, etc.)
+            //
+            f_contents.clear();
+            char buf[1024 * 16];
+            do
+            {
+                in.read(buf, sizeof(buf));
+                ssize_t sz(in.gcount());
+                if(sz <= 0)
+                {
+                    break;
+                }
+                f_contents.insert(f_contents.end(), buf, buf + sz);
+            }
+            while(in.good());
         }
-        catch(std::bad_alloc const & e)                         // LCOV_EXCL_LINE
+        else
         {
-            f_error = "cannot allocate buffer of "              // LCOV_EXCL_LINE
-                + std::to_string(size)                          // LCOV_EXCL_LINE
-                + " bytes to read file.";                       // LCOV_EXCL_LINE
-            f_contents.clear();                                 // LCOV_EXCL_LINE
-            return false;                                       // LCOV_EXCL_LINE
+            // resize the buffer accordingly
+            //
+            try
+            {
+                f_contents.resize(size, '\0');
+            }
+            catch(std::bad_alloc const & e)                         // LCOV_EXCL_LINE
+            {
+                f_error = "cannot allocate buffer of "              // LCOV_EXCL_LINE
+                    + std::to_string(size)                          // LCOV_EXCL_LINE
+                    + " bytes to read file.";                       // LCOV_EXCL_LINE
+                f_contents.clear();                                 // LCOV_EXCL_LINE
+                return false;                                       // LCOV_EXCL_LINE
+            }
+
+            // read the data
+            //
+            in.read(f_contents.data(), size);
         }
 
-        // read the data
-        //
-        in.read(f_contents.data(), size);
-
-        if(in.fail()) // note: eof() will be true here          // LCOV_EXCL_LINE
+        if(in.bad()) // eof() always true, fail() may be true too (in case we can't gather the size() above)
         {
             f_error = "an I/O error occurred reading \""        // LCOV_EXCL_LINE
                 + f_filename                                    // LCOV_EXCL_LINE
@@ -370,6 +474,7 @@ private:
     std::string         f_filename = std::string();
     std::string         f_contents = std::string();
     std::string         f_error = std::string();
+    size_mode_t         f_size_mode = size_mode_t::SIZE_MODE_SEEK;
     bool                f_temporary = false;
 };
 
