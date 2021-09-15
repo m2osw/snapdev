@@ -1,16 +1,11 @@
-snapdev (1.1.19.0~bionic) bionic; urgency=high
-
-  * Added function to trim strings.
-  * Fixed the tokenize_string direct 'char const *' usage.
-  * Added a test to verify the trim_string() function.
-
- -- Alexis Wilke <alexis@m2osw.com>  Wed, 15 Sep 2021 08:32:34 -0700
-
 snapdev (1.1.18.0~bionic) bionic; urgency=high
 
   * Added function to extract map keys to a set or vector.
   * Fixed the std::ostream of int128, we had to cancel an optimization.
   * Allow reading of special files by file_contents().
+  * Added function to trim strings.
+  * Fixed the tokenize_string direct 'char const *' usage.
+  * Added a test to verify the trim_string() function.
 
  -- Alexis Wilke <alexis@m2osw.com>  Sun, 29 Aug 2021 23:20:11 -0700
 
