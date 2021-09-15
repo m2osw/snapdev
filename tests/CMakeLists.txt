@@ -40,6 +40,7 @@ if(Catch2_FOUND)
         catch_matrix.cpp
         catch_mkdir_p.cpp
         catch_timespec_operations.cpp
+        catch_trim_string.cpp
         catch_user_groups.cpp
     )
 

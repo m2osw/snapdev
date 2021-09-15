@@ -59,6 +59,7 @@ install(
         timespec_operations.h
         timestamp.h
         tokenize_string.h
+        trim_string.h
         user_groups.h
         ${CMAKE_CURRENT_BINARY_DIR}/version.h
 

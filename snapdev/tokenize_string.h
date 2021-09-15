@@ -170,8 +170,8 @@ size_t tokenize_string(ContainerT & tokens
         typename ContainerT::value_type::size_type const start_pos(last_pos);
         pos = (*compare_function)(str, delimiters, last_pos);
 
-        char const * start(str.data() + start_pos);
-        char const * end(str.data() + (pos == ContainerT::value_type::npos ? str.length() : pos));
+        typename ContainerT::value_type::value_type const * start(str.data() + start_pos);
+        typename ContainerT::value_type::value_type const * end(str.data() + (pos == ContainerT::value_type::npos ? str.length() : pos));
 
         if(start != end                 // if not (already) empty
         && !trim_string.empty())        // and there are characters to trim
