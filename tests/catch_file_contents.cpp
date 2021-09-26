@@ -49,7 +49,7 @@ CATCH_TEST_CASE("file_contents", "[os]")
         // try to create file, but directory is missing
         {
             std::string const content("Open fails in this case\n");
-            std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir + "/inexcistant-directory/test-file.txt");
+            std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/inexcistant-directory/test-file.txt");
 
             {
                 snap::file_contents content_test_output(filename, false);
@@ -70,7 +70,7 @@ CATCH_TEST_CASE("file_contents", "[os]")
         // create directory & file
         {
             std::string const content("We're testing a write...\nand then a read\n");
-            std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir + "/contents/test-file.txt");
+            std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/contents/test-file.txt");
 
             {
                 snap::file_contents content_test_output(filename, true);
@@ -88,7 +88,7 @@ CATCH_TEST_CASE("file_contents", "[os]")
         // check that if the directory exists, it works as expected
         {
             std::string const content("Try again without the create directory and it still works\n");
-            std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir + "/contents/dir-exists.txt");
+            std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/contents/dir-exists.txt");
 
             {
                 snap::file_contents content_test_output(filename, false);
@@ -104,7 +104,7 @@ CATCH_TEST_CASE("file_contents", "[os]")
         }
 
         {
-            std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir + "/contents/dir-exists.txt/object.java");
+            std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/contents/dir-exists.txt/object.java");
 
             CATCH_REQUIRE_THROWS_MATCHES(
                       snap::file_contents(filename, true, true)
@@ -116,7 +116,7 @@ CATCH_TEST_CASE("file_contents", "[os]")
         // this one tries to delete the "contents" directory and that fails
         // since it's a directory (and it's not even empty)
         {
-            std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir + "/contents");
+            std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/contents");
             snap::file_contents content_test_output(filename, false, true);
         }
     }
@@ -125,7 +125,7 @@ CATCH_TEST_CASE("file_contents", "[os]")
     CATCH_START_SECTION("file_contents: write temporary -> read fails")
     {
         std::string const content("We're testing a write...\nand then a read but the file is gone!\n");
-        std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir + "/contents/temporary-file.txt");
+        std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/contents/temporary-file.txt");
 
         {
             snap::file_contents content_test_output(filename, true, true);

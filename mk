@@ -5,7 +5,8 @@
 
 # Additional arguments to run the tests
 #
-export PROJECT_TEST_ARGS="--tmp `pwd`/tmp/snapdev"
+# --tmp-dir is now part of the snapcatch2 so we can use it everywhere
+#export PROJECT_TEST_ARGS="--tmp `pwd`/tmp/snapdev"
 
 if test -x ../../cmake/scripts/mk
 then

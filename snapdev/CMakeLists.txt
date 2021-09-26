@@ -31,12 +31,15 @@ configure_file(
 
 install(
     FILES
+        callback_manager.h
         chownnm.h
         empty_set_intersection.h
         file_contents.h
         glob_to_list.h
         hexadecimal_string.h
         init_structure.h
+        is_smart_pointer.h
+        is_string_literal.h
         join_strings.h
         lockfile.h
         log2.h

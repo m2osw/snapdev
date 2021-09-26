@@ -33,6 +33,7 @@ if(Catch2_FOUND)
     add_executable(${PROJECT_NAME}
         catch_main.cpp
 
+        catch_callback_manager.cpp
         catch_change_owner.cpp
         catch_file_contents.cpp
         catch_int128.cpp

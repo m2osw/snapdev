@@ -59,7 +59,7 @@ namespace SNAP_CATCH2_NAMESPACE
 {
 
 
-std::string                 g_tmp_dir;
+
 
 
 
@@ -71,57 +71,7 @@ namespace
 {
 
 
-Catch::clara::Parser add_command_line_options(Catch::clara::Parser const & cli)
-{
-    return cli
-         | Catch::clara::Opt(SNAP_CATCH2_NAMESPACE::g_tmp_dir, "tmp")
-              ["-T"]["--tmp"]
-              ("a path to a temporary directory used by the tests.");
-}
 
-
-
-int finish_init(Catch::Session & session)
-{
-    snap::NOT_USED(session);
-
-    if(!SNAP_CATCH2_NAMESPACE::g_tmp_dir.empty())
-    {
-        if(SNAP_CATCH2_NAMESPACE::g_tmp_dir == "/tmp")
-        {
-            std::cerr << "fatal error: you must specify a sub-directory for your temporary directory such as /tmp/snapdev";
-            exit(1);
-        }
-    }
-    else
-    {
-        SNAP_CATCH2_NAMESPACE::g_tmp_dir = "/tmp/snapdev";
-    }
-
-    // delete the existing tmp directory
-    {
-        std::stringstream ss;
-        ss << "rm -rf \"" << SNAP_CATCH2_NAMESPACE::g_tmp_dir << "\"";
-        if(system(ss.str().c_str()) != 0)
-        {
-            std::cerr << "fatal error: could not delete temporary directory \"" << SNAP_CATCH2_NAMESPACE::g_tmp_dir << "\".";
-            exit(1);
-        }
-    }
-
-    // then re-create the directory
-    {
-        std::stringstream ss;
-        ss << "mkdir -p \"" << SNAP_CATCH2_NAMESPACE::g_tmp_dir << "\"";
-        if(system(ss.str().c_str()) != 0)
-        {
-            std::cerr << "fatal error: could not create temporary directory \"" << SNAP_CATCH2_NAMESPACE::g_tmp_dir << "\".";
-            exit(1);
-        }
-    }
-
-    return 0;
-}
 
 
 
@@ -136,8 +86,8 @@ int main(int argc, char * argv[])
             , argc
             , argv
             , []() { libexcept::set_collect_stack(libexcept::collect_stack_t::COLLECT_STACK_NO); }
-            , &add_command_line_options
-            , &finish_init
+            , nullptr
+            , nullptr
         );
 }
 

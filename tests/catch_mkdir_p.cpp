@@ -74,7 +74,7 @@ CATCH_TEST_CASE("mkdir_p", "[os]")
         // TODO: for a complete test, we would need to transform the g_tmp_dir
         //       in a relative path, which is complicated at the moment...
         //
-        std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir + "/with/extra/sub-dirs/and-a-file.txt");
+        std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/with/extra/sub-dirs/and-a-file.txt");
         CATCH_REQUIRE(snap::mkdir_p(filename, true, 0700) == 0);
 
         // the file itself needs to not exist
@@ -112,7 +112,7 @@ CATCH_TEST_CASE("mkdir_p", "[os]")
     CATCH_START_SECTION("mkdir_p: create full path")
     {
         std::unique_ptr<char *, snap::raii_generic_deleter<char *, nullptr, decltype(&::free), &::free>> cwd(get_current_dir_name());
-        std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir + "/test/with/root/path");
+        std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/test/with/root/path");
         CATCH_REQUIRE(snap::mkdir_p(filename, false, 0750) == 0);
 
         // the last directory needs to be 0700

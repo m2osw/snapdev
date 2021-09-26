@@ -37,6 +37,11 @@ namespace snap
  *     // next test
  * \endcode
  *
+ * Note that the old value is lost once your exit the block, destroy your
+ * object, etc. If you instead want to restore the old value, use the
+ * transparent_setenv class which saves the old value and restores it
+ * for you.
+ *
  * \note
  * This class is not thread safe.
  *
@@ -109,7 +114,8 @@ private:
 /** \brief Change the value of an environment variable within a context.
  *
  * This class is used to set an environment within a block and restore
- * its value once the block is exited.
+ * its value once the block is exited. This can be particularly useful
+ * for variables such as `HOME`.
  *
  * This is very similar to the safe_setenv except that the old value
  * gets restored on destruction.

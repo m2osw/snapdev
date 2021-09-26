@@ -39,8 +39,6 @@ namespace SNAP_CATCH2_NAMESPACE
 {
 
 
-extern std::string                  g_tmp_dir;
-
 
 class obj_setenv
 {
@@ -85,7 +83,6 @@ inline char32_t rand_char(bool full_range = false)
 
     return wc;
 }
-
 
 
 

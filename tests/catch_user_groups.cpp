@@ -54,7 +54,7 @@ CATCH_TEST_CASE("user_groups", "[os]")
     //
     CATCH_START_SECTION("user_groups: groups")
     {
-        std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir + "/system-groups.txt");
+        std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/system-groups.txt");
         CATCH_REQUIRE(system(("groups >" + filename).c_str()) == 0);
         snap::file_contents system_groups(filename);
         system_groups.read_all();

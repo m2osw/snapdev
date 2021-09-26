@@ -71,7 +71,7 @@ CATCH_TEST_CASE("chownnm", "[os]")
 
             if(permitted)
             {
-                std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir + "/group-test.txt");
+                std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/group-test.txt");
                 snap::file_contents system_groups(filename);
                 system_groups.contents("test file--testing changing group\n");
                 system_groups.write_all();
@@ -114,7 +114,7 @@ CATCH_TEST_CASE("chownnm", "[os]")
         }
         else
         {
-            std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir + "/owner-test.txt");
+            std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/owner-test.txt");
             snap::file_contents system_groups(filename);
             system_groups.contents("test file--testing changing owner\n");
             system_groups.write_all();
