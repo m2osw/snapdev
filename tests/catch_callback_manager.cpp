@@ -60,7 +60,7 @@ bool the_static_callback(int v, int q, std::string z)
     CATCH_REQUIRE(q == g_expected_b);
     CATCH_REQUIRE(z == g_expected_c);
     g_called = true;
-    return true;
+    return g_expected_a == 33;
 }
 
 bool void_static_callback()
@@ -100,7 +100,7 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
                 CATCH_REQUIRE(q == f_expected_b);
                 CATCH_REQUIRE(z == f_expected_c);
                 ++f_count;
-                return true;
+                return f_count < 9;
             }
 
             bool void_callback()
@@ -114,7 +114,7 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
             int f_expected_b = 0;
             int f_expected_c = 0;
         };
-        snap::callback_manager<foo::vector_t, true> m;
+        snap::callback_manager<foo::vector_t, false> m;
 
         foo::pointer_t f1(std::make_shared<foo>(count));
         foo::pointer_t f2(std::make_shared<foo>(count));
@@ -132,29 +132,36 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
 
         CATCH_REQUIRE(m.size() == 0);
         CATCH_REQUIRE(m.empty());
+        CATCH_REQUIRE_FALSE(foo::pointer_t());      // no pointer, nothin happens
         CATCH_REQUIRE(m.add_callback(f1));
         CATCH_REQUIRE(m.add_callback(f2));
         CATCH_REQUIRE(m.add_callback(f3));
+        CATCH_REQUIRE_FALSE(m.add_callback(f1));    // trying again fails (no duplicates allowed)
+        CATCH_REQUIRE_FALSE(m.add_callback(f2));
+        CATCH_REQUIRE_FALSE(m.add_callback(f3));
+        CATCH_REQUIRE_FALSE(foo::pointer_t());      // no pointer, nothin happens
         CATCH_REQUIRE_FALSE(m.empty());
         CATCH_REQUIRE(m.size() == 3);
 
-        m.call(&foo::the_callback, 5, 13, 7);
+        CATCH_REQUIRE(m.call(&foo::the_callback, 5, 13, 7));
 
         CATCH_REQUIRE(count == 3);
         CATCH_REQUIRE(f1->f_count == 3);
         CATCH_REQUIRE(f2->f_count == 3);
         CATCH_REQUIRE(f3->f_count == 3);
 
-        m.call(&foo::void_callback);
+        CATCH_REQUIRE(m.call(&foo::void_callback));
 
         CATCH_REQUIRE(count == 6);
         CATCH_REQUIRE(f1->f_count == 6);
         CATCH_REQUIRE(f2->f_count == 6);
         CATCH_REQUIRE(f3->f_count == 6);
 
-        m.remove_callback(f2);
+        CATCH_REQUIRE(m.remove_callback(f2));
         CATCH_REQUIRE_FALSE(m.empty());
         CATCH_REQUIRE(m.size() == 2);
+
+        CATCH_REQUIRE_FALSE(m.remove_callback(f2));
 
         f1->f_expected_a = 12;
         f3->f_expected_a = 12;
@@ -163,18 +170,31 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
         f1->f_expected_c = 17;
         f3->f_expected_c = 17;
 
-        m.call(&foo::the_callback, 12, 37, 17);
+        CATCH_REQUIRE(m.call(&foo::the_callback, 12, 37, 17));
 
         CATCH_REQUIRE(count == 8);
         CATCH_REQUIRE(f1->f_count == 8);
         CATCH_REQUIRE(f2->f_count == 8);
         CATCH_REQUIRE(f3->f_count == 8);
 
+        f1->f_expected_a = 25;
+        f1->f_expected_b = 31;
+        f1->f_expected_c =  6;
+
+        CATCH_REQUIRE_FALSE(m.call(&foo::the_callback, 25, 31, 6));
+
+        CATCH_REQUIRE(count == 9);
+        CATCH_REQUIRE(f1->f_count == 9);
+        CATCH_REQUIRE(f2->f_count == 9);
+        CATCH_REQUIRE(f3->f_count == 9);
+
         CATCH_REQUIRE_FALSE(m.empty());
         CATCH_REQUIRE(m.clear());
         CATCH_REQUIRE(m.empty());
         CATCH_REQUIRE(m.size() == 0);
         CATCH_REQUIRE_FALSE(m.clear());
+        CATCH_REQUIRE_FALSE(m.remove_callback(f1));
+        CATCH_REQUIRE_FALSE(m.remove_callback(f3));
     }
     CATCH_END_SECTION()
 
@@ -187,10 +207,22 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
 
         snap::callback_manager<list_t, true> m;
 
+        CATCH_REQUIRE_FALSE(m.add_callback(nullptr));
         CATCH_REQUIRE(m.add_callback(the_static_callback));
+        CATCH_REQUIRE_FALSE(m.add_callback(nullptr));
+        CATCH_REQUIRE_FALSE(m.empty());
+        CATCH_REQUIRE(m.size() == 1);
 
         CATCH_REQUIRE_FALSE(g_called);
-        m.call(33, 51, "expected value");
+        CATCH_REQUIRE(m.call(33, 51, "expected value"));
+        CATCH_REQUIRE(g_called);
+
+        g_called = false;
+        g_expected_a = 44;
+        g_expected_b = 50;
+        g_expected_c = "return false";
+        CATCH_REQUIRE_FALSE(g_called);
+        CATCH_REQUIRE_FALSE(m.call(44, 50, "return false"));
         CATCH_REQUIRE(g_called);
     }
     CATCH_END_SECTION()
@@ -207,7 +239,7 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
         CATCH_REQUIRE(m.add_callback(void_static_callback));
 
         CATCH_REQUIRE_FALSE(g_called);
-        m.call();
+        CATCH_REQUIRE(m.call());
         CATCH_REQUIRE(g_called);
     }
     CATCH_END_SECTION()
