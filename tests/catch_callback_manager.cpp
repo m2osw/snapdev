@@ -98,10 +98,10 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
 
             bool the_callback(int v, int q, int z)
             {
-std::cerr << "check values for " << f_id << " v = " << v << " expected " << f_expected_a << "\n";
                 CATCH_REQUIRE(v == f_expected_a);
                 CATCH_REQUIRE(q == f_expected_b);
                 CATCH_REQUIRE(z == f_expected_c);
+                CATCH_REQUIRE(f_count == f_expected_count);
                 ++f_count;
                 return f_count < 9;
             }
@@ -117,6 +117,7 @@ std::cerr << "check values for " << f_id << " v = " << v << " expected " << f_ex
             int f_expected_a = 0;
             int f_expected_b = 0;
             int f_expected_c = 0;
+            int f_expected_count = 0;
         };
         snap::callback_manager<foo::pointer_t> m;
 
@@ -133,12 +134,15 @@ std::cerr << "check values for " << f_id << " v = " << v << " expected " << f_ex
         f1->f_expected_c = 7;
         f2->f_expected_c = 7;
         f3->f_expected_c = 7;
+        f1->f_expected_count = 1;
+        f2->f_expected_count = 0;
+        f3->f_expected_count = 2;
 
         CATCH_REQUIRE(m.size() == 0);
         CATCH_REQUIRE(m.empty());
-        auto const id1(m.add_callback(f1));
-        auto const id2(m.add_callback(f2));
-        auto const id3(m.add_callback(f3));
+        auto const id1(m.add_callback(f1, 0));
+        auto const id2(m.add_callback(f2, 1));
+        auto const id3(m.add_callback(f3, -1));
         CATCH_REQUIRE_FALSE(m.empty());
         CATCH_REQUIRE(m.size() == 3);
 
@@ -171,6 +175,9 @@ std::cerr << "check values for " << f_id << " v = " << v << " expected " << f_ex
         f1->f_expected_c = 17;
         f3->f_expected_c = 17;
 
+        f1->f_expected_count = 6;
+        f3->f_expected_count = 7;
+
         CATCH_REQUIRE(m.call(&foo::the_callback, 12, 37, 17));
 
         CATCH_REQUIRE(count == 8);
@@ -181,6 +188,8 @@ std::cerr << "check values for " << f_id << " v = " << v << " expected " << f_ex
         f1->f_expected_a = 25;
         f1->f_expected_b = 31;
         f1->f_expected_c =  6;
+
+        f1->f_expected_count = 8;
 
         CATCH_REQUIRE_FALSE(m.call(&foo::the_callback, 25, 31, 6));
 

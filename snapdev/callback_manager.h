@@ -45,7 +45,17 @@ namespace snap
  * The following shows how objects are added:
  *
  * \code
- *     callback_manager<std::set<T::pointer_t>> callbacks;
+ *     struct foo
+ *     {
+ *         typedef std::shared_ptr<foo> pointer_t;
+ *
+ *         bool member_function(int, float, std::string const &)
+ *         {
+ *             ...
+ *             return true;
+ *         }
+ *     };
+ *     callback_manager<foo::pointer_t> callbacks;
  *
  *     callbacks.add_callback(obj1);
  *     snap::callback_manager::callback_id_t save_id(callbacks.add_callback(obj2));
@@ -58,13 +68,14 @@ namespace snap
  *     callbacks.remove_callback(save_id);  // won't call functions on obj2 anymore
  * \endcode
  *
- * If you instead want to add direct function calls, you can use a container
- * of functions and directly add functions. This works with objects as well
- * when used with std::bind() but you can only call those functions (opposed
- * to any one member function in the previous example).
+ * If you instead want to add direct function calls, you can use a function
+ * type and directly add functions. This works with objects as well when used
+ * with std::bind() but you can only call those functions (opposed to any one
+ * member function in the previous example).
  *
  * \code
- *     callback_manager<std::list<F>> callbacks;
+ *     typedef std::function<bool (*)(int, float, std::string const &)> F;
+ *     callback_manager<F> callbacks;
  *
  *     snap::callback_manager::callback_id_t save1(callbacks.add_callback(std::bind(&T::member_function, obj1, std::placeholders::_1, std::placeholders::_2, ...)));
  *     snap::callback_manager::callback_id_t save2(callbacks.add_callback(my_func));
@@ -76,23 +87,23 @@ namespace snap
  *     callbacks.remove_callback(save2);
  * \endcode
  *
- * Note that to be able to remove an std::bind() function, you must save that
- * object in a parameter. Each time you call std::bind() you get a new object
- * so it is necessary to save it to be able to reference it later.
+ * Note that to be able to remove a callback, you must save the identifier
+ * returned by the add_callback(). This works whatever the type of callback
+ * you add (shared pointer, direct function, std::function, std::bind).
  *
  * \code
  *     auto c = std::bind(...);
- *     callbacks.add_callback(c);
+ *     auto id = callbacks.add_callback(c);
  *
  *     ...
  *
- *     callbacks.remove_callback(c);
+ *     callbacks.remove_callback(id);
  * \endcode
  *
  * Of course, you may use the clear() function as well. However, that is not
  * always what you want.
  *
- * \tparam T  The type of functions or objects to manage.
+ * \tparam T  The type of function or object to manage.
  */
 template<class T>
 class callback_manager
@@ -103,6 +114,7 @@ public:
     typedef std::uint32_t                           callback_id_t;
     typedef std::int32_t                            priority_t;
 
+    static constexpr callback_id_t const            NULL_CALLBACK_ID = 0;
     static constexpr priority_t const               DEFAULT_PRIORITY = 0;
 
 private:
@@ -118,7 +130,7 @@ private:
         {
         }
 
-        callback_id_t   f_id = callback_id_t();
+        callback_id_t   f_id = NULL_CALLBACK_ID;
         value_type      f_callback = value_type();
         priority_t      f_priority = DEFAULT_PRIORITY;
     };
@@ -198,15 +210,16 @@ public:
     /** \brief Add a callback to this manager.
      *
      * This function inserts the given callback to this manager. By default,
-     * the new callback goes at the end of the container. To add the
-     * item at a different location, the container needs to be capable of
-     * sorting the items in some way (i.e. a priority).
+     * the new callback goes at the end of the list of callbacks. To add the
+     * item at a different location, the callback can be given a priority.
+     * Higher numbers get added first. Callbacks with the same priority
+     * get sorted in the order they are added.
      *
      * The number of callbacks is not limited.
      *
      * It is possible to add a callback while within a callback function.
-     * The new callback will not be seen until the next time an event
-     * occurs and the call() function gets called.
+     * However, the new callback will not be seen until the next time an
+     * event occurs and the call() function gets called.
      *
      * \note
      * If the callback type is an object share pointer, then you will be
@@ -216,30 +229,16 @@ public:
      * in order to attach the function to an object at runtime.
      *
      * \note
-     * By default the manager doesn't re-add a callback more than once.
-     * This behavior is specific to your instance of the manager. It can
-     * be changed by setting the DUPLICATE template parameter to true.
-     * If you allow duplication of callbacks, then the same callback ends
-     * up being called for each instance appearing in the manager.
-     * However, the std::bind() function is likely to generate a different
-     * object each time, so in most cases, the duplicity test is not really
-     * going to work for direct functions.
-     *
-     * \note
-     * This version of the add_callback() is used when the DUPLICATES was
-     * set to false. This function checks whether the \p callback being
-     * added is already present in the container. If so, then it does not
-     * get re-added.
+     * It is possible to add the same callback any number of time. It
+     * will get called a number of time equal to the number of times
+     * you added it to the callback manager. Duplicity is not easy to
+     * test for objects such as std::function and std::bind.
      *
      * \note
      * The identifier is allowed to wrap around, although you need to
      * call the function 2^32 times before it happens. Right now, we
      * assume this never happens so the function doesn't check whether
-     * it overrides an existing callback.
-     *
-     * \todo
-     * Look at adding a priority to sort callbacks by priorty instead
-     * of the order in which they get added.
+     * two callbacks get the same identifier.
      *
      * \param[in] callback  The callback to be added to the manager.
      * \param[in] priority  The priority to sort the callback by.
@@ -251,14 +250,25 @@ public:
      */
     callback_id_t add_callback(T callback, priority_t priority = DEFAULT_PRIORITY)
     {
-        // insert "at the end" (i.e. the f_next_id is always a little larger
-        // than the previous insert and maps are sorted); if we sort by
-        // priority, we want to create an internal class which gets sorted,
-        // maybe a map as well, but that's for later.
-        //
         ++f_next_id;
-        f_callbacks.emplace_back(
-                      f_next_id
+        if(f_next_id == 0)
+        {
+            ++f_next_id;
+        }
+
+        auto it(std::find_if(
+              f_callbacks.begin()
+            , f_callbacks.end()
+            , [priority](auto const & c)
+                {
+                    // assuming f_next_id doesn't wrap, this is sufficient
+                    //
+                    return c.f_priority < priority;
+                }));
+
+        f_callbacks.emplace(
+                      it
+                    , f_next_id
                     , callback
                     , priority
                 );
@@ -446,7 +456,7 @@ private:
      * callback or you can call the clear() function, then there is no need
      * to save the callback identifier on return.
      */
-    callback_id_t   f_next_id = callback_id_t();
+    callback_id_t   f_next_id = NULL_CALLBACK_ID;
 };
 
 
