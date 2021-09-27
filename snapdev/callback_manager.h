@@ -251,9 +251,9 @@ public:
     callback_id_t add_callback(T callback, priority_t priority = DEFAULT_PRIORITY)
     {
         ++f_next_id;
-        if(f_next_id == 0)
+        if(f_next_id == NULL_CALLBACK_ID)
         {
-            ++f_next_id;
+            ++f_next_id;  // LCOV_EXCL_LINE
         }
 
         auto it(std::find_if(
