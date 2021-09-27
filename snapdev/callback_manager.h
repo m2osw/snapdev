@@ -28,6 +28,8 @@
 //
 #include    <algorithm>
 #include    <functional>
+#include    <iostream>
+#include    <list>
 
 
 
@@ -46,14 +48,14 @@ namespace snap
  *     callback_manager<std::set<T::pointer_t>> callbacks;
  *
  *     callbacks.add_callback(obj1);
- *     callbacks.add_callback(obj2);
+ *     snap::callback_manager::callback_id_t save_id(callbacks.add_callback(obj2));
  *     callbacks.add_callback(obj3);
  *
  *     // call member_function() on obj1, obj2, obj3 with parameters p1, p2, p3
  *     //
  *     callbacks.call(&T::member_function, p1, p2, p3);
  *
- *     callbacks.remove_callback(obj2);  // won't call functions on obj2
+ *     callbacks.remove_callback(save_id);  // won't call functions on obj2 anymore
  * \endcode
  *
  * If you instead want to add direct function calls, you can use a container
@@ -64,14 +66,14 @@ namespace snap
  * \code
  *     callback_manager<std::list<F>> callbacks;
  *
- *     callbacks.add_callback(std::bind(&T::member_function, obj1, std::placeholders::_1, std::placeholders::_2, ...));
- *     callbacks.add_callback(my_func);
+ *     snap::callback_manager::callback_id_t save1(callbacks.add_callback(std::bind(&T::member_function, obj1, std::placeholders::_1, std::placeholders::_2, ...)));
+ *     snap::callback_manager::callback_id_t save2(callbacks.add_callback(my_func));
  *
  *     // call the functions added earlier with p1, p2, p3
  *     //
  *     callbacks.call(p1, p2, p3);
  *
- *     callbacks.remove_callback(my_func);
+ *     callbacks.remove_callback(save2);
  * \endcode
  *
  * Note that to be able to remove an std::bind() function, you must save that
@@ -90,21 +92,41 @@ namespace snap
  * Of course, you may use the clear() function as well. However, that is not
  * always what you want.
  *
- * \warning
- * For certain types of functions, the DUPLICATES must be set to `true`,
- * otherwise the add_callbacks() will fail. This is especially true if you
- * use std::function or std::bind functions. These do not compare against
- * nullptr or each others. The solution is to set DUPLICATES to `true`
- * and not try to use the remove_callback() function. Also, that means
- * those types of functions can be added to an std::set which requires
- * the == operator to exist.
- *
- * \tparam C  The type of container to use (std::vector, std::list, ...).
- * \tparam DUPLICATES  Whether duplicates are allowed (true) or not (false).
+ * \tparam T  The type of functions or objects to manage.
  */
-template<class C, bool DUPLICATES = false>
+template<class T>
 class callback_manager
 {
+public:
+    typedef std::shared_ptr<callback_manager<T>>    pointer_t;
+    typedef T                                       value_type;
+    typedef std::uint32_t                           callback_id_t;
+    typedef std::int32_t                            priority_t;
+
+    static constexpr priority_t const               DEFAULT_PRIORITY = 0;
+
+private:
+    struct item_t
+    {
+        item_t(
+                  callback_id_t id
+                , value_type callback
+                , priority_t priority)
+            : f_id(id)
+            , f_callback(callback)
+            , f_priority(priority)
+        {
+        }
+
+        callback_id_t   f_id = callback_id_t();
+        value_type      f_callback = value_type();
+        priority_t      f_priority = DEFAULT_PRIORITY;
+    };
+
+
+    typedef std::list<item_t>                       callbacks_t;
+
+
     /** \brief Function used when the "callbacks" are objects.
      *
      * In this case, we are managing a container of shared pointers to
@@ -129,10 +151,10 @@ class callback_manager
     template<typename F, typename ... ARGS>
     bool call_member(F func, ARGS ... args)
     {
-        C callbacks(f_callbacks);
-        for(auto c : callbacks)
+        auto callbacks(f_callbacks);
+        for(auto & c : callbacks)
         {
-            if(!(c.get()->*func)(args...))
+            if(!(c.f_callback.get()->*func)(args...))
             {
                 return false;
             }
@@ -150,7 +172,7 @@ class callback_manager
      * If one of the functions returns `false`, then the loop stops
      * immediately and this function returns `false`. If all the
      * callback functions returns `true`, then all get called and
-     * call_function() returns `true.
+     * call_function() returns `true`.
      *
      * \tparam ARGS  The types of the arguments to pass to the callbacks.
      * \param[in] args  The arguments to pass to the callbacks.
@@ -160,10 +182,10 @@ class callback_manager
     template<typename ... ARGS>
     bool call_function(ARGS ... args)
     {
-        C callbacks(f_callbacks);
-        for(auto c : callbacks)
+        auto callbacks(f_callbacks);
+        for(auto & c : callbacks)
         {
-            if(!std::invoke(c, args...))
+            if(!std::invoke(c.f_callback, args...))
             {
                 return false;
             }
@@ -173,15 +195,6 @@ class callback_manager
 
 
 public:
-    typedef C value_type;
-    typedef typename C::size_type size_type;
-    typedef typename C::difference_type difference_type;
-    typedef value_type & reference;
-    typedef value_type const & const_reference;
-    typedef typename C::allocator_type allocator_type;
-    typedef typename C::pointer pointer;
-    typedef typename C::const_pointer const_pointer;
-
     /** \brief Add a callback to this manager.
      *
      * This function inserts the given callback to this manager. By default,
@@ -218,68 +231,39 @@ public:
      * added is already present in the container. If so, then it does not
      * get re-added.
      *
-     * \param[in] callback  The callback to be added to the manager.
+     * \note
+     * The identifier is allowed to wrap around, although you need to
+     * call the function 2^32 times before it happens. Right now, we
+     * assume this never happens so the function doesn't check whether
+     * it overrides an existing callback.
      *
-     * \return true if the callback was added, false otherwise.
+     * \todo
+     * Look at adding a priority to sort callbacks by priorty instead
+     * of the order in which they get added.
+     *
+     * \param[in] callback  The callback to be added to the manager.
+     * \param[in] priority  The priority to sort the callback by.
+     *
+     * \return The callback identifier you can use to remove the callback.
      *
      * \sa remove_callback()
      * \sa call()
      */
-    template<bool D = DUPLICATES>
-        typename std::enable_if<!D, bool>::type
-    add_callback(typename C::value_type callback)
+    callback_id_t add_callback(T callback, priority_t priority = DEFAULT_PRIORITY)
     {
-        if(callback == nullptr)
-        {
-            return false;
-        }
-
-        if(!DUPLICATES)
-        {
-            if(std::find(
-                  begin(f_callbacks)
-                , end(f_callbacks)
-                , callback) != end(f_callbacks))
-            {
-                return false;
-            }
-        }
-
-        // insert "at the end" (i.e. for std::set, it doesn't get at the end)
+        // insert "at the end" (i.e. the f_next_id is always a little larger
+        // than the previous insert and maps are sorted); if we sort by
+        // priority, we want to create an internal class which gets sorted,
+        // maybe a map as well, but that's for later.
         //
-        f_callbacks.insert(
-                  f_callbacks.end()
-                , callback);
+        ++f_next_id;
+        f_callbacks.emplace_back(
+                      f_next_id
+                    , callback
+                    , priority
+                );
 
-        return true;
-    }
-
-    /** \brief Add a callback no matter what.
-     *
-     * This instance of the add_callback() function allows for the addition
-     * of any callback, whether it is a duplicate or not.
-     *
-     * If you are adding direct functions using advance C++ features, such
-     * as std::bind(), then having DUPLICATES set to false is likely to
-     * fail because the std::bind() type has no `operator == ()` that works
-     * on it.
-     *
-     * \tparam D  A copy of the duplicate flag.
-     * \param[in] callback  The callback to be added.
-     *
-     * \return Always true since we cannot verify duplication.
-     */
-    template<bool D = DUPLICATES>
-        typename std::enable_if<D, bool>::type
-    add_callback(typename C::value_type callback)
-    {
-        // insert "at the end" (i.e. for std::set, it doesn't get at the end)
-        //
-        f_callbacks.insert(
-                  f_callbacks.end()
-                , callback);
-
-        return true;
+        return f_next_id;
     }
 
 
@@ -294,34 +278,30 @@ public:
      * again. In other words, if you remove a function that wasn't yet
      * called, it will still get called this time around.
      *
-     * \note
-     * If duplicity is allowed in your manager, this function only removes
-     * the first callback that matches.
+     * The parameter used to remove a callback is the callback identifier
+     * returned by the add_callback() function.
      *
      * \note
-     * The function is not available if the type C::value_type
+     * Calling the function more than once with the same identifier is
+     * allowed, although after the first call, nothing happens.
      *
-     * \param[in] callback  The callback to be removed.
+     * \param[in] callback_id  The identifier of the callback to be removed.
      *
      * \return true if a callback was removed, false otherwise.
      *
      * \sa add_callback()
      * \sa call()
      */
-    // the following breaks; I think that the has_equal_operator<> doesn't
-    // work correctly at this point...
-    //
-    //template<typename ... ARGS, typename T = C>
-    //typename std::enable_if<std::is_same<T, C>::value
-    //        && snap::has_equal_operator<typename T::value_type>::value
-    //    , bool>::type
-    bool remove_callback(typename C::value_type callback)
+    bool remove_callback(callback_id_t callback_id)
     {
-        auto it(std::find(
-                  begin(f_callbacks)
-                , end(f_callbacks)
-                , callback));
-        if(it == end(f_callbacks))
+        auto it(std::find_if(
+              f_callbacks.begin()
+            , f_callbacks.end()
+            , [callback_id](auto const & c)
+                {
+                    return c.f_id == callback_id;
+                }));
+        if(it == f_callbacks.end())
         {
             return false;
         }
@@ -404,16 +384,17 @@ public:
      *
      * \tparam F  The type of member functon.
      * \tparam ARGS  The type of each of the function arguments.
-     * \tparam T  A copy of the container type.
+     * \tparam U  A copy of the callback type.
      * \param[in] func  The member function to be called.
      * \param[in] args  The arguments to pass to the callback functions.
      *
      * \return true if all the callback functions returned true.
      */
-    template<typename F, typename ... ARGS, typename T = C>
-    typename std::enable_if<std::is_same<T, C>::value
-            && std::is_member_function_pointer<F>::value
-            && is_shared_ptr<typename T::value_type>::value, bool>::type
+    template<typename F, typename ... ARGS, typename U = T>
+    typename std::enable_if<std::is_same<U, T>::value
+                && std::is_member_function_pointer<F>::value
+                && is_shared_ptr<U>::value
+            , bool>::type
     call(F func, ARGS ... args)
     {
         return call_member(func, args...);
@@ -432,14 +413,14 @@ public:
      * as a member function or not.
      *
      * \tparam ARGS  The type of each of the function arguments.
-     * \tparam T  A copy of the container type.
+     * \tparam U  A copy of the callback type.
      * \param[in] args  The arguments to pass to the callback functions.
      *
      * \return true if all the callback functions returned true.
      */
-    template<typename ... ARGS, typename T = C>
-    typename std::enable_if<std::is_same<T, C>::value
-            && !is_shared_ptr<typename T::value_type>::value, bool>::type
+    template<typename ... ARGS, typename U = T>
+    typename std::enable_if<std::is_same<U, T>::value
+            && !is_shared_ptr<U>::value, bool>::type
     call(ARGS ... args)
     {
         return call_function(args...);
@@ -454,7 +435,18 @@ private:
      * does nothing. The list can be shrunk using the remove_callback()
      * or the clear() functions.
      */
-    C       f_callbacks = C();
+    callbacks_t     f_callbacks = callbacks_t();
+
+
+    /** \brief The next idenfitier.
+     *
+     * Each time you call the add_callback() function, this identifier gets
+     * incremented by one. You can record that number to later remove that
+     * specific callback from the list. If you never need to remove the
+     * callback or you can call the clear() function, then there is no need
+     * to save the callback identifier on return.
+     */
+    callback_id_t   f_next_id = callback_id_t();
 };
 
 

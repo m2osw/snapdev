@@ -90,13 +90,15 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
             typedef std::shared_ptr<foo>    pointer_t;
             typedef std::vector<pointer_t>  vector_t;
 
-            foo(int & cnt)
-                : f_count(cnt)
+            foo(int & cnt, int id)
+                : f_id(id)
+                , f_count(cnt)
             {
             }
 
             bool the_callback(int v, int q, int z)
             {
+std::cerr << "check values for " << f_id << " v = " << v << " expected " << f_expected_a << "\n";
                 CATCH_REQUIRE(v == f_expected_a);
                 CATCH_REQUIRE(q == f_expected_b);
                 CATCH_REQUIRE(z == f_expected_c);
@@ -110,16 +112,17 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
                 return true;
             }
 
+            int f_id = 0;
             int & f_count;
             int f_expected_a = 0;
             int f_expected_b = 0;
             int f_expected_c = 0;
         };
-        snap::callback_manager<foo::vector_t, false> m;
+        snap::callback_manager<foo::pointer_t> m;
 
-        foo::pointer_t f1(std::make_shared<foo>(count));
-        foo::pointer_t f2(std::make_shared<foo>(count));
-        foo::pointer_t f3(std::make_shared<foo>(count));
+        foo::pointer_t f1(std::make_shared<foo>(count, 1));
+        foo::pointer_t f2(std::make_shared<foo>(count, 2));
+        foo::pointer_t f3(std::make_shared<foo>(count, 3));
 
         f1->f_expected_a = 5;
         f2->f_expected_a = 5;
@@ -133,14 +136,9 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
 
         CATCH_REQUIRE(m.size() == 0);
         CATCH_REQUIRE(m.empty());
-        CATCH_REQUIRE_FALSE(foo::pointer_t());      // no pointer, nothin happens
-        CATCH_REQUIRE(m.add_callback(f1));
-        CATCH_REQUIRE(m.add_callback(f2));
-        CATCH_REQUIRE(m.add_callback(f3));
-        CATCH_REQUIRE_FALSE(m.add_callback(f1));    // trying again fails (no duplicates allowed)
-        CATCH_REQUIRE_FALSE(m.add_callback(f2));
-        CATCH_REQUIRE_FALSE(m.add_callback(f3));
-        CATCH_REQUIRE_FALSE(foo::pointer_t());      // no pointer, nothin happens
+        auto const id1(m.add_callback(f1));
+        auto const id2(m.add_callback(f2));
+        auto const id3(m.add_callback(f3));
         CATCH_REQUIRE_FALSE(m.empty());
         CATCH_REQUIRE(m.size() == 3);
 
@@ -158,11 +156,13 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
         CATCH_REQUIRE(f2->f_count == 6);
         CATCH_REQUIRE(f3->f_count == 6);
 
-        CATCH_REQUIRE(m.remove_callback(f2));
+        CATCH_REQUIRE(m.remove_callback(id2));
         CATCH_REQUIRE_FALSE(m.empty());
         CATCH_REQUIRE(m.size() == 2);
 
-        CATCH_REQUIRE_FALSE(m.remove_callback(f2));
+        CATCH_REQUIRE_FALSE(m.remove_callback(id2));
+        CATCH_REQUIRE_FALSE(m.empty());
+        CATCH_REQUIRE(m.size() == 2);
 
         f1->f_expected_a = 12;
         f3->f_expected_a = 12;
@@ -194,8 +194,8 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
         CATCH_REQUIRE(m.empty());
         CATCH_REQUIRE(m.size() == 0);
         CATCH_REQUIRE_FALSE(m.clear());
-        CATCH_REQUIRE_FALSE(m.remove_callback(f1));
-        CATCH_REQUIRE_FALSE(m.remove_callback(f3));
+        CATCH_REQUIRE_FALSE(m.remove_callback(id1));
+        CATCH_REQUIRE_FALSE(m.remove_callback(id3));
     }
     CATCH_END_SECTION()
 
@@ -204,13 +204,10 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
         g_called = false;
 
         typedef bool (*callback_t)(int, int, std::string);
-        typedef std::list<callback_t> list_t;
 
-        snap::callback_manager<list_t, false> m;
+        snap::callback_manager<callback_t> m;
 
-        CATCH_REQUIRE_FALSE(m.add_callback(nullptr));
         CATCH_REQUIRE(m.add_callback(the_static_callback));
-        CATCH_REQUIRE_FALSE(m.add_callback(nullptr));
         CATCH_REQUIRE_FALSE(m.empty());
         CATCH_REQUIRE(m.size() == 1);
 
@@ -235,7 +232,7 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
         typedef bool (*callback_t)();
         typedef std::list<callback_t> list_t;
 
-        snap::callback_manager<list_t, true> m;
+        snap::callback_manager<callback_t> m;
 
         CATCH_REQUIRE(m.add_callback(void_static_callback));
 
@@ -266,14 +263,15 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
 
         auto f(std::bind(&bind::my_callback, &b, 111));
 
-        snap::callback_manager<std::list<decltype(f)>, true> m;
+        snap::callback_manager<decltype(f)> m;
 
-        CATCH_REQUIRE(m.add_callback(f));
+        auto const id(m.add_callback(f));
 
         CATCH_REQUIRE(m.call());
 
-        // this is not available in this case
-        //CATCH_REQUIRE(m.remove_callback(f));
+        CATCH_REQUIRE_FALSE(m.empty());
+        CATCH_REQUIRE(m.remove_callback(id));
+        CATCH_REQUIRE(m.empty());
     }
     CATCH_END_SECTION()
 }
