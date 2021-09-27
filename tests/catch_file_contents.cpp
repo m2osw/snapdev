@@ -145,6 +145,14 @@ CATCH_TEST_CASE("file_contents", "[os]")
                           "snapdev::file_contents: the filename of a file_contents object cannot be the empty string."));
     }
     CATCH_END_SECTION()
+
+    CATCH_START_SECTION("file_contents: read from /proc/self/cmd")
+    {
+        snap::file_contents comm("/proc/self/comm");
+        CATCH_REQUIRE(comm.read_all());
+        CATCH_REQUIRE(static_cast<snap::file_contents const &>(comm).contents() == "unittest\n");
+    }
+    CATCH_END_SECTION()
 }
 
 

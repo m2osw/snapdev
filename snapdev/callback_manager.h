@@ -21,11 +21,13 @@
 // self
 //
 #include    <snapdev/is_smart_pointer.h>
+#include    <snapdev/has_member_function.h>
 
 
 // C++ lib
 //
 #include    <algorithm>
+#include    <functional>
 
 
 
@@ -87,6 +89,15 @@ namespace snap
  *
  * Of course, you may use the clear() function as well. However, that is not
  * always what you want.
+ *
+ * \warning
+ * For certain types of functions, the DUPLICATES must be set to `true`,
+ * otherwise the add_callbacks() will fail. This is especially true if you
+ * use std::function or std::bind functions. These do not compare against
+ * nullptr or each others. The solution is to set DUPLICATES to `true`
+ * and not try to use the remove_callback() function. Also, that means
+ * those types of functions can be added to an std::set which requires
+ * the == operator to exist.
  *
  * \tparam C  The type of container to use (std::vector, std::list, ...).
  * \tparam DUPLICATES  Whether duplicates are allowed (true) or not (false).
@@ -152,7 +163,7 @@ class callback_manager
         C callbacks(f_callbacks);
         for(auto c : callbacks)
         {
-            if(!(*c)(args...))
+            if(!std::invoke(c, args...))
             {
                 return false;
             }
@@ -201,6 +212,12 @@ public:
      * object each time, so in most cases, the duplicity test is not really
      * going to work for direct functions.
      *
+     * \note
+     * This version of the add_callback() is used when the DUPLICATES was
+     * set to false. This function checks whether the \p callback being
+     * added is already present in the container. If so, then it does not
+     * get re-added.
+     *
      * \param[in] callback  The callback to be added to the manager.
      *
      * \return true if the callback was added, false otherwise.
@@ -208,7 +225,9 @@ public:
      * \sa remove_callback()
      * \sa call()
      */
-    bool add_callback(typename C::value_type callback)
+    template<bool D = DUPLICATES>
+        typename std::enable_if<!D, bool>::type
+    add_callback(typename C::value_type callback)
     {
         if(callback == nullptr)
         {
@@ -235,6 +254,34 @@ public:
         return true;
     }
 
+    /** \brief Add a callback no matter what.
+     *
+     * This instance of the add_callback() function allows for the addition
+     * of any callback, whether it is a duplicate or not.
+     *
+     * If you are adding direct functions using advance C++ features, such
+     * as std::bind(), then having DUPLICATES set to false is likely to
+     * fail because the std::bind() type has no `operator == ()` that works
+     * on it.
+     *
+     * \tparam D  A copy of the duplicate flag.
+     * \param[in] callback  The callback to be added.
+     *
+     * \return Always true since we cannot verify duplication.
+     */
+    template<bool D = DUPLICATES>
+        typename std::enable_if<D, bool>::type
+    add_callback(typename C::value_type callback)
+    {
+        // insert "at the end" (i.e. for std::set, it doesn't get at the end)
+        //
+        f_callbacks.insert(
+                  f_callbacks.end()
+                , callback);
+
+        return true;
+    }
+
 
     /** \brief Remove a callback.
      *
@@ -251,6 +298,9 @@ public:
      * If duplicity is allowed in your manager, this function only removes
      * the first callback that matches.
      *
+     * \note
+     * The function is not available if the type C::value_type
+     *
      * \param[in] callback  The callback to be removed.
      *
      * \return true if a callback was removed, false otherwise.
@@ -258,6 +308,13 @@ public:
      * \sa add_callback()
      * \sa call()
      */
+    // the following breaks; I think that the has_equal_operator<> doesn't
+    // work correctly at this point...
+    //
+    //template<typename ... ARGS, typename T = C>
+    //typename std::enable_if<std::is_same<T, C>::value
+    //        && snap::has_equal_operator<typename T::value_type>::value
+    //    , bool>::type
     bool remove_callback(typename C::value_type callback)
     {
         auto it(std::find(

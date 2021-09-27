@@ -38,6 +38,7 @@
 // C++ include
 //
 #include    <list>
+#include    <set>
 
 
 // last include
@@ -205,7 +206,7 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
         typedef bool (*callback_t)(int, int, std::string);
         typedef std::list<callback_t> list_t;
 
-        snap::callback_manager<list_t, true> m;
+        snap::callback_manager<list_t, false> m;
 
         CATCH_REQUIRE_FALSE(m.add_callback(nullptr));
         CATCH_REQUIRE(m.add_callback(the_static_callback));
@@ -241,6 +242,38 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
         CATCH_REQUIRE_FALSE(g_called);
         CATCH_REQUIRE(m.call());
         CATCH_REQUIRE(g_called);
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("callback manager: std::bind() function")
+    {
+        class bind
+        {
+        public:
+            typedef std::set<bind> set_t;
+
+            bool my_callback(int param)
+            {
+                g_expected = param;
+
+                return true;
+            }
+
+            int g_expected = -1;
+        };
+
+        bind b;
+
+        auto f(std::bind(&bind::my_callback, &b, 111));
+
+        snap::callback_manager<std::list<decltype(f)>, true> m;
+
+        CATCH_REQUIRE(m.add_callback(f));
+
+        CATCH_REQUIRE(m.call());
+
+        // this is not available in this case
+        //CATCH_REQUIRE(m.remove_callback(f));
     }
     CATCH_END_SECTION()
 }

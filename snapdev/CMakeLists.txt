@@ -36,6 +36,7 @@ install(
         empty_set_intersection.h
         file_contents.h
         glob_to_list.h
+        has_member_function.h
         hexadecimal_string.h
         init_structure.h
         is_smart_pointer.h

@@ -143,7 +143,7 @@ CATCH_TEST_CASE("tokenize_string", "[string]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("generate tokens: comma separated, remove empty and trim")
+    CATCH_START_SECTION("generate tokens: arrow (string) separated, remove empty and trim")
     {
         std::vector<std::string> tokens;
         CATCH_REQUIRE(snap::tokenize_string(
