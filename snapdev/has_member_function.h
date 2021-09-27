@@ -18,11 +18,6 @@
 // 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
-// self
-//
-//#include    <snapdev/has_member_function.h>
-
-
 // C++ lib
 //
 #include    <algorithm>
@@ -34,6 +29,12 @@ namespace snap
 {
 
 
+// the following is based on answers from:
+// https://stackoverflow.com/questions/6534041/how-to-check-whether-operator-exists
+//
+// however, at this point all the answers seem too specialized to make them
+// work consistently; right now, these classes do not work as expected...
+//
 template<typename T, typename M, typename ... A>
 class has_member_function
 {
