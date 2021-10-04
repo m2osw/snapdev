@@ -18,11 +18,20 @@
 // 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
-#include "snapdev/reverse_cstring.h"
+// self
+//
+#include    "snapdev/reverse_cstring.h"
 
-#include <string>
+
+// C++ lib
+//
+#include    <string>
+
+
 
 namespace snap
+{
+namespace pathinfo
 {
 
 
@@ -47,7 +56,7 @@ namespace snap
  * \return The basename of \p path.
  */
 template<class StringT>
-StringT string_pathinfo_basename(StringT const & path
+StringT basename(StringT const & path
                                , typename std::decay<StringT>::type const & suffix = ""
                                , typename std::decay<StringT>::type const & prefix = "")
 {
@@ -87,6 +96,68 @@ StringT string_pathinfo_basename(StringT const & path
 }
 
 
+/** \brief Replace the suffix with another.
+ *
+ * This function checks whether a file ends with a given suffix. If so then
+ * the existing suffix gets removed. Then it happens the new suffix.
+ *
+ * The function is not checking whether a suffix starts with a period.
+ * It can include any other character.
+ *
+ * \code
+ *     // the following expressions return true
+ *     snap::string_pathinfo_replace_suffix(
+ *                "/usr/share/snapwebsites/replace.cpp"
+ *              , ".cpp"
+ *              , ".h") == "/usr/share/snapwebsites/replace.h"
+ *
+ *     snap::string_pathinfo_replace_suffix(
+ *                "/usr/share/snapwebsites/replace"
+ *              , ".cpp"
+ *              , ".h") == "/usr/share/snapwebsites/replace.h"
+ * \endcode
+ *
+ * \note
+ * By default, the \p new_suffix parameter is set to the empty string.
+ * This means the function can be used to trim the string from
+ * \p old_suffix.
+ *
+ * \todo
+ * Add a function which supports an array of \p old_suffix.
+ *
+ * \tparam StringT  The type of string to parse.
+ * \param[in] path  The path from which to replace a suffix.
+ * \param[in] old_suffix  If the path ends with that suffix, remove it.
+ * \param[in] new_suffix  Append this suffix.
+ * \param[in] no_change_on_missing  If old_suffix is missing, do not change
+ * the \t path.
+ *
+ * \return \p path with its suffix replaced as defined above.
+ */
+template<class StringT>
+StringT replace_suffix(
+          StringT const & path
+        , typename std::decay<StringT>::type const & old_suffix
+        , typename std::decay<StringT>::type const & new_suffix = ""
+        , bool no_change_on_missing = false)
+{
+    // TODO: with C++20 we could use:   path.ends_with(old_suffix)
+    //
+    if(path.length() >= old_suffix.length()
+    && path.c_str() + path.length() - old_suffix.length() == old_suffix)
+    {
+        return path.substr(0, path.length() - old_suffix.length()) + new_suffix;
+    }
+
+    if(no_change_on_missing)
+    {
+        return path;
+    }
+
+    return path + new_suffix;
+}
+
+
 /** \brief Retrieve the directory name of a path.
  *
  * This function retrieves the directory name of a path. The returned path
@@ -104,7 +175,7 @@ StringT string_pathinfo_basename(StringT const & path
  * \return The directory name of \p path.
  */
 template < class StringT >
-StringT string_pathinfo_dirname(StringT const & path)
+StringT dirname(StringT const & path)
 {
     typename StringT::size_type pos(path.find_last_of('/'));
     if(pos == StringT::npos)
@@ -125,5 +196,6 @@ StringT string_pathinfo_dirname(StringT const & path)
     }
 }
 
+} // namespace pathinfo
 } // namespace snap
 // vim: ts=4 sw=4 et

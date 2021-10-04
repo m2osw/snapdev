@@ -40,6 +40,7 @@ if(Catch2_FOUND)
         catch_log2.cpp
         catch_matrix.cpp
         catch_mkdir_p.cpp
+        catch_pathinfo.cpp
         catch_timespec_operations.cpp
         catch_tokenize_string.cpp
         catch_trim_string.cpp
