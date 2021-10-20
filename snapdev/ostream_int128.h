@@ -43,13 +43,13 @@ namespace snap
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-std::string __attribute__((optimize("-fno-strict-overflow"))) to_string(__int128 x)
+std::string to_string(__int128 x)
 {
     char buf[42];
 
     int idx(sizeof(buf));
     unsigned __int128 y(x < 0
-        ? static_cast<unsigned __int128>(-x)
+        ? -static_cast<unsigned __int128>(x)
         : static_cast<unsigned __int128>(x));
     constexpr unsigned __int128 const limit(9);
     while(y > limit)

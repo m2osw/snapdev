@@ -29,7 +29,7 @@
 
 #include    <snapdev/file_contents.h>
 #include    <snapdev/raii_generic_deleter.h>
-#include    <snapdev/string_pathinfo.h>
+#include    <snapdev/pathinfo.h>
 
 #include    "catch_main.h"
 
@@ -84,7 +84,7 @@ CATCH_TEST_CASE("mkdir_p", "[os]")
 
         // the last directory needs to be 0700
         //
-        std::string const basename(snap::string_pathinfo_dirname(filename));
+        std::string const basename(snap::pathinfo::dirname(filename));
         CATCH_REQUIRE(stat(basename.c_str(), &st) == 0);
         CATCH_REQUIRE(S_ISDIR(st.st_mode));
         CATCH_REQUIRE((st.st_mode & 0777) == 0700);
@@ -117,7 +117,7 @@ CATCH_TEST_CASE("mkdir_p", "[os]")
 
         // the last directory needs to be 0700
         //
-        std::string const basename(snap::string_pathinfo_dirname(filename));
+        std::string const basename(snap::pathinfo::dirname(filename));
         struct stat st;
         CATCH_REQUIRE(stat(basename.c_str(), &st) == 0);
         bool is_dir(S_ISDIR(st.st_mode));

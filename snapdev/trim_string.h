@@ -38,8 +38,9 @@
 
 // C++ lib
 //
-#include    <string>
 #include    <algorithm>
+#include    <cwctype>
+#include    <string>
 
 
 
