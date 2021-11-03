@@ -36,6 +36,7 @@ if(SNAPCATCH2_FOUND)
         catch_callback_manager.cpp
         catch_change_owner.cpp
         catch_file_contents.cpp
+        catch_hexadecimal_string.cpp
         catch_int128.cpp
         catch_log2.cpp
         catch_matrix.cpp

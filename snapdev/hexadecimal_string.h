@@ -21,12 +21,13 @@
 
 // libexcept lib
 //
-#include "libexcept/exception.h"
+#include    "libexcept/exception.h"
 
 
 // C++ lib
 //
-#include <algorithm>
+#include    <algorithm>
+#include    <climits>
 
 
 
@@ -34,10 +35,67 @@ namespace snap
 {
 
 
-DECLARE_MAIN_EXCEPTION(string_exception);
+DECLARE_MAIN_EXCEPTION(hexadecimal_string_exception);
 
-DECLARE_EXCEPTION(string_exception, string_invalid_parameter);
+DECLARE_OUT_OF_RANGE(hexadecimal_string_out_of_range);
 
+DECLARE_EXCEPTION(hexadecimal_string_exception, hexadecimal_string_invalid_parameter);
+
+
+
+/** \brief Check whether character is an hexadecimal digit.
+ *
+ * This function checks whether the given \p c character represents
+ * an hexadecimal digit.
+ *
+ * The function accepts upper and lower case characters (A-F or a-f)
+ * as the same set of digits.
+ *
+ * \rparam charT  The type of character to be tested.
+ * \param[in] c  The character to be tested.
+ *
+ * \return true if the the character represents an hexadecimal digit.
+ */
+template<class charT>
+bool is_hexdigit(charT c)
+{
+    return (c >= '0' && c <= '9')
+        || (c >= 'a' && c <= 'f')
+        || (c >= 'A' && c <= 'F');
+}
+
+
+/** \brief Convert an hexadecimal character in a number.
+ *
+ * This function converts an hexadecimal character that represents a valid
+ * digit in an integer.
+ *
+ * \exception hexadecimal_string_invalid_parameter
+ * If the input is not a valid hexadecimal character, then this error is
+ * raised.
+ *
+ * \tparam charT  The type of the character (char, char32_t, etc.)
+ * \param[in] c  The character to convert to a number.
+ *
+ * \return The converted character as an integer.
+ */
+template<class charT>
+int hexdigit_to_number(charT c)
+{
+    if(c >= '0' && c <= '9')
+    {
+        return c - '0';
+    }
+    if(c >= 'a' && c <= 'f')
+    {
+        return c - ('a' - 10);
+    }
+    if(c >= 'A' && c <= 'F')
+    {
+        return c - ('A' - 10);
+    }
+    throw hexadecimal_string_invalid_parameter("the input character is not an hexadecimal digit.");
+}
 
 
 /** \brief Transform a binary string to hexadecimal.
@@ -89,7 +147,10 @@ inline std::string bin_to_hex(std::string const & binary)
  *
  * The output will be exactly half the size of the input.
  *
- * \exception string_invalid_parameter
+ * \note
+ * The output is saved in a string in big endian format.
+ *
+ * \exception hexadecimal_string_invalid_parameter
  * If the input string is not considered valid, then this exception is
  * raised. To be valid every single character must be an hexadecimal
  * digit (0-9, a-f, A-F) and the length of the string must be even.
@@ -104,51 +165,13 @@ inline std::string hex_to_bin(std::string const & hex)
 
     if((hex.length() & 1) != 0)
     {
-        throw string_invalid_parameter("the hex parameter must have an even size");
+        throw hexadecimal_string_invalid_parameter("the hex parameter must have an even size.");
     }
 
     for(char const * s(hex.c_str()); *s != '\0'; s += 2)
     {
-        int value(0);
-
-        // first digit
-        //
-        if(s[0] >= '0' && s[0] <= '9')
-        {
-            value = (s[0] - '0') * 16;
-        }
-        else if(s[0] >= 'a' && s[0] <= 'f')
-        {
-            value = (s[0] - 'a' + 10) * 16;
-        }
-        else if(s[0] >= 'A' && s[0] <= 'F')
-        {
-            value = (s[0] - 'A' + 10) * 16;
-        }
-        else
-        {
-            throw string_invalid_parameter("the hex parameter must only contain valid hexadecimal digits");
-        }
-
-        // second digit
-        //
-        if(s[1] >= '0' && s[1] <= '9')
-        {
-            value += s[1] - '0';
-        }
-        else if(s[1] >= 'a' && s[1] <= 'f')
-        {
-            value += s[1] - 'a' + 10;
-        }
-        else if(s[1] >= 'A' && s[1] <= 'F')
-        {
-            value += s[1] - 'A' + 10;
-        }
-        else
-        {
-            throw string_invalid_parameter("the hex parameter must only contain valid hexadecimal digits");
-        }
-
+        char value = static_cast<char>(hexdigit_to_number(s[0]) * 16
+                                     + hexdigit_to_number(s[1]));
         result.push_back(value);
     }
 
@@ -163,37 +186,99 @@ inline std::string hex_to_bin(std::string const & hex)
  * The output string is optimized to not include any unnecessary leading
  * zeroes.
  *
+ * The input value is considered to be positive or zero. Negative numbers
+ * are viewed as their unsigned corresponding number (i.e. if the input
+ * is an int32_t is viewed as uint32_t).
+ *
  * \note
  * The function does not add an introducer (so no "0x" at the start of
  * the resulting string).
  *
  * \tparam T  The type of integer to convert to a string.
  * \param[in] value  The input integer to convert.
+ * \param[in] uppercase  Whether to use upper (true) or lower (false) case
+ * letters for the hexadecimal digits A to F.
+ * \param[in] width  The minimum width (prepend '0' to reach this width).
  *
  * \return The hexademical representation of the input integer.
  */
 template<class T>
-inline std::string int_to_hex(T value)
+inline std::string int_to_hex(
+      T value
+    , bool uppercase = false
+    , std::uint32_t width = 1)
 {
-    // special case, without this, we'd get an empty string for zero
-    //
-    if(value == 0)
-    {
-        return std::string("0");
-    }
+    typedef typename std::make_unsigned<T>::type unsigned_value_t;
 
     char buf[sizeof(T) * 2 + 1];
     char * d(buf + sizeof(T) * 2);
+    char const * const e(d);
     *d = '\0';
 
-    for(; value != 0; value >>= 4)
+    char const letter_digit(uppercase ? 'A' - 10 : 'a' - 10);
+
+    for(unsigned_value_t unsigned_value(value);
+        unsigned_value != 0;
+        unsigned_value >>= 4)
     {
         --d;
-        int const v(value & 15);
-        *d = v < 10 ? v + '0' : v + ('a' - 10);
+        int const v(unsigned_value & 15);
+        *d = v < 10 ? v + '0' : v + letter_digit;
+    }
+
+    if(*d == '\0')
+    {
+        --d;
+        *d = '0';
+    }
+
+    if(width > sizeof(buf) - 1)
+    {
+        width = sizeof(buf) - 1;
+    }
+    while(e - d < width)
+    {
+        --d;
+        *d = '0';
     }
 
     return std::string(d);
+}
+
+
+/** \brief Convert a string to an integer.
+ *
+ * This function converts a string that represents an hexadecimal number
+ * in an integer.
+ *
+ * \exception out_of_range
+ * If the number is too large for the integer, then this exception is
+ * raised.
+ *
+ * \exception hexadecimal_string_invalid_parameter
+ * If the input string is not considered valid, then this exception is
+ * raised. To be valid every single character must be an hexadecimal
+ * digit (0-9, a-f, A-F) and the length of the string must be even.
+ *
+ * \tparam T  The type of integer to return.
+ * \param[in] hex  The hexadecimal string to be converted.
+ *
+ * \return The converted \p hex parameter as an integer.
+ */
+template<class T>
+T hex_to_int(std::string const & hex)
+{
+    T value(0);
+    for(auto const c : hex)
+    {
+        if((value >> (sizeof(T) * CHAR_BIT - 4)) != 0)
+        {
+            throw hexadecimal_string_out_of_range("input string has an hexadecimal number which is too large for the output integer type.");
+        }
+        value *= 16;
+        value += hexdigit_to_number(c);
+    }
+    return value;
 }
 
 
