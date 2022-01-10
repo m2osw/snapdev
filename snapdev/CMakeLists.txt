@@ -1,4 +1,4 @@
-# Copyright (c) 2006-2021  Made to Order Software Corp.  All Rights Reserved.
+# Copyright (c) 2006-2022  Made to Order Software Corp.  All Rights Reserved.
 #
 # https://snapwebsites.org/project/snapdev
 # contact@m2osw.com
@@ -57,6 +57,7 @@ install(
         qcaseinsensitivestring.h
         raii_generic_deleter.h
         reverse_cstring.h
+        safe_assert.h
         safe_setenv.h
         safe_variable.h
         string_replace_many.h

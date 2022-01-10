@@ -1,4 +1,4 @@
-# Copyright (c) 2006-2021  Made to Order Software Corp.  All Rights Reserved
+# Copyright (c) 2006-2022  Made to Order Software Corp.  All Rights Reserved
 #
 # https://snapwebsites.org/project/snapdev
 # contact@m2osw.com
@@ -33,6 +33,7 @@ if(SNAPCATCH2_FOUND)
     add_executable(${PROJECT_NAME}
         catch_main.cpp
 
+        catch_assert.cpp
         catch_callback_manager.cpp
         catch_change_owner.cpp
         catch_file_contents.cpp
@@ -50,8 +51,6 @@ if(SNAPCATCH2_FOUND)
 
     target_include_directories(${PROJECT_NAME}
         PUBLIC
-            ${CMAKE_BINARY_DIR}
-            ${PROJECT_SOURCE_DIR}
             ${CATCH_INCLUDE_DIR}
             ${LIBEXCEPT_INCLUDE_DIRS}
     )
