@@ -1,4 +1,4 @@
-// Copyright (c) 2021  Made to Order Software Corp.  All Rights Reserved
+// Copyright (c) 2021-2022  Made to Order Software Corp.  All Rights Reserved
 //
 // https://snapwebsites.org/project/snapdev
 // contact@m2osw.com
@@ -467,12 +467,12 @@ inline bool operator >= (timespec const & lhs, double rhs)
  *
  * \return A reference to the basic_ostream object.
  */
-template<class E, class S>
-std::basic_ostream<E, S> & operator << (std::basic_ostream<E, S> & out, timespec const & t)
+template<typename CharT, typename Traits>
+std::basic_ostream<CharT, Traits> & operator << (std::basic_ostream<CharT, Traits> & out, timespec const & t)
 {
     // write to a string buffer first
     //
-    std::basic_ostringstream<E, S, std::allocator<E> > s;
+    std::basic_ostringstream<CharT, Traits, std::allocator<CharT> > s;
 
     // setup the string output like the out stream
     //

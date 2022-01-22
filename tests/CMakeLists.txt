@@ -17,14 +17,14 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-# Note that when user does not have Catch then this does not get included
-# in the final output
-#
+##
+## SnapDev Unit Tests
+##
 project(unittest)
 
 find_package(SnapCatch2)
 
-if(SNAPCATCH2_FOUND)
+if(SnapCatch2_FOUND)
 
     add_definitions(
         -DCATCH_CONFIG_PREFIX_ALL
@@ -51,20 +51,21 @@ if(SNAPCATCH2_FOUND)
 
     target_include_directories(${PROJECT_NAME}
         PUBLIC
-            ${CATCH_INCLUDE_DIR}
+            ${SNAPCATCH2_INCLUDE_DIRS}
             ${LIBEXCEPT_INCLUDE_DIRS}
     )
 
     target_link_libraries(${PROJECT_NAME}
-        ${LIBEXCEPT_LIBRARY}
+        ${LIBEXCEPT_LIBRARIES}
+        ${SNAPCATCH2_LIBRARIES}
     )
 
     add_test(unitest ${PROJECT_NAME})
 
-else(SNAPCATCH2_FOUND)
+else(SnapCatch2_FOUND)
 
     message("snapcatch2 not found... no test will be built.")
 
-endif(SNAPCATCH2_FOUND)
+endif(SnapCatch2_FOUND)
 
 # vim: ts=4 sw=4 et
