@@ -39,6 +39,7 @@ install(
         has_member_function.h
         hexadecimal_string.h
         init_structure.h
+        int128_literal.h
         is_smart_pointer.h
         is_string_literal.h
         join_strings.h
