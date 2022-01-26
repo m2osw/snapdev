@@ -43,6 +43,7 @@ CATCH_TEST_CASE("safe_assert", "[foo]")
     {
         constexpr bool valid(true);
         snap::SAFE_ASSERT(valid, "this works");
+        CATCH_REQUIRE(valid);
     }
     CATCH_END_SECTION()
 
@@ -51,6 +52,7 @@ CATCH_TEST_CASE("safe_assert", "[foo]")
     {
         constexpr bool invalid(false);
         snap::SAFE_ASSERT(invalid, "this \"passes\"", ", but really it's not compiled in in Release mode");
+        CATCH_REQUIRE_FALSE(valid);
     }
     CATCH_END_SECTION()
 #endif
