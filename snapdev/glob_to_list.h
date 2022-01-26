@@ -32,16 +32,346 @@
 
 // C++ lib
 //
+#include    <list>
 #include    <memory>
+#include    <set>
 
 
 // C lib
 //
 #include    <glob.h>
+#include    <limits.h>
+#include    <stdlib.h>
+#include    <sys/stat.h>
 
 
 namespace snap
 {
+
+
+/** \brief An object that holds the information about the file being loaded.
+ *
+ * In order to only read certain types of files (such as directories),
+ * we have to get the lstat()'s. This object represents one file found
+ * in the directory with it's lstat()'s.
+ *
+ * Note that since we use lstat() you get the statistics about the very
+ * file named in the object, not the target of the symbolic link.
+ */
+class file
+{
+public:
+    file(std::string const & filename)
+        : f_filename(filename)
+    {
+    }
+
+    std::string const & filename() const
+    {
+        return f_filename;
+    }
+
+    bool exists() const
+    {
+        load_stats();
+        return f_stat_loaded;
+    }
+
+    bool is_symbolic_link() const
+    {
+        if(exists())
+        {
+            return S_ISLNK(f_stat.st_mode);
+        }
+        return false;
+    }
+
+    bool is_regular_file() const
+    {
+        if(exists())
+        {
+            return S_ISREG(f_stat.st_mode);
+        }
+        return false;
+    }
+
+    bool is_directory() const
+    {
+        if(exists())
+        {
+            return S_ISDIR(f_stat.st_mode);
+        }
+        return false;
+    }
+
+    bool is_character() const
+    {
+        if(exists())
+        {
+            return S_ISCHR(f_stat.st_mode);
+        }
+        return false;
+    }
+
+    bool is_block() const
+    {
+        if(exists())
+        {
+            return S_ISBLK(f_stat.st_mode);
+        }
+        return false;
+    }
+
+    bool is_fifo() const
+    {
+        if(exists())
+        {
+            return S_ISFIFO(f_stat.st_mode);
+        }
+        return false;
+    }
+
+    bool is_socket() const
+    {
+        if(exists())
+        {
+            return S_ISSOCK(f_stat.st_mode);
+        }
+        return false;
+    }
+
+    int is_uid() const
+    {
+        if(exists())
+        {
+            return (f_stat.st_mode & S_ISUID) != 0;
+        }
+        return 0;
+    }
+
+    int is_gid() const
+    {
+        if(exists())
+        {
+            return (f_stat.st_mode & S_ISGID) != 0;
+        }
+        return 0;
+    }
+
+    int is_vtx() const
+    {
+        if(exists())
+        {
+            return (f_stat.st_mode & S_ISVTX) != 0;
+        }
+        return 0;
+    }
+
+    int permissions() const
+    {
+        if(exists())
+        {
+            return f_stat.st_mode & 0777;
+        }
+        return 0;
+    }
+
+    uid_t uid() const
+    {
+        if(exists())
+        {
+            return f_stat.st_uid;
+        }
+        return -1;
+    }
+
+    gid_t gid() const
+    {
+        if(exists())
+        {
+            return f_stat.st_gid;
+        }
+        return -1;
+    }
+
+    gid_t size() const
+    {
+        if(exists())
+        {
+            return f_stat.st_size;
+        }
+        return -1;
+    }
+
+    bool target_exists() const
+    {
+        load_target_stats();
+        return f_target_stat_loaded;
+    }
+
+    bool is_target_symbolic_link() const
+    {
+        if(target_exists())
+        {
+            return S_ISLNK(f_target_stat.st_mode);
+        }
+        return false;
+    }
+
+    bool is_target_regular_file() const
+    {
+        if(target_exists())
+        {
+            return S_ISREG(f_target_stat.st_mode);
+        }
+        return false;
+    }
+
+    bool is_target_directory() const
+    {
+        if(target_exists())
+        {
+            return S_ISDIR(f_target_stat.st_mode);
+        }
+        return false;
+    }
+
+    bool is_target_character() const
+    {
+        if(target_exists())
+        {
+            return S_ISCHR(f_target_stat.st_mode);
+        }
+        return false;
+    }
+
+    bool is_target_block() const
+    {
+        if(target_exists())
+        {
+            return S_ISBLK(f_target_stat.st_mode);
+        }
+        return false;
+    }
+
+    bool is_target_fifo() const
+    {
+        if(target_exists())
+        {
+            return S_ISFIFO(f_target_stat.st_mode);
+        }
+        return false;
+    }
+
+    bool is_target_socket() const
+    {
+        if(target_exists())
+        {
+            return S_ISSOCK(f_target_stat.st_mode);
+        }
+        return false;
+    }
+
+    int is_target_uid() const
+    {
+        if(target_exists())
+        {
+            return (f_target_stat.st_mode & S_ISUID) != 0;
+        }
+        return 0;
+    }
+
+    int is_target_gid() const
+    {
+        if(target_exists())
+        {
+            return (f_target_stat.st_mode & S_ISGID) != 0;
+        }
+        return 0;
+    }
+
+    int is_target_vtx() const
+    {
+        if(target_exists())
+        {
+            return (f_target_stat.st_mode & S_ISVTX) != 0;
+        }
+        return 0;
+    }
+
+    int target_permissions() const
+    {
+        if(target_exists())
+        {
+            return f_target_stat.st_mode & 0777;
+        }
+        return 0;
+    }
+
+    uid_t target_uid() const
+    {
+        if(target_exists())
+        {
+            return f_target_stat.st_uid;
+        }
+        return -1;
+    }
+
+    gid_t target_gid() const
+    {
+        if(target_exists())
+        {
+            return f_target_stat.st_gid;
+        }
+        return -1;
+    }
+
+    gid_t target_size() const
+    {
+        if(target_exists())
+        {
+            return f_target_stat.st_size;
+        }
+        return -1;
+    }
+
+private:
+    void load_stats() const
+    {
+        if(f_stat_loaded)
+        {
+            return;
+        }
+
+        if(lstat(f_filename.c_str(), &f_stat) != 0)
+        {
+            return;
+        }
+
+        f_stat_loaded = true;
+    }
+
+    void load_target_stats() const
+    {
+        if(f_target_stat_loaded)
+        {
+            return;
+        }
+
+        if(stat(f_filename.c_str(), &f_target_stat) != 0)
+        {
+            return;
+        }
+
+        f_target_stat_loaded = true;
+    }
+
+    std::string         f_filename = std::string();
+    mutable struct stat f_stat = {};
+    mutable struct stat f_target_stat = {};
+    mutable bool        f_stat_loaded = false;
+    mutable bool        f_target_stat_loaded = false;
+};
 
 
 /** \brief A smart pointer to auto-delete glob results.
@@ -104,20 +434,25 @@ typedef std::unique_ptr<glob_t, raii_pointer_deleter<glob_t, decltype(&::globfre
 
 enum class glob_to_list_flag_t
 {
+    GLOB_FLAG_NONE,               // not a flag, useful in case you need a value for ?:
     GLOB_FLAG_BRACE,              // allow {a,b,c}...
     GLOB_FLAG_IGNORE_ERRORS,      // read as much as possible
     GLOB_FLAG_MARK_DIRECTORY,     // add "/" to directory names
     GLOB_FLAG_NO_ESCAPE,          // ignore '\'
     GLOB_FLAG_ONLY_DIRECTORIES,   // only return directories
     GLOB_FLAG_PERIOD,             // allow period at the start (i.e. pattern ".*")
-    GLOB_FLAG_TILDE               // transform "~/..." with "$HOME/..."
+    GLOB_FLAG_TILDE,              // transform "~/..." with "$HOME/..."
+    GLOB_FLAG_RECURSIVE,          // when a directory is found, read it too
+    GLOB_FLAG_FOLLOW_SYMLINK,     // in recursive mode, do or do not follow symlinks
 };
 
 
 /** \brief Manage the results of glob() calls.
  *
  * This template is able to call glob() and insert the results to your
- * class.
+ * container object. If the type of the container is std::string, then
+ * only the filenames are returned. If the type is set to a snap::file,
+ * then the function returns a set of snap::file objects.
  *
  * The supported flags allow for selecting which files to ignore. By
  * default, files that start with a period (.) are ignored.
@@ -137,6 +472,11 @@ enum class glob_to_list_flag_t
  *     }
  * \endcode
  *
+ * \warning
+ * The class is not multithread safe. The glob() function makes use of a
+ * global variable to report errors so there is no way at this point to
+ * make it safe (without a \em service like implementation).
+ *
  * \tparam C  The type of the container where to add the filenames.
  * \tparam T  The type used for the filenames (C<T>).
  */
@@ -144,6 +484,9 @@ template<typename C>
 class glob_to_list
     : public C
 {
+private:
+    typedef std::set<std::string>   directories_t;
+
 public:
     typedef C                       container_t;
 
@@ -154,6 +497,19 @@ public:
      * The \p path variable is expected to include a path with glob() like
      * patterns (i.e. `*.txt`, `0?.mp3`, etc.)
      *
+     * Note that the glob()-ing is done on the entire path. However, only
+     * the last part (after the last slash) is used in case you use the
+     * GLOB_FLAG_RECURSIVE. Note that in recursive mode, the directories
+     * will always be read since we have to recurse through them.
+     *
+     * \remarks
+     * This implementation is not multithread safe. Make sure to use this
+     * function in a part of your code which is locked.
+     *
+     * \todo
+     * Add a read_path() which supports dynamic flags.
+     *
+     * \tparam args  A list of one or more glob to list flags.
      * \param[in] path  The path with glob patterns.
      *
      * \return true if no error occurred.
@@ -161,8 +517,219 @@ public:
     template<glob_to_list_flag_t ...args>
     bool read_path(std::string const & path)
     {
-        int const flags = GLOB_NOSORT;// | flags_merge<args...>();
+        f_recursive = false;
+        f_follow_symlinks = false;
+        int const flags = GLOB_NOSORT | flags_merge<args...>();
 
+        if(!f_recursive)
+        {
+            return read_directory(path, flags);
+        }
+
+        // in recursive mode we want to collect the list of directories
+        // along whatever the user wants to collect and then process
+        // those directories as well; this also requires us to retrieve
+        // the pattern (last segment) first as the actual pattern
+        //
+        directories_t visited;
+        std::string::size_type const pos(path.rfind('/'));
+        if(pos == std::string::npos)
+        {
+            // no directory in the path, only a pattern
+            //
+            return recursive_read_path(
+                          get_real_path(".")
+                        , path
+                        , flags
+                        , visited);
+        }
+        else
+        {
+            return recursive_read_path(
+                          get_real_path(path.substr(0, pos))
+                        , path.substr(pos + 1)
+                        , flags
+                        , visited);
+        }
+    }
+
+    /** \brief Convert the input \p path in a canonicalized path.
+     *
+     * This function goes through the specified \p path and canonicalize
+     * it. This means:
+     *
+     * * removing any "/./"
+     * * removing any "/../"
+     * * replacing softlinks with the target path
+     *
+     * The resulting path is likely going to be a full path.
+     *
+     * \note
+     * If the input path is an empty string (equivalent to ".") then the
+     * result may also be the empty string even though no errors would have
+     * happened.
+     *
+     * \param[in] path  The path to canonicalize.
+     *
+     * \return The canonicalized version of \p path or an empty string on error.
+     */
+    std::string get_real_path(std::string const & path)
+    {
+        char buf[PATH_MAX + 1];
+        buf[PATH_MAX] = '\0';
+        if(realpath(path.c_str(), buf) != buf)
+        {
+            // it failed
+            //
+            f_last_error_errno = errno;
+            f_last_error_path = path;
+            switch(f_last_error_errno)
+            {
+            case EACCES:
+                f_last_error_message = "realpath() is missing permission to read or search a component of the path.";
+                break;
+
+            case EIO:
+                f_last_error_message = "realpath() had I/O issues while searching.";
+                break;
+
+            case ELOOP:
+                f_last_error_message = "realpath() found too many symbolic links.";
+                break;
+
+            case ENAMETOOLONG:
+                f_last_error_message = "realpath() output buffer too small for path.";
+                break;
+
+            case ENOENT:
+                f_last_error_message = "realpath() could not find the specified file.";
+                break;
+
+            case ENOMEM:
+                f_last_error_message = "realpath() could not allocate necessary memory.";
+                break;
+
+            case ENOTDIR:
+                f_last_error_message = "realpath() found a file instead of a directory within the path.";
+                break;
+
+            default:
+                f_last_error_message = "realpath() failed.";
+                break;
+
+            }
+            return std::string();
+        }
+        return buf;
+    }
+
+    /** \brief The last error message.
+     *
+     * Whenever a call fails, it saves an error message here.
+     *
+     * The error message is whatever represents the error best from our
+     * point of view.
+     *
+     * \note
+     * Error messages get overwritten so you must call this function
+     * before calling another function to not lose intermediate messages.
+     *
+     * \return The last error message.
+     */
+    std::string get_last_error_message() const
+    {
+        return f_last_error_message;
+    }
+
+    /** \brief The last error path.
+     *
+     * The path that generated the error. In most cases, this is the input
+     * path you specified, with the pattern still intact. When using the
+     * recursive feature, the path will be the path of the directory that
+     * is currently being handled.
+     *
+     * \return The path that generated the error.
+     */
+    std::string get_last_error_path() const
+    {
+        return f_last_error_path;
+    }
+
+    /** \brief Retrieve the last error number.
+     *
+     * Whenever an error occurs with a system function, the errno value
+     * gets saved in the "last error errno" variable which can then be
+     * retrieved using this function. This should be used instead of
+     * trying to understand the error message which is expected to only
+     * be used for human consumption.
+     *
+     * \return The last error errno value.
+     */
+    int get_last_error_errno() const
+    {
+        return f_last_error_errno;
+    }
+
+private:
+    template<class none = void>
+    constexpr int flags_merge()
+    {
+        return 0;
+    }
+
+    template<glob_to_list_flag_t flag, glob_to_list_flag_t ...args>
+    constexpr int flags_merge()
+    {
+        switch(flag)
+        {
+        case glob_to_list_flag_t::GLOB_FLAG_NONE:
+            return GLOB_ONLYDIR | flags_merge<args...>();
+
+        case glob_to_list_flag_t::GLOB_FLAG_BRACE:
+            return GLOB_BRACE | flags_merge<args...>();
+
+        case glob_to_list_flag_t::GLOB_FLAG_IGNORE_ERRORS:
+            return GLOB_ERR | flags_merge<args...>();
+
+        case glob_to_list_flag_t::GLOB_FLAG_MARK_DIRECTORY:
+            return GLOB_MARK | flags_merge<args...>();
+
+        case glob_to_list_flag_t::GLOB_FLAG_NO_ESCAPE:
+            return GLOB_NOESCAPE | flags_merge<args...>();
+
+        case glob_to_list_flag_t::GLOB_FLAG_ONLY_DIRECTORIES:
+            return GLOB_ONLYDIR | flags_merge<args...>();
+
+        case glob_to_list_flag_t::GLOB_FLAG_PERIOD:
+            return GLOB_PERIOD | flags_merge<args...>();
+
+        case glob_to_list_flag_t::GLOB_FLAG_TILDE:
+            return GLOB_TILDE_CHECK | flags_merge<args...>();
+
+        case glob_to_list_flag_t::GLOB_FLAG_RECURSIVE:
+            f_recursive = true;
+            return flags_merge<args...>();
+
+        case glob_to_list_flag_t::GLOB_FLAG_FOLLOW_SYMLINK:
+            f_follow_symlinks = true;
+            return flags_merge<args...>();
+
+        }
+
+        throw std::logic_error("unimplemented GLOB_FLAG_... in flags_merge()");
+    }
+
+    static int glob_err_callback(char const * p, int e)
+    {
+        g_self->f_last_error_message = "caught an error while reading a directory.";
+        g_self->f_last_error_path = p;
+        g_self->f_last_error_errno = e;
+
+        return 0;
+    }
+
+    bool read_directory(std::string const & path, int const flags)
+    {
         glob_t dir = glob_t();
         g_self = this;
         int const r(glob(path.c_str(), flags, glob_err_callback, &dir));
@@ -200,6 +767,7 @@ public:
                 f_last_error_message = "glob(\""
                         + path
                         + "\") could not find any files matching the pattern.";
+                f_last_error_errno = ENOENT;
                 break;
 
             default:
@@ -218,66 +786,89 @@ public:
         return true;
     }
 
-    std::string get_last_error_message() const
+    bool recursive_read_path(
+          std::string const & path
+        , std::string const & pattern
+        , int flags
+        , directories_t & visited)
     {
-        return f_last_error_message;
-    }
-
-    std::string get_last_error_path() const
-    {
-        return f_last_error_path;
-    }
-
-    int get_last_error_errno() const
-    {
-        return f_last_error_errno;
-    }
-
-private:
-    template<class none = void>
-    constexpr int flags_merge()
-    {
-        return 0;
-    }
-
-    template<glob_to_list_flag_t flag, glob_to_list_flag_t ...args>
-    constexpr int flags_merge()
-    {
-        switch(flag)
+        // (1) read client's files in path
+        //
+        if(!read_directory(path + '/' + pattern, flags))
         {
-        case glob_to_list_flag_t::GLOB_FLAG_BRACE:
-            return GLOB_BRACE | flags_merge<args...>();
-
-        case glob_to_list_flag_t::GLOB_FLAG_IGNORE_ERRORS:
-            return GLOB_ERR | flags_merge<args...>();
-
-        case glob_to_list_flag_t::GLOB_FLAG_MARK_DIRECTORY:
-            return GLOB_MARK | flags_merge<args...>();
-
-        case glob_to_list_flag_t::GLOB_FLAG_NO_ESCAPE:
-            return GLOB_NOESCAPE | flags_merge<args...>();
-
-        case glob_to_list_flag_t::GLOB_FLAG_ONLY_DIRECTORIES:
-            return GLOB_ONLYDIR | flags_merge<args...>();
-
-        case glob_to_list_flag_t::GLOB_FLAG_PERIOD:
-            return GLOB_PERIOD | flags_merge<args...>();
-
-        case glob_to_list_flag_t::GLOB_FLAG_TILDE:
-            return GLOB_TILDE_CHECK | flags_merge<args...>();
-
+            if(f_last_error_errno != ENOENT)
+            {
+                return false;
+            }
         }
 
-        throw std::logic_error("unimplemented GLOB_FLAG_... in flags_merge()");
-    }
+        // (2) find child directories
+        //
+        typedef std::list<file> dir_list_t;
+        glob_to_list<dir_list_t> sub_dirs;
+        bool success(false);
+        if((flags & GLOB_ERR) != 0)
+        {
+            success = sub_dirs.read_path<
+                  glob_to_list_flag_t::GLOB_FLAG_IGNORE_ERRORS
+                , glob_to_list_flag_t::GLOB_FLAG_ONLY_DIRECTORIES>(path + "/*");
+        }
+        else
+        {
+            success = sub_dirs.read_path<
+                  glob_to_list_flag_t::GLOB_FLAG_ONLY_DIRECTORIES>(path + "/*");
+        }
+        if(!success
+        && sub_dirs.get_last_error_errno() != ENOENT)
+        {
+            f_last_error_message = sub_dirs.get_last_error_message();
+            f_last_error_path = sub_dirs.get_last_error_path();
+            f_last_error_errno = sub_dirs.get_last_error_errno();
+            return f_last_error_errno != ENOENT;
+        }
 
-    static int glob_err_callback(char const * p, int e)
-    {
-        g_self->f_last_error_message = "caught an error while reading a directory.";
-        g_self->f_last_error_path = p;
-        g_self->f_last_error_errno = e;
+        // (3) read the sub-directories
+        //
+        for(auto const & d : sub_dirs)
+        {
+            if(!d.exists())
+            {
+                continue;
+            }
+            if(d.is_symbolic_link())
+            {
+                if(!f_follow_symlinks
+                || !d.is_target_directory())
+                {
+                    continue;
+                }
+            }
+            else
+            {
+                if(!d.is_directory())
+                {
+                    continue;
+                }
+            }
 
-        return 0;
+            // because we use a real-path, we may find that some paths are
+            // duplicates (most certainly because of a softlink)
+            //
+            std::string const p(get_real_path(d.filename()));
+            if(visited.insert(p).second)
+            {
+                if(!recursive_read_path(
+                      p
+                    , pattern
+                    , flags
+                    , visited))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     static thread_local glob_to_list *
@@ -286,6 +877,8 @@ private:
     std::string                 f_last_error_message = std::string();
     std::string                 f_last_error_path = std::string();
     int                         f_last_error_errno = 0;
+    bool                        f_recursive = false;
+    bool                        f_follow_symlinks = false;
 };
 
 
