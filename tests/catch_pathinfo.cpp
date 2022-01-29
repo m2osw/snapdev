@@ -46,32 +46,32 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[pathinfo]")
 {
     CATCH_START_SECTION("pathinfo: replace existing suffix")
     {
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.cpp"
                 , ".cpp"
                 , ".h") == "/full/path/example/pathinfo.h");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.h"
                 , ".h"
                 , ".cpp") == "/full/path/example/pathinfo.cpp");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "relative/path/pathinfo.cpp"
                 , ".cpp"
                 , ".h") == "relative/path/pathinfo.h");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "relative/path/pathinfo.h"
                 , ".h"
                 , ".cpp") == "relative/path/pathinfo.cpp");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "no-path.cpp"
                 , ".cpp"
                 , ".h") == "no-path.h");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "no-path.h"
                 , ".h"
                 , ".cpp") == "no-path.cpp");
@@ -83,12 +83,12 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[pathinfo]")
         std::string full_path_c("/full/path/example/pathinfo.c");
         std::string full_path_hpp("/full/path/example/pathinfo.hpp");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix(
                   full_path_c
                 , ".cpp"
                 , ".h") == "/full/path/example/pathinfo.c.h");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix(
                   full_path_hpp
                 , ".h"
                 , ".cpp") == "/full/path/example/pathinfo.hpp.cpp");
@@ -96,12 +96,12 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[pathinfo]")
         std::string relative_path_c("relative/path/pathinfo.c");
         std::string relative_path_hpp("relative/path/pathinfo.hpp");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix(
                   relative_path_c
                 , ".cpp"
                 , ".h") == "relative/path/pathinfo.c.h");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix(
                   relative_path_hpp
                 , ".h"
                 , ".cpp") == "relative/path/pathinfo.hpp.cpp");
@@ -109,12 +109,12 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[pathinfo]")
         std::string no_path_c("no-path.c");
         std::string no_path_hpp("no-path.hpp");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix(
                   no_path_c
                 , ".cpp"
                 , ".h") == "no-path.c.h");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix(
                   no_path_hpp
                 , ".h"
                 , ".cpp") == "no-path.hpp.cpp");
@@ -123,27 +123,27 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[pathinfo]")
 
     CATCH_START_SECTION("pathinfo: remove suffix when present")
     {
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.cpp"
                 , ".cpp") == "/full/path/example/pathinfo");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.h"
                 , ".h") == "/full/path/example/pathinfo");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "relative/path/pathinfo.cpp"
                 , ".cpp") == "relative/path/pathinfo");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "relative/path/pathinfo.h"
                 , ".h") == "relative/path/pathinfo");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "no-path.cpp"
                 , ".cpp") == "no-path");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "no-path.h"
                 , ".h") == "no-path");
     }
@@ -151,27 +151,27 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[pathinfo]")
 
     CATCH_START_SECTION("pathinfo: remove suffix when absent")
     {
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.c"
                 , ".cpp") == "/full/path/example/pathinfo.c");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.hpp"
                 , ".h") == "/full/path/example/pathinfo.hpp");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "relative/path/pathinfo.c"
                 , ".cpp") == "relative/path/pathinfo.c");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "relative/path/pathinfo.hpp"
                 , ".h") == "relative/path/pathinfo.hpp");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "no-path.c"
                 , ".cpp") == "no-path.c");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "no-path.hpp"
                 , ".h") == "no-path.hpp");
     }
@@ -179,25 +179,25 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[pathinfo]")
 
     CATCH_START_SECTION("pathinfo: do nothing if non-existant suffix")
     {
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.c"
                 , ".cpp"
                 , ".h"
                 , true) == "/full/path/example/pathinfo.c");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.c"
                 , ".cpp"
                 , ""
                 , true) == "/full/path/example/pathinfo.c");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.hpp"
                 , ".h"
                 , ".cpp"
                 , true) == "/full/path/example/pathinfo.hpp");
 
-        CATCH_REQUIRE(snap::pathinfo::replace_suffix<std::string>(
+        CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.hpp"
                 , ".h"
                 , std::string()

@@ -30,7 +30,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 DECLARE_MAIN_EXCEPTION(lockfile_error);
@@ -412,5 +412,5 @@ private:
 
 
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

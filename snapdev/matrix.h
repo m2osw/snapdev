@@ -29,7 +29,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 // Matrix additions, subtractions, and multiplications can be verified
@@ -482,7 +482,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
                 return false;
             }
 #pragma GCC diagnostic pop
-            snap::matrix<double> adj(adjugate());
+            snapdev::matrix<double> adj(adjugate());
 
             *this = adj * (static_cast<value_type>(1) / det);
             return true;
@@ -1911,7 +1911,7 @@ private:
 };
 
 
-} // namespace snap
+} // namespace snapdev
 
 
 
@@ -1926,7 +1926,7 @@ private:
  * \return A reference to the basic_ostream object.
  */
 template<class E, class S, class T, class SIZE>
-std::basic_ostream<E, S> & operator << (std::basic_ostream<E, S> & out, snap::matrix<T, SIZE> const & m)
+std::basic_ostream<E, S> & operator << (std::basic_ostream<E, S> & out, snapdev::matrix<T, SIZE> const & m)
 {
     // write to a string buffer first
     //
@@ -1941,13 +1941,13 @@ std::basic_ostream<E, S> & operator << (std::basic_ostream<E, S> & out, snap::ma
     // output the matrix
     //
     s << "[";
-    for(typename snap::matrix<T, SIZE>::size_type j(0); j < m.rows(); ++j)
+    for(typename snapdev::matrix<T, SIZE>::size_type j(0); j < m.rows(); ++j)
     {
         s << std::endl << "  [";
         if(m.columns() > 0)
         {
             s << static_cast<T>(m[j][0]);
-            for(typename snap::matrix<T, SIZE>::size_type i(1); i < m.columns(); ++i)
+            for(typename snapdev::matrix<T, SIZE>::size_type i(1); i < m.columns(); ++i)
             {
                 s << ", " << static_cast<T>(m[j][i]);
             }

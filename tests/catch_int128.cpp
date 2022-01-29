@@ -113,7 +113,7 @@ CATCH_TEST_CASE("int128_literal", "[literal][int128]")
 {
     CATCH_START_SECTION("int128_literal: zero and powers of two")
     {
-        using namespace snap;
+        using namespace snapdev::literals;
 
         __int128 m0(0_int128);
         CATCH_REQUIRE(m0 == 0);
@@ -758,7 +758,7 @@ CATCH_TEST_CASE("int128_literal", "[literal][int128]")
 
     CATCH_START_SECTION("uint128_literal: unsigned zero and powers of two")
     {
-        using namespace snap;
+        using namespace snapdev::literals;
 
         unsigned __int128 m0(0_uint128);
         CATCH_REQUIRE(m0 == 0);
@@ -1403,7 +1403,7 @@ CATCH_TEST_CASE("int128_literal", "[literal][int128]")
 
     CATCH_START_SECTION("[u]int128_literal: large numbers in decimal, hexadecimal, octal and binary")
     {
-        using namespace snap;
+        using namespace snapdev::literals;
 
         // test a negative decimal number of 128 bits
         // (the minus is arithmetic in the compiler, not part of the literal)

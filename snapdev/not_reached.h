@@ -32,7 +32,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 [[noreturn]] [[deprecated]] inline void NOTREACHED()
@@ -63,5 +63,5 @@ namespace snap
     abort();
 }
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

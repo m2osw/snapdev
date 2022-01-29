@@ -138,43 +138,43 @@ CATCH_TEST_CASE("trim_string", "[string]")
 
             // no trimming
             //
-            CATCH_REQUIRE(snap::trim_string(original, false, false) == p.f_original);
-            CATCH_REQUIRE(snap::trim_string(original, false, false, false, std::string(" ")) == p.f_original);
+            CATCH_REQUIRE(snapdev::trim_string(original, false, false) == p.f_original);
+            CATCH_REQUIRE(snapdev::trim_string(original, false, false, false, std::string(" ")) == p.f_original);
 
             // start trimming
             //
-            CATCH_REQUIRE(snap::trim_string(original, true, false) == p.f_start);
-            CATCH_REQUIRE(snap::trim_string(original, true, false, false, std::string(" ")) == p.f_spaces_start);
+            CATCH_REQUIRE(snapdev::trim_string(original, true, false) == p.f_start);
+            CATCH_REQUIRE(snapdev::trim_string(original, true, false, false, std::string(" ")) == p.f_spaces_start);
 
             // end trimming
             //
-            CATCH_REQUIRE(snap::trim_string(original, false, true) == p.f_end);
-            CATCH_REQUIRE(snap::trim_string(original, false, true, false, std::string(" ")) == p.f_spaces_end);
+            CATCH_REQUIRE(snapdev::trim_string(original, false, true) == p.f_end);
+            CATCH_REQUIRE(snapdev::trim_string(original, false, true, false, std::string(" ")) == p.f_spaces_end);
 
             // inside trimming
             //
-            CATCH_REQUIRE(snap::trim_string(original, false, false, true) == p.f_inside);
-            CATCH_REQUIRE(snap::trim_string(original, false, false, true, std::string(" ")) == p.f_spaces_inside);
+            CATCH_REQUIRE(snapdev::trim_string(original, false, false, true) == p.f_inside);
+            CATCH_REQUIRE(snapdev::trim_string(original, false, false, true, std::string(" ")) == p.f_spaces_inside);
 
             // start/end trimming
             //
-            CATCH_REQUIRE(snap::trim_string(original) == p.f_start_and_end);
-            CATCH_REQUIRE(snap::trim_string(original, true, true, false, std::string(" ")) == p.f_spaces_start_and_end);
+            CATCH_REQUIRE(snapdev::trim_string(original) == p.f_start_and_end);
+            CATCH_REQUIRE(snapdev::trim_string(original, true, true, false, std::string(" ")) == p.f_spaces_start_and_end);
 
             // start/inside trimming
             //
-            CATCH_REQUIRE(snap::trim_string(original, true, false, true) == p.f_start_and_inside);
-            CATCH_REQUIRE(snap::trim_string(original, true, false, true, std::string(" ")) == p.f_spaces_start_and_inside);
+            CATCH_REQUIRE(snapdev::trim_string(original, true, false, true) == p.f_start_and_inside);
+            CATCH_REQUIRE(snapdev::trim_string(original, true, false, true, std::string(" ")) == p.f_spaces_start_and_inside);
 
             // inside/end trimming
             //
-            CATCH_REQUIRE(snap::trim_string(original, false, true, true) == p.f_inside_and_end);
-            CATCH_REQUIRE(snap::trim_string(original, false, true, true, std::string(" ")) == p.f_spaces_inside_and_end);
+            CATCH_REQUIRE(snapdev::trim_string(original, false, true, true) == p.f_inside_and_end);
+            CATCH_REQUIRE(snapdev::trim_string(original, false, true, true, std::string(" ")) == p.f_spaces_inside_and_end);
 
             // all trimming
             //
-            CATCH_REQUIRE(snap::trim_string(original, true, true, true) == p.f_all);
-            CATCH_REQUIRE(snap::trim_string(original, true, true, true, std::string(" ")) == p.f_spaces_all);
+            CATCH_REQUIRE(snapdev::trim_string(original, true, true, true) == p.f_all);
+            CATCH_REQUIRE(snapdev::trim_string(original, true, true, true, std::string(" ")) == p.f_spaces_all);
         }
     }
     CATCH_END_SECTION()

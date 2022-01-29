@@ -39,7 +39,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -86,5 +86,5 @@ void map_keyset(C & keys, M const & m)
 }
 
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

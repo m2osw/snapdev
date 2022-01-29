@@ -70,12 +70,12 @@ CATCH_TEST_CASE("matrix_init", "[matrix]")
     {
         CATCH_START_SECTION("matrix: empty")
         {
-            snap::matrix<double> empty;
+            snapdev::matrix<double> empty;
 
             CATCH_REQUIRE(empty.rows() == 0);
             CATCH_REQUIRE(empty.columns() == 0);
 
-            snap::matrix<double> copy(empty);
+            snapdev::matrix<double> copy(empty);
 
             CATCH_REQUIRE(empty.rows() == 0);
             CATCH_REQUIRE(empty.columns() == 0);
@@ -84,7 +84,7 @@ CATCH_TEST_CASE("matrix_init", "[matrix]")
 
         CATCH_START_SECTION("matrix: 2x2")
         {
-            snap::matrix<double> m(2, 2);
+            snapdev::matrix<double> m(2, 2);
 
             CATCH_REQUIRE(m.rows() == 2);
             CATCH_REQUIRE(m.columns() == 2);
@@ -111,8 +111,8 @@ CATCH_TEST_CASE("matrix_init", "[matrix]")
             CATCH_REQUIRE(m[1][0] == r10);
             CATCH_REQUIRE(m[1][1] == r11);
 
-            snap::matrix<double> copy(m);
-            snap::matrix<double> c2;
+            snapdev::matrix<double> copy(m);
+            snapdev::matrix<double> c2;
 
             CATCH_REQUIRE(copy[0][0] == r00);
             CATCH_REQUIRE(copy[0][1] == r01);
@@ -159,7 +159,7 @@ CATCH_TEST_CASE("matrix_init", "[matrix]")
 
         CATCH_START_SECTION("matrix: 3x3")
         {
-            snap::matrix<double> m(3, 3);
+            snapdev::matrix<double> m(3, 3);
 
             CATCH_REQUIRE(m.rows() == 3);
             CATCH_REQUIRE(m.columns() == 3);
@@ -206,8 +206,8 @@ CATCH_TEST_CASE("matrix_init", "[matrix]")
             CATCH_REQUIRE(m[2][1] == r21);
             CATCH_REQUIRE(m[2][2] == r22);
 
-            snap::matrix<double> copy(m);
-            snap::matrix<double> c2;
+            snapdev::matrix<double> copy(m);
+            snapdev::matrix<double> c2;
 
             CATCH_REQUIRE(copy[0][0] == r00);
             CATCH_REQUIRE(copy[0][1] == r01);
@@ -284,7 +284,7 @@ CATCH_TEST_CASE("matrix_init", "[matrix]")
 
         CATCH_START_SECTION("matrix: 4x4")
         {
-            snap::matrix<double> m(4, 4);
+            snapdev::matrix<double> m(4, 4);
 
             CATCH_REQUIRE(m.rows() == 4);
             CATCH_REQUIRE(m.columns() == 4);
@@ -359,8 +359,8 @@ CATCH_TEST_CASE("matrix_init", "[matrix]")
             CATCH_REQUIRE(m[3][2] == r32);
             CATCH_REQUIRE(m[3][3] == r33);
 
-            snap::matrix<double> copy(m);
-            snap::matrix<double> c2;
+            snapdev::matrix<double> copy(m);
+            snapdev::matrix<double> c2;
 
             CATCH_REQUIRE(copy[0][0] == r00);
             CATCH_REQUIRE(copy[0][1] == r01);
@@ -484,7 +484,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -594,7 +594,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -652,7 +652,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -779,7 +779,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -837,7 +837,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -895,7 +895,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
 
             // setup C
             //
-            snap::matrix<double> c(4, 4);
+            snapdev::matrix<double> c(4, 4);
 
             CATCH_REQUIRE(c.rows() == 4);
             CATCH_REQUIRE(c.columns() == 4);
@@ -1030,7 +1030,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -1088,7 +1088,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -1212,7 +1212,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -1270,7 +1270,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -1397,7 +1397,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -1507,7 +1507,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -1565,7 +1565,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -1623,7 +1623,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
 
             // setup C
             //
-            snap::matrix<double> c(4, 4);
+            snapdev::matrix<double> c(4, 4);
 
             CATCH_REQUIRE(c.rows() == 4);
             CATCH_REQUIRE(c.columns() == 4);
@@ -1758,7 +1758,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -1816,7 +1816,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -1944,7 +1944,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -2001,7 +2001,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
             CATCH_REQUIRE(a[3][3] == a33);
 
             {
-                snap::matrix<double> p = a.minor_matrix(0, 0);
+                snapdev::matrix<double> p = a.minor_matrix(0, 0);
 
                 CATCH_REQUIRE(p.rows() == 3);
                 CATCH_REQUIRE(p.columns() == 3);
@@ -2018,7 +2018,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
             }
 
             {
-                snap::matrix<double> p = a.minor_matrix(0, 1);
+                snapdev::matrix<double> p = a.minor_matrix(0, 1);
 
                 CATCH_REQUIRE(p.rows() == 3);
                 CATCH_REQUIRE(p.columns() == 3);
@@ -2035,7 +2035,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
             }
 
             {
-                snap::matrix<double> p = a.minor_matrix(0, 2);
+                snapdev::matrix<double> p = a.minor_matrix(0, 2);
 
                 CATCH_REQUIRE(p.rows() == 3);
                 CATCH_REQUIRE(p.columns() == 3);
@@ -2052,7 +2052,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
             }
 
             {
-                snap::matrix<double> p = a.minor_matrix(0, 3);
+                snapdev::matrix<double> p = a.minor_matrix(0, 3);
 
                 CATCH_REQUIRE(p.rows() == 3);
                 CATCH_REQUIRE(p.columns() == 3);
@@ -2069,7 +2069,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
             }
 
             {
-                snap::matrix<double> p = a.minor_matrix(2, 1);
+                snapdev::matrix<double> p = a.minor_matrix(2, 1);
 
                 CATCH_REQUIRE(p.rows() == 3);
                 CATCH_REQUIRE(p.columns() == 3);
@@ -2091,7 +2091,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -2147,7 +2147,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
             CATCH_REQUIRE(a[3][2] == a32);
             CATCH_REQUIRE(a[3][3] == a33);
 
-            snap::matrix<double> t = a.transpose();
+            snapdev::matrix<double> t = a.transpose();
 
             CATCH_REQUIRE(t.rows() == 4);
             CATCH_REQUIRE(t.columns() == 4);
@@ -2175,7 +2175,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(6, 2);
+            snapdev::matrix<double> a(6, 2);
 
             CATCH_REQUIRE(a.rows() == 6);
             CATCH_REQUIRE(a.columns() == 2);
@@ -2219,7 +2219,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
             CATCH_REQUIRE(a[5][0] == a50);
             CATCH_REQUIRE(a[5][1] == a51);
 
-            snap::matrix<double> t = a.transpose();
+            snapdev::matrix<double> t = a.transpose();
 
             CATCH_REQUIRE(t.rows() == 2);
             CATCH_REQUIRE(t.columns() == 6);
@@ -2256,7 +2256,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(2, 2);
+            snapdev::matrix<double> a(2, 2);
 
             CATCH_REQUIRE(a.rows() == 2);
             CATCH_REQUIRE(a.columns() == 2);
@@ -2276,7 +2276,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
             CATCH_REQUIRE(a[1][0] == a10);
             CATCH_REQUIRE(a[1][1] == a11);
 
-            snap::matrix<double> m = a.adjugate();
+            snapdev::matrix<double> m = a.adjugate();
 
             CATCH_REQUIRE(m.rows() == 2);
             CATCH_REQUIRE(m.columns() == 2);
@@ -2292,7 +2292,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(3, 3);
+            snapdev::matrix<double> a(3, 3);
 
             CATCH_REQUIRE(a.rows() == 3);
             CATCH_REQUIRE(a.columns() == 3);
@@ -2327,61 +2327,61 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
             CATCH_REQUIRE(a[2][1] == a21);
             CATCH_REQUIRE(a[2][2] == a22);
 
-            snap::matrix<double> m = a.adjugate();
+            snapdev::matrix<double> m = a.adjugate();
 
             CATCH_REQUIRE(m.rows() == 3);
             CATCH_REQUIRE(m.columns() == 3);
 
             {
-                snap::matrix<double> p(a.minor_matrix(0, 0));
+                snapdev::matrix<double> p(a.minor_matrix(0, 0));
                 double const e(m[0][0] - p.determinant());
                 CATCH_REQUIRE(fabs(e) < 0.0001);
             }
 
             {
-                snap::matrix<double> p(a.minor_matrix(0, 1));
+                snapdev::matrix<double> p(a.minor_matrix(0, 1));
                 double const e(m[1][0] + p.determinant());
                 CATCH_REQUIRE(fabs(e) < 0.0001);
             }
 
             {
-                snap::matrix<double> p(a.minor_matrix(0, 2));
+                snapdev::matrix<double> p(a.minor_matrix(0, 2));
                 double const e(m[2][0] - p.determinant());
                 CATCH_REQUIRE(fabs(e) < 0.0001);
             }
 
             {
-                snap::matrix<double> p(a.minor_matrix(1, 0));
+                snapdev::matrix<double> p(a.minor_matrix(1, 0));
                 double const e(m[0][1] + p.determinant());
                 CATCH_REQUIRE(fabs(e) < 0.0001);
             }
 
             {
-                snap::matrix<double> p(a.minor_matrix(1, 1));
+                snapdev::matrix<double> p(a.minor_matrix(1, 1));
                 double const e(m[1][1] - p.determinant());
                 CATCH_REQUIRE(fabs(e) < 0.0001);
             }
 
             {
-                snap::matrix<double> p(a.minor_matrix(1, 2));
+                snapdev::matrix<double> p(a.minor_matrix(1, 2));
                 double const e(m[2][1] + p.determinant());
                 CATCH_REQUIRE(fabs(e) < 0.0001);
             }
 
             {
-                snap::matrix<double> p(a.minor_matrix(2, 0));
+                snapdev::matrix<double> p(a.minor_matrix(2, 0));
                 double const e(m[0][2] - p.determinant());
                 CATCH_REQUIRE(fabs(e) < 0.0001);
             }
 
             {
-                snap::matrix<double> p(a.minor_matrix(2, 1));
+                snapdev::matrix<double> p(a.minor_matrix(2, 1));
                 double const e(m[1][2] + p.determinant());
                 CATCH_REQUIRE(fabs(e) < 0.0001);
             }
 
             {
-                snap::matrix<double> p(a.minor_matrix(2, 2));
+                snapdev::matrix<double> p(a.minor_matrix(2, 2));
                 double const e(m[2][2] - p.determinant());
                 CATCH_REQUIRE(fabs(e) < 0.0001);
             }
@@ -2397,7 +2397,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(2, 2);
+            snapdev::matrix<double> a(2, 2);
 
             CATCH_REQUIRE(a.rows() == 2);
             CATCH_REQUIRE(a.columns() == 2);
@@ -2431,7 +2431,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(3, 3);
+            snapdev::matrix<double> a(3, 3);
 
             CATCH_REQUIRE(a.rows() == 3);
             CATCH_REQUIRE(a.columns() == 3);
@@ -2462,7 +2462,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
             {
                 // setup A
                 //
-                snap::matrix<double> a(3, 3);
+                snapdev::matrix<double> a(3, 3);
 
                 CATCH_REQUIRE(a.rows() == 3);
                 CATCH_REQUIRE(a.columns() == 3);
@@ -2522,7 +2522,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -2580,7 +2580,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -2707,7 +2707,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -2817,7 +2817,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -2875,7 +2875,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -2933,7 +2933,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
 
             // setup C
             //
-            snap::matrix<double> c(4, 4);
+            snapdev::matrix<double> c(4, 4);
 
             CATCH_REQUIRE(c.rows() == 4);
             CATCH_REQUIRE(c.columns() == 4);
@@ -3096,7 +3096,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -3154,7 +3154,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -3301,7 +3301,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -3359,7 +3359,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -3486,7 +3486,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -3596,7 +3596,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -3654,7 +3654,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -3677,7 +3677,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
             double b33;
 
             // create an inversible matrix (most are with random numbers)
-            snap::matrix<double> t(4, 4);
+            snapdev::matrix<double> t(4, 4);
             do
             {
                 b00 = frand();
@@ -3737,7 +3737,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
 
             // setup C
             //
-            snap::matrix<double> c(4, 4);
+            snapdev::matrix<double> c(4, 4);
 
             CATCH_REQUIRE(c.rows() == 4);
             CATCH_REQUIRE(c.columns() == 4);
@@ -3853,7 +3853,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
             // division function does, it does not mean that the
             // division works properly, though
             //
-            snap::matrix<double> r(4, 4);
+            snapdev::matrix<double> r(4, 4);
             r = a * t;
 
             CATCH_REQUIRE(c[0][0] == r[0][0]);
@@ -3874,10 +3874,10 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
             CATCH_REQUIRE(c[3][3] == r[3][3]);
 
             double const determinant(b.determinant());
-            snap::matrix<double> adjugate(b.adjugate());
+            snapdev::matrix<double> adjugate(b.adjugate());
 
-            snap::matrix<double> inv(adjugate * (1.0 / determinant));
-            snap::matrix<double> div(a * inv);
+            snapdev::matrix<double> inv(adjugate * (1.0 / determinant));
+            snapdev::matrix<double> div(a * inv);
 
             CATCH_REQUIRE(fabs(c[0][0] - div[0][0]) < 0.0001);
             CATCH_REQUIRE(fabs(c[0][1] - div[0][1]) < 0.0001);
@@ -3902,7 +3902,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
@@ -3960,7 +3960,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -4017,10 +4017,10 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
             CATCH_REQUIRE(b[3][3] == b33);
 
             double const determinant(b.determinant());
-            snap::matrix<double> adjugate(b.adjugate());
+            snapdev::matrix<double> adjugate(b.adjugate());
 
-            snap::matrix<double> inv(adjugate * (1.0 / determinant));
-            snap::matrix<double> div(a * inv);
+            snapdev::matrix<double> inv(adjugate * (1.0 / determinant));
+            snapdev::matrix<double> div(a * inv);
 
             // run operation A /= B
             //
@@ -4094,14 +4094,14 @@ CATCH_TEST_CASE("matrix_color", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -4146,14 +4146,14 @@ CATCH_TEST_CASE("matrix_color", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -4225,14 +4225,14 @@ CATCH_TEST_CASE("matrix_color", "[matrix]")
         {
             // setup A
             //
-            snap::matrix<double> a(4, 4);
+            snapdev::matrix<double> a(4, 4);
 
             CATCH_REQUIRE(a.rows() == 4);
             CATCH_REQUIRE(a.columns() == 4);
 
             // setup B
             //
-            snap::matrix<double> b(4, 4);
+            snapdev::matrix<double> b(4, 4);
 
             CATCH_REQUIRE(b.rows() == 4);
             CATCH_REQUIRE(b.columns() == 4);
@@ -4297,7 +4297,7 @@ CATCH_TEST_CASE("matrix_color", "[matrix]")
 
                     // $R_r$ (red rotation)
                     //
-                    snap::matrix<double> r_r(4, 4);
+                    snapdev::matrix<double> r_r(4, 4);
                     r_r[1][1] =  1.0 / sqrt(2.0);
                     r_r[1][2] =  1.0 / sqrt(2.0);
                     r_r[2][1] = -1.0 / sqrt(2.0);
@@ -4305,7 +4305,7 @@ CATCH_TEST_CASE("matrix_color", "[matrix]")
 
                     // $R_g$ (green rotation)
                     //
-                    snap::matrix<double> r_g(4, 4);
+                    snapdev::matrix<double> r_g(4, 4);
                     r_g[0][0] =  sqrt(2.0) / sqrt(3.0);
                     r_g[0][2] =  1.0 / sqrt(3.0);
                     r_g[2][0] = -1.0 / sqrt(3.0);
@@ -4313,11 +4313,11 @@ CATCH_TEST_CASE("matrix_color", "[matrix]")
 
                     // $R_rg = R_r R_g$ (red and green rotations combined)
                     //
-                    snap::matrix<double> r_rg(r_r * r_g);
+                    snapdev::matrix<double> r_rg(r_r * r_g);
 
                     // $w$ (luma vector, a.k.a. color weights to calcalute the perfect grayscale for your monitor)
                     //
-                    snap::matrix<double> w(a.get_luma_vector());
+                    snapdev::matrix<double> w(a.get_luma_vector());
                     //w[0][0] = a.RED_WEIGHT;
                     //w[1][0] = a.GREEN_WEIGHT;
                     //w[2][0] = a.BLUE_WEIGHT;
@@ -4325,22 +4325,22 @@ CATCH_TEST_CASE("matrix_color", "[matrix]")
 
                     // sm (skew matrix)
                     //
-                    snap::matrix<double> sm(r_rg * w);
+                    snapdev::matrix<double> sm(r_rg * w);
 
                     // s (scaling with skew matrix)
                     //
-                    snap::matrix<double> s(4, 4);
+                    snapdev::matrix<double> s(4, 4);
                     s[0][2] = sm[0][0] / sm[2][0];
                     s[1][2] = sm[1][0] / sm[2][0];
 
                     // p (skewed red & green rotation)
                     //
-                    snap::matrix<double> p(r_rg);
+                    snapdev::matrix<double> p(r_rg);
                     p *= s;
 
                     // r_b (blue rotation)
                     //
-                    snap::matrix<double> r_b(4, 4);
+                    snapdev::matrix<double> r_b(4, 4);
                     double const rot_cos(cos(hue));
                     double const rot_sin(sin(hue));
                     r_b[0][0] =  rot_cos;
@@ -4350,7 +4350,7 @@ CATCH_TEST_CASE("matrix_color", "[matrix]")
 
                     // hue_matrix (the resulting matrix depending on angle)
                     //
-                    snap::matrix<double> hue_matrix(p * r_b / p);
+                    snapdev::matrix<double> hue_matrix(p * r_b / p);
 
 //std::cout << "Got b = " << b << "\n";
 //std::cout << "Got our hue matrix = " << hue_matrix << "\n";

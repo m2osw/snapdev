@@ -50,22 +50,22 @@ CATCH_TEST_CASE("mkdir_p", "[os]")
 {
     CATCH_START_SECTION("mkdir_p: empty")
     {
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), true,  0700, "user",        "group")       == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), false, 0700, "user",        "group")       == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), true,  0775, "user",        "group")       == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), false, 0775, "user",        "group")       == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), true,  0700, std::string(), "group")       == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), false, 0700, std::string(), "group")       == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), true,  0775, std::string(), "group")       == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), false, 0775, std::string(), "group")       == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), true,  0700, "user",        std::string()) == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), false, 0700, "user",        std::string()) == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), true,  0775, "user",        std::string()) == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), false, 0775, "user",        std::string()) == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), true,  0700, std::string(), std::string()) == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), false, 0700, std::string(), std::string()) == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), true,  0775, std::string(), std::string()) == 0);
-        CATCH_REQUIRE(snap::mkdir_p(std::string(), false, 0775, std::string(), std::string()) == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), true,  0700, "user",        "group")       == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), false, 0700, "user",        "group")       == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), true,  0775, "user",        "group")       == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), false, 0775, "user",        "group")       == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), true,  0700, std::string(), "group")       == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), false, 0700, std::string(), "group")       == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), true,  0775, std::string(), "group")       == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), false, 0775, std::string(), "group")       == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), true,  0700, "user",        std::string()) == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), false, 0700, "user",        std::string()) == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), true,  0775, "user",        std::string()) == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), false, 0775, "user",        std::string()) == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), true,  0700, std::string(), std::string()) == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), false, 0700, std::string(), std::string()) == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), true,  0775, std::string(), std::string()) == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(std::string(), false, 0775, std::string(), std::string()) == 0);
     }
     CATCH_END_SECTION()
 
@@ -75,7 +75,7 @@ CATCH_TEST_CASE("mkdir_p", "[os]")
         //       in a relative path, which is complicated at the moment...
         //
         std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/with/extra/sub-dirs/and-a-file.txt");
-        CATCH_REQUIRE(snap::mkdir_p(filename, true, 0700) == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(filename, true, 0700) == 0);
 
         // the file itself needs to not exist
         //
@@ -84,25 +84,25 @@ CATCH_TEST_CASE("mkdir_p", "[os]")
 
         // the last directory needs to be 0700
         //
-        std::string const basename(snap::pathinfo::dirname(filename));
+        std::string const basename(snapdev::pathinfo::dirname(filename));
         CATCH_REQUIRE(stat(basename.c_str(), &st) == 0);
         CATCH_REQUIRE(S_ISDIR(st.st_mode));
         CATCH_REQUIRE((st.st_mode & 0777) == 0700);
 
         // re-create with a different mode changes it
         //
-        CATCH_REQUIRE(snap::mkdir_p(filename, true, 0755) == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(filename, true, 0755) == 0);
         CATCH_REQUIRE(stat(basename.c_str(), &st) == 0);
         CATCH_REQUIRE(S_ISDIR(st.st_mode));
         CATCH_REQUIRE((st.st_mode & 0777) == 0755);
 
         // last component is a file, that creates an error
         //
-        snap::file_contents actual_file(filename);
+        snapdev::file_contents actual_file(filename);
         actual_file.contents("test file--testing that create folder fails if a file exists\n");
         actual_file.write_all();
 
-        int const r(snap::mkdir_p(filename, false, 0700));
+        int const r(snapdev::mkdir_p(filename, false, 0700));
         int const e(errno);
         CATCH_REQUIRE(r == -1);
         CATCH_REQUIRE(e == EEXIST);
@@ -111,13 +111,13 @@ CATCH_TEST_CASE("mkdir_p", "[os]")
 
     CATCH_START_SECTION("mkdir_p: create full path")
     {
-        std::unique_ptr<char *, snap::raii_generic_deleter<char *, nullptr, decltype(&::free), &::free>> cwd(get_current_dir_name());
+        std::unique_ptr<char *, snapdev::raii_generic_deleter<char *, nullptr, decltype(&::free), &::free>> cwd(get_current_dir_name());
         std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/test/with/root/path");
-        CATCH_REQUIRE(snap::mkdir_p(filename, false, 0750) == 0);
+        CATCH_REQUIRE(snapdev::mkdir_p(filename, false, 0750) == 0);
 
         // the last directory needs to be 0700
         //
-        std::string const basename(snap::pathinfo::dirname(filename));
+        std::string const basename(snapdev::pathinfo::dirname(filename));
         struct stat st;
         CATCH_REQUIRE(stat(basename.c_str(), &st) == 0);
         bool is_dir(S_ISDIR(st.st_mode));

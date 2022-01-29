@@ -47,7 +47,7 @@ CATCH_TEST_CASE("file_contents", "[os]")
             std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/inexcistant-directory/test-file.txt");
 
             {
-                snap::file_contents content_test_output(filename, false);
+                snapdev::file_contents content_test_output(filename, false);
                 content_test_output.contents(content);
                 CATCH_REQUIRE_FALSE(content_test_output.write_all());
                 CATCH_REQUIRE(content_test_output.last_error() == "could not open file \""
@@ -56,7 +56,7 @@ CATCH_TEST_CASE("file_contents", "[os]")
             }
 
             {
-                snap::file_contents content_test_input(filename);
+                snapdev::file_contents content_test_input(filename);
                 CATCH_REQUIRE_FALSE(content_test_input.read_all());
                 CATCH_REQUIRE_FALSE(content_test_input.contents() == content);
             }
@@ -68,15 +68,15 @@ CATCH_TEST_CASE("file_contents", "[os]")
             std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/contents/test-file.txt");
 
             {
-                snap::file_contents content_test_output(filename, true);
+                snapdev::file_contents content_test_output(filename, true);
                 content_test_output.contents(content);
                 CATCH_REQUIRE(content_test_output.write_all());
             }
 
             {
-                snap::file_contents content_test_input(filename);
+                snapdev::file_contents content_test_input(filename);
                 CATCH_REQUIRE(content_test_input.read_all());
-                CATCH_REQUIRE(static_cast<snap::file_contents const &>(content_test_input).contents() == content);
+                CATCH_REQUIRE(static_cast<snapdev::file_contents const &>(content_test_input).contents() == content);
             }
         }
 
@@ -86,13 +86,13 @@ CATCH_TEST_CASE("file_contents", "[os]")
             std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/contents/dir-exists.txt");
 
             {
-                snap::file_contents content_test_output(filename, false);
+                snapdev::file_contents content_test_output(filename, false);
                 content_test_output.contents(content);
                 CATCH_REQUIRE(content_test_output.write_all());
             }
 
             {
-                snap::file_contents content_test_input(filename);
+                snapdev::file_contents content_test_input(filename);
                 CATCH_REQUIRE(content_test_input.read_all());
                 CATCH_REQUIRE(content_test_input.contents() == content);
             }
@@ -102,7 +102,7 @@ CATCH_TEST_CASE("file_contents", "[os]")
             std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/contents/dir-exists.txt/object.java");
 
             CATCH_REQUIRE_THROWS_MATCHES(
-                      snap::file_contents(filename, true, true)
+                      snapdev::file_contents(filename, true, true)
                     , std::ios::failure
                     , Catch::Matchers::ExceptionMessage(
                               "snapdev::file_contents: the full path to filename for a file_contents object could not be created: iostream error"));
@@ -112,7 +112,7 @@ CATCH_TEST_CASE("file_contents", "[os]")
         // since it's a directory (and it's not even empty)
         {
             std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/contents");
-            snap::file_contents content_test_output(filename, false, true);
+            snapdev::file_contents content_test_output(filename, false, true);
         }
     }
     CATCH_END_SECTION()
@@ -123,13 +123,13 @@ CATCH_TEST_CASE("file_contents", "[os]")
         std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/contents/temporary-file.txt");
 
         {
-            snap::file_contents content_test_output(filename, true, true);
+            snapdev::file_contents content_test_output(filename, true, true);
             content_test_output.contents(content);
             CATCH_REQUIRE(content_test_output.write_all());
         }
 
         {
-            snap::file_contents content_test_input(filename);
+            snapdev::file_contents content_test_input(filename);
             CATCH_REQUIRE_FALSE(content_test_input.read_all());
             CATCH_REQUIRE(content_test_input.contents() == std::string());
         }
@@ -139,7 +139,7 @@ CATCH_TEST_CASE("file_contents", "[os]")
     CATCH_START_SECTION("file_contents: empty filename is not accepted")
     {
         CATCH_REQUIRE_THROWS_MATCHES(
-                  snap::file_contents(std::string(), true, true)
+                  snapdev::file_contents(std::string(), true, true)
                 , std::invalid_argument
                 , Catch::Matchers::ExceptionMessage(
                           "snapdev::file_contents: the filename of a file_contents object cannot be the empty string."));
@@ -148,9 +148,9 @@ CATCH_TEST_CASE("file_contents", "[os]")
 
     CATCH_START_SECTION("file_contents: read from /proc/self/cmd")
     {
-        snap::file_contents comm("/proc/self/comm");
+        snapdev::file_contents comm("/proc/self/comm");
         CATCH_REQUIRE(comm.read_all());
-        CATCH_REQUIRE(static_cast<snap::file_contents const &>(comm).contents() == "unittest\n");
+        CATCH_REQUIRE(static_cast<snapdev::file_contents const &>(comm).contents() == "unittest\n");
     }
     CATCH_END_SECTION()
 }

@@ -119,7 +119,7 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
             int f_expected_c = 0;
             int f_expected_count = 0;
         };
-        snap::callback_manager<foo::pointer_t> m;
+        snapdev::callback_manager<foo::pointer_t> m;
 
         foo::pointer_t f1(std::make_shared<foo>(count, 1));
         foo::pointer_t f2(std::make_shared<foo>(count, 2));
@@ -214,7 +214,7 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
 
         typedef bool (*callback_t)(int, int, std::string);
 
-        snap::callback_manager<callback_t> m;
+        snapdev::callback_manager<callback_t> m;
 
         CATCH_REQUIRE(m.add_callback(the_static_callback));
         CATCH_REQUIRE_FALSE(m.empty());
@@ -241,7 +241,7 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
         typedef bool (*callback_t)();
         typedef std::list<callback_t> list_t;
 
-        snap::callback_manager<callback_t> m;
+        snapdev::callback_manager<callback_t> m;
 
         CATCH_REQUIRE(m.add_callback(void_static_callback));
 
@@ -272,7 +272,7 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
 
         auto f(std::bind(&bind::my_callback, &b, 111));
 
-        snap::callback_manager<decltype(f)> m;
+        snapdev::callback_manager<decltype(f)> m;
 
         auto const id(m.add_callback(f));
 

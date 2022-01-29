@@ -45,7 +45,7 @@
 #include    <sys/stat.h>
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -886,5 +886,5 @@ template <typename C>
 thread_local glob_to_list<C> * glob_to_list<C>::g_self = nullptr;
 
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

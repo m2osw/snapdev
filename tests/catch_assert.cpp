@@ -42,7 +42,7 @@ CATCH_TEST_CASE("safe_assert", "[foo]")
     CATCH_START_SECTION("safe_assert: make sure assert can pass")
     {
         constexpr bool valid(true);
-        snap::SAFE_ASSERT(valid, "this works");
+        snapdev::SAFE_ASSERT(valid, "this works");
         CATCH_REQUIRE(valid);
     }
     CATCH_END_SECTION()
@@ -51,7 +51,7 @@ CATCH_TEST_CASE("safe_assert", "[foo]")
     CATCH_START_SECTION("safe_assert: test invalid assert in Release mode")
     {
         constexpr bool invalid(false);
-        snap::SAFE_ASSERT(invalid, "this \"passes\"", ", but really it's not compiled in in Release mode");
+        snapdev::SAFE_ASSERT(invalid, "this \"passes\"", ", but really it's not compiled in in Release mode");
         CATCH_REQUIRE_FALSE(valid);
     }
     CATCH_END_SECTION()

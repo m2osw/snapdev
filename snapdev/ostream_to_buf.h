@@ -31,7 +31,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -104,5 +104,5 @@ private:
 };
 
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

@@ -30,7 +30,7 @@
 #include    <sstream>
 
 
-namespace snap
+namespace snapdev
 {
 
 /** \brief Convert an __int128 to a string.
@@ -99,11 +99,10 @@ std::string to_string(unsigned __int128 x)
 }
 #pragma GCC diagnostic pop
 
-}
+} //namespace snap
 
 
-
-//namespace snap -- no namespace for such definitions, it works better that way
+// no namespace for operators, it's easier that way
 
 
 /** \brief Output an __int128 number.
@@ -123,7 +122,7 @@ std::string to_string(unsigned __int128 x)
 #pragma GCC diagnostic ignored "-Wpedantic"
 std::ostream & operator << (std::ostream & os, __int128 x)
 {
-    return os << snap::to_string(x);
+    return os << snapdev::to_string(x);
 }
 #pragma GCC diagnostic pop
 
@@ -145,7 +144,7 @@ std::ostream & operator << (std::ostream & os, __int128 x)
 #pragma GCC diagnostic ignored "-Wpedantic"
 std::ostream & operator << (std::ostream & os, unsigned __int128 x)
 {
-    return os << snap::to_string(x);
+    return os << snapdev::to_string(x);
 }
 #pragma GCC diagnostic pop
 

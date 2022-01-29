@@ -22,7 +22,7 @@
 #include <string>
 #include <type_traits>
 
-namespace snap
+namespace snapdev
 {
 
 /** \brief Search needles in input string and replace with replacement strings.
@@ -106,5 +106,5 @@ StringT string_replace_many(StringT const & input
     return result;
 }
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

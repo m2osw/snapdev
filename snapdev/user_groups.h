@@ -29,7 +29,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -97,5 +97,5 @@ ContainerT user_group_names(std::string const & user)
 
 
 
-} // snap namespace
+} // namespace snapdev
 // vim: ts=4 sw=4 et

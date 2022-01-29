@@ -56,15 +56,15 @@ CATCH_TEST_CASE("user_groups", "[os]")
     {
         std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/system-groups.txt");
         CATCH_REQUIRE(system(("groups >" + filename).c_str()) == 0);
-        snap::file_contents system_groups(filename);
+        snapdev::file_contents system_groups(filename);
         system_groups.read_all();
 
         char const * user(getenv("USER"));
         CATCH_REQUIRE(user != nullptr);
-        std::set<std::string> our_groups(snap::user_group_names<std::set<std::string>>(user));
+        std::set<std::string> our_groups(snapdev::user_group_names<std::set<std::string>>(user));
 
         std::set<std::string> system_set;
-        snap::tokenize_string(
+        snapdev::tokenize_string(
                   system_set
                 , system_groups.contents()
                 , " \n"
@@ -76,7 +76,7 @@ CATCH_TEST_CASE("user_groups", "[os]")
 
     CATCH_START_SECTION("user_groups: invalid user")
     {
-        std::set<std::string> our_groups(snap::user_group_names<std::set<std::string>>("invalid-user"));
+        std::set<std::string> our_groups(snapdev::user_group_names<std::set<std::string>>("invalid-user"));
         CATCH_REQUIRE(our_groups.empty());
     }
     CATCH_END_SECTION()

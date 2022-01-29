@@ -51,10 +51,10 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
         timespec a{  5L, 345L };
         timespec b{ 13L, 701L };
 
-        CATCH_REQUIRE(valid_timespec(a));
-        CATCH_REQUIRE(valid_timespec(b));
-        CATCH_REQUIRE_FALSE(negative_timespec(a));
-        CATCH_REQUIRE_FALSE(negative_timespec(b));
+        CATCH_REQUIRE(snapdev::valid_timespec(a));
+        CATCH_REQUIRE(snapdev::valid_timespec(b));
+        CATCH_REQUIRE_FALSE(snapdev::negative_timespec(a));
+        CATCH_REQUIRE_FALSE(snapdev::negative_timespec(b));
 
         timespec c(a + b);
 
@@ -78,8 +78,8 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
         timespec a{ 25L, 1'345L };
         timespec b{ 13L,   701L };
 
-        CATCH_REQUIRE(valid_timespec(a));
-        CATCH_REQUIRE(valid_timespec(b));
+        CATCH_REQUIRE(snapdev::valid_timespec(a));
+        CATCH_REQUIRE(snapdev::valid_timespec(b));
 
         timespec c(a - b);
         timespec d(-b);
@@ -113,7 +113,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
 
         CATCH_REQUIRE(!!now);
         CATCH_REQUIRE_FALSE(!backward);
-        CATCH_REQUIRE(negative_timespec(backward));
+        CATCH_REQUIRE(snapdev::negative_timespec(backward));
 
         now += backward;
 
@@ -148,8 +148,8 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
         timespec a{ 13L,   701L };
         timespec b{ 25L, 1'345L };
 
-        CATCH_REQUIRE(valid_timespec(a));
-        CATCH_REQUIRE(valid_timespec(b));
+        CATCH_REQUIRE(snapdev::valid_timespec(a));
+        CATCH_REQUIRE(snapdev::valid_timespec(b));
 
         a -= b;
 
@@ -166,12 +166,12 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
         timespec a = {};
 
         CATCH_REQUIRE(!a);
-        CATCH_REQUIRE_FALSE(negative_timespec(a));
+        CATCH_REQUIRE_FALSE(snapdev::negative_timespec(a));
 
         --a;
 
         CATCH_REQUIRE_FALSE(!a);
-        CATCH_REQUIRE(negative_timespec(a));
+        CATCH_REQUIRE(snapdev::negative_timespec(a));
         CATCH_REQUIRE(a.tv_sec == -1L);
         CATCH_REQUIRE(a.tv_nsec == 999'999'999L);
 
@@ -184,7 +184,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
         ++a;
 
         CATCH_REQUIRE(!!a);
-        CATCH_REQUIRE_FALSE(negative_timespec(a));
+        CATCH_REQUIRE_FALSE(snapdev::negative_timespec(a));
         CATCH_REQUIRE(a.tv_sec == 0L);
         CATCH_REQUIRE(a.tv_nsec == 1L);
 
@@ -322,7 +322,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
 
         timespec save = {};
         CATCH_REQUIRE(!save);
-        CATCH_REQUIRE(valid_timespec(save));
+        CATCH_REQUIRE(snapdev::valid_timespec(save));
         save <<= nsec;
 
         CATCH_REQUIRE(nsec == 1629652549L * 1'000'000'000L + 913'788'345L);

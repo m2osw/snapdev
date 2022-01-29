@@ -18,7 +18,7 @@
 // 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -55,7 +55,5 @@ inline constexpr void NOT_USED( T && first, ARGS && ...args )
 
 
 
-}
-//namespace snap
-
+} // namespace snapdev
 // vim: ts=4 sw=4 et

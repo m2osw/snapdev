@@ -32,7 +32,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -105,5 +105,5 @@ inline int chownnm(
 
 
 
-} // snap namespace
+} // namespace snapdev
 // vim: ts=4 sw=4 et

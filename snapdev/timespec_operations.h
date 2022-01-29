@@ -35,6 +35,24 @@
 
 
 
+inline timespec operator - (timespec const & t)
+{
+    // equivalent to `0 - t`
+    //
+    timespec result{ -t.tv_sec, -t.tv_nsec };
+    if(result.tv_nsec < 0)
+    {
+        --result.tv_sec;
+        result.tv_nsec += 1'000'000'000L;
+    }
+    return result;
+}
+
+
+namespace snapdev
+{
+
+
 inline bool valid_timespec(timespec const & t)
 {
     return t.tv_nsec < 1'000'000'000LL;
@@ -44,20 +62,6 @@ inline bool valid_timespec(timespec const & t)
 inline bool negative_timespec(timespec const & t)
 {
     return t.tv_sec < 0LL;
-}
-
-
-inline timespec operator - (timespec const & t)
-{
-    // equivalen to `0 - t`
-    //
-    timespec result{ -t.tv_sec, -t.tv_nsec };
-    if(result.tv_nsec < 0)
-    {
-        --result.tv_sec;
-        result.tv_nsec += 1'000'000'000L;
-    }
-    return result;
 }
 
 
@@ -113,6 +117,25 @@ inline timespec add_timespec(timespec const & lhs, timespec const & rhs)
 
     return result;
 }
+
+
+int compare_timespec(timespec const & lhs, timespec const & rhs)
+{
+    if(lhs.tv_sec == rhs.tv_sec)
+    {
+        return lhs.tv_nsec == rhs.tv_nsec
+                ? 0
+                : (lhs.tv_nsec < rhs.tv_nsec ? -1 : 1);
+    }
+
+    return lhs.tv_sec < rhs.tv_sec ? -1 : 1;
+}
+
+
+
+} // namespace snapdev
+
+
 
 
 // This one is not possible as a static function
@@ -178,7 +201,7 @@ inline std::int64_t operator >>= (timespec & t, double & nsec)
 
 inline timespec & operator += (timespec & lhs, timespec const & rhs)
 {
-    lhs = add_timespec(lhs, rhs);
+    lhs = snapdev::add_timespec(lhs, rhs);
     return lhs;
 }
 
@@ -245,7 +268,7 @@ inline timespec operator + (timespec const & lhs, double rhs)
 inline timespec & operator -= (timespec & lhs, timespec const & rhs)
 {
     timespec const neg(-rhs);
-    lhs = add_timespec(lhs, neg);
+    lhs = snapdev::add_timespec(lhs, neg);
     return lhs;
 }
 
@@ -309,22 +332,9 @@ inline timespec operator - (timespec const & lhs, double rhs)
 }
 
 
-int compare_timespec(timespec const & lhs, timespec const & rhs)
-{
-    if(lhs.tv_sec == rhs.tv_sec)
-    {
-        return lhs.tv_nsec == rhs.tv_nsec
-                ? 0
-                : (lhs.tv_nsec < rhs.tv_nsec ? -1 : 1);
-    }
-
-    return lhs.tv_sec < rhs.tv_sec ? -1 : 1;
-}
-
-
 inline bool operator == (timespec const & lhs, timespec const & rhs)
 {
-    return compare_timespec(lhs, rhs) == 0;
+    return snapdev::compare_timespec(lhs, rhs) == 0;
 }
 
 
@@ -332,7 +342,7 @@ inline bool operator == (timespec const & lhs, std::int64_t rhs)
 {
     timespec t;
     t <<= rhs;
-    return compare_timespec(lhs, t) == 0;
+    return snapdev::compare_timespec(lhs, t) == 0;
 }
 
 
@@ -340,13 +350,13 @@ inline bool operator == (timespec const & lhs, double rhs)
 {
     timespec t;
     t <<= rhs;
-    return compare_timespec(lhs, t) == 0;
+    return snapdev::compare_timespec(lhs, t) == 0;
 }
 
 
 inline bool operator != (timespec const & lhs, timespec const & rhs)
 {
-    return compare_timespec(lhs, rhs) != 0;
+    return snapdev::compare_timespec(lhs, rhs) != 0;
 }
 
 
@@ -354,7 +364,7 @@ inline bool operator != (timespec const & lhs, std::int64_t rhs)
 {
     timespec t;
     t <<= rhs;
-    return compare_timespec(lhs, t) != 0;
+    return snapdev::compare_timespec(lhs, t) != 0;
 }
 
 
@@ -362,13 +372,13 @@ inline bool operator != (timespec const & lhs, double rhs)
 {
     timespec t;
     t <<= rhs;
-    return compare_timespec(lhs, t) != 0;
+    return snapdev::compare_timespec(lhs, t) != 0;
 }
 
 
 inline bool operator < (timespec const & lhs, timespec const & rhs)
 {
-    return compare_timespec(lhs, rhs) == -1;
+    return snapdev::compare_timespec(lhs, rhs) == -1;
 }
 
 
@@ -376,7 +386,7 @@ inline bool operator < (timespec const & lhs, std::int64_t rhs)
 {
     timespec t;
     t <<= rhs;
-    return compare_timespec(lhs, t) == -1;
+    return snapdev::compare_timespec(lhs, t) == -1;
 }
 
 
@@ -384,13 +394,13 @@ inline bool operator < (timespec const & lhs, double rhs)
 {
     timespec t;
     t <<= rhs;
-    return compare_timespec(lhs, t) == -1;
+    return snapdev::compare_timespec(lhs, t) == -1;
 }
 
 
 inline bool operator <= (timespec const & lhs, timespec const & rhs)
 {
-    return compare_timespec(lhs, rhs) <= 0;
+    return snapdev::compare_timespec(lhs, rhs) <= 0;
 }
 
 
@@ -398,7 +408,7 @@ inline bool operator <= (timespec const & lhs, std::int64_t rhs)
 {
     timespec t;
     t <<= rhs;
-    return compare_timespec(lhs, t) <= 0;
+    return snapdev::compare_timespec(lhs, t) <= 0;
 }
 
 
@@ -406,13 +416,13 @@ inline bool operator <= (timespec const & lhs, double rhs)
 {
     timespec t;
     t <<= rhs;
-    return compare_timespec(lhs, t) <= 0;
+    return snapdev::compare_timespec(lhs, t) <= 0;
 }
 
 
 inline bool operator > (timespec const & lhs, timespec const & rhs)
 {
-    return compare_timespec(lhs, rhs) == 1;
+    return snapdev::compare_timespec(lhs, rhs) == 1;
 }
 
 
@@ -420,7 +430,7 @@ inline bool operator > (timespec const & lhs, std::int64_t rhs)
 {
     timespec t;
     t <<= rhs;
-    return compare_timespec(lhs, t) == 1;
+    return snapdev::compare_timespec(lhs, t) == 1;
 }
 
 
@@ -428,13 +438,13 @@ inline bool operator > (timespec const & lhs, double rhs)
 {
     timespec t;
     t <<= rhs;
-    return compare_timespec(lhs, t) == 1;
+    return snapdev::compare_timespec(lhs, t) == 1;
 }
 
 
 inline bool operator >= (timespec const & lhs, timespec const & rhs)
 {
-    return compare_timespec(lhs, rhs) >= 0;
+    return snapdev::compare_timespec(lhs, rhs) >= 0;
 }
 
 
@@ -442,7 +452,7 @@ inline bool operator >= (timespec const & lhs, std::int64_t rhs)
 {
     timespec t;
     t <<= rhs;
-    return compare_timespec(lhs, t) >= 0;
+    return snapdev::compare_timespec(lhs, t) >= 0;
 }
 
 
@@ -450,8 +460,10 @@ inline bool operator >= (timespec const & lhs, double rhs)
 {
     timespec t;
     t <<= rhs;
-    return compare_timespec(lhs, t) >= 0;
+    return snapdev::compare_timespec(lhs, t) >= 0;
 }
+
+
 
 
 /** \brief Output a timespec to a basic_ostream.
@@ -485,7 +497,6 @@ std::basic_ostream<CharT, Traits> & operator << (std::basic_ostream<CharT, Trait
     //
     return out << s.str();
 }
-
 
 
 

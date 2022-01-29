@@ -52,7 +52,7 @@ CATCH_TEST_CASE("tokenize_string", "[string]")
     CATCH_START_SECTION("generate tokens: keep empty entries")
     {
         std::vector<std::string> tokens;
-        CATCH_REQUIRE(snap::tokenize_string(
+        CATCH_REQUIRE(snapdev::tokenize_string(
                   tokens
                 , "   foo    catch  bar   "
                 , " ") == 13);
@@ -76,7 +76,7 @@ CATCH_TEST_CASE("tokenize_string", "[string]")
     CATCH_START_SECTION("generate tokens: remove empty entries")
     {
         std::vector<std::string> tokens;
-        CATCH_REQUIRE(snap::tokenize_string(
+        CATCH_REQUIRE(snapdev::tokenize_string(
                   tokens
                 , "   foo    catch  bar   "
                 , " "
@@ -91,7 +91,7 @@ CATCH_TEST_CASE("tokenize_string", "[string]")
     CATCH_START_SECTION("generate tokens: comma separated")
     {
         std::vector<std::string> tokens;
-        CATCH_REQUIRE(snap::tokenize_string(
+        CATCH_REQUIRE(snapdev::tokenize_string(
                   tokens
                 , ",,,foo,,,,catch,,bar,,,"
                 , ",") == 13);
@@ -115,7 +115,7 @@ CATCH_TEST_CASE("tokenize_string", "[string]")
     CATCH_START_SECTION("generate tokens: comma separated, remove empty")
     {
         std::vector<std::string> tokens;
-        CATCH_REQUIRE(snap::tokenize_string(
+        CATCH_REQUIRE(snapdev::tokenize_string(
                   tokens
                 , ",,, foo ,,,,catch  ,,bar ,,,"
                 , ","
@@ -130,7 +130,7 @@ CATCH_TEST_CASE("tokenize_string", "[string]")
     CATCH_START_SECTION("generate tokens: comma separated, remove empty and trim")
     {
         std::vector<std::string> tokens;
-        CATCH_REQUIRE(snap::tokenize_string(
+        CATCH_REQUIRE(snapdev::tokenize_string(
                   tokens
                 , ", ,, foo ,,    ,,catch  ,,bar ,,,  "
                 , ","
@@ -146,13 +146,13 @@ CATCH_TEST_CASE("tokenize_string", "[string]")
     CATCH_START_SECTION("generate tokens: arrow (string) separated, remove empty and trim")
     {
         std::vector<std::string> tokens;
-        CATCH_REQUIRE(snap::tokenize_string(
+        CATCH_REQUIRE(snapdev::tokenize_string(
                   tokens
                 , "a => b => c => d"
                 , "=>"
                 , true
                 , " "
-                , snap::string_predicate<decltype(tokens)>) == 4);
+                , snapdev::string_predicate<decltype(tokens)>) == 4);
         CATCH_REQUIRE(tokens.size() == 4);
         CATCH_REQUIRE(tokens[0] == "a");
         CATCH_REQUIRE(tokens[1] == "b");

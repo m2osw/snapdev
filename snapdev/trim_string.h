@@ -44,7 +44,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -194,5 +194,5 @@ StringT trim_string(
     return result;
 }
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

@@ -42,7 +42,7 @@
 #include <stdio.h>
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -78,5 +78,5 @@ int log2(std::uint64_t v)
 
 
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

@@ -37,7 +37,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -84,5 +84,5 @@ bool empty_set_intersection(std::set<K, C, A> const & lhs, std::set<K, C, A> con
 
 
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

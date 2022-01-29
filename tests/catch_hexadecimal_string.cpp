@@ -129,11 +129,11 @@ CATCH_TEST_CASE("hexadecimal_string_hex_digits", "[hexadecimal_string]")
             || (i >= 'a' && i <= 'f')
             || (i >= 'A' && i <= 'F'))
             {
-                CATCH_REQUIRE(snap::is_hexdigit(i));
+                CATCH_REQUIRE(snapdev::is_hexdigit(i));
             }
             else
             {
-                CATCH_REQUIRE_FALSE(snap::is_hexdigit(i));
+                CATCH_REQUIRE_FALSE(snapdev::is_hexdigit(i));
             }
         }
     }
@@ -154,20 +154,20 @@ CATCH_TEST_CASE("hexadecimal_string_16_bit_values", "[hexadecimal_string]")
             {
                 value = "0" + value;
             }
-            std::string bin(snap::hex_to_bin(value));
+            std::string bin(snapdev::hex_to_bin(value));
             std::string upper;
             if(bin.length() == 1)
             {
                 CATCH_REQUIRE(i < 256);
                 CATCH_REQUIRE(static_cast<unsigned char>(bin[0]) == static_cast<unsigned char>(i));
 
-                CATCH_REQUIRE(snap::int_to_hex(i, false) == ss.str());
-                CATCH_REQUIRE(snap::int_to_hex(i, false, 2) == value);
+                CATCH_REQUIRE(snapdev::int_to_hex(i, false) == ss.str());
+                CATCH_REQUIRE(snapdev::int_to_hex(i, false, 2) == value);
 
-                CATCH_REQUIRE(snap::hex_to_int<int>(ss.str()) == i);
-                CATCH_REQUIRE(snap::hex_to_int<int>(value) == i);
+                CATCH_REQUIRE(snapdev::hex_to_int<int>(ss.str()) == i);
+                CATCH_REQUIRE(snapdev::hex_to_int<int>(value) == i);
 
-                upper = snap::int_to_hex(i, true, 2);
+                upper = snapdev::int_to_hex(i, true, 2);
             }
             else
             {
@@ -175,17 +175,17 @@ CATCH_TEST_CASE("hexadecimal_string_16_bit_values", "[hexadecimal_string]")
                 CATCH_REQUIRE(static_cast<unsigned char>(bin[0]) == static_cast<unsigned char>(i >> 8));
                 CATCH_REQUIRE(static_cast<unsigned char>(bin[1]) == static_cast<unsigned char>(i));
 
-                CATCH_REQUIRE(snap::int_to_hex(i, false) == ss.str());
-                CATCH_REQUIRE(snap::int_to_hex(i, false, 4) == value);
-                CATCH_REQUIRE(snap::hex_to_int<int>(ss.str()) == i);
-                CATCH_REQUIRE(snap::hex_to_int<int>(value) == i);
+                CATCH_REQUIRE(snapdev::int_to_hex(i, false) == ss.str());
+                CATCH_REQUIRE(snapdev::int_to_hex(i, false, 4) == value);
+                CATCH_REQUIRE(snapdev::hex_to_int<int>(ss.str()) == i);
+                CATCH_REQUIRE(snapdev::hex_to_int<int>(value) == i);
 
-                upper = snap::int_to_hex(i, true, 4);
+                upper = snapdev::int_to_hex(i, true, 4);
             }
 
-            CATCH_REQUIRE(snap::bin_to_hex(bin) == value);
+            CATCH_REQUIRE(snapdev::bin_to_hex(bin) == value);
 
-            std::string bin_from_upper(snap::hex_to_bin(upper));
+            std::string bin_from_upper(snapdev::hex_to_bin(upper));
             if(bin_from_upper.length() == 1)
             {
                 CATCH_REQUIRE(i < 256);
@@ -214,16 +214,16 @@ CATCH_TEST_CASE("hexadecimal_string_16_bit_values", "[hexadecimal_string]")
                 ss << std::setw(2) << std::setfill('0') << std::hex << value;
                 result.push_back(value);
             }
-            CATCH_REQUIRE(snap::hex_to_bin(ss.str()) == result);
-            CATCH_REQUIRE(snap::bin_to_hex(result) == ss.str());
+            CATCH_REQUIRE(snapdev::hex_to_bin(ss.str()) == result);
+            CATCH_REQUIRE(snapdev::bin_to_hex(result) == ss.str());
         }
     }
     CATCH_END_SECTION()
 
     CATCH_START_SECTION("hexadecimal_string: bin_to_hex with empty")
     {
-        CATCH_REQUIRE(snap::bin_to_hex(std::string()) == std::string());
-        CATCH_REQUIRE(snap::bin_to_hex("") == "");
+        CATCH_REQUIRE(snapdev::bin_to_hex(std::string()) == std::string());
+        CATCH_REQUIRE(snapdev::bin_to_hex("") == "");
     }
     CATCH_END_SECTION()
 
@@ -232,7 +232,7 @@ CATCH_TEST_CASE("hexadecimal_string_16_bit_values", "[hexadecimal_string]")
         for(int i(0); i < 256; ++i)
         {
             std::uint8_t c(i & 255);
-            std::string const value(snap::int_to_hex(c, true, 4));  // 4 when type is at most 2 digits, return 2 digits...
+            std::string const value(snapdev::int_to_hex(c, true, 4));  // 4 when type is at most 2 digits, return 2 digits...
             std::stringstream ss;
             ss << std::setw(2) << std::setfill('0') << std::hex << std::uppercase << i;
             CATCH_REQUIRE(ss.str() == value);
@@ -255,8 +255,8 @@ CATCH_TEST_CASE("hexadecimal_string_invalid_input", "[hexadecimal_string][error]
                 ss << std::hex << value;
             }
             CATCH_REQUIRE_THROWS_MATCHES(
-                      snap::hex_to_bin(ss.str())
-                    , snap::hexadecimal_string_invalid_parameter
+                      snapdev::hex_to_bin(ss.str())
+                    , snapdev::hexadecimal_string_invalid_parameter
                     , Catch::Matchers::ExceptionMessage(
                               "hexadecimal_string_exception: the hex parameter must have an even size."));
         }
@@ -288,7 +288,7 @@ CATCH_TEST_CASE("hexadecimal_string_invalid_input", "[hexadecimal_string][error]
             {
                 char32_t const invalid(rand() % (0x110000 - 1) + 1);
                 if((invalid < 0xD800 || invalid >= 0xE000)  // don't try with UTF-16 surrogates
-                && !snap::is_hexdigit(invalid))
+                && !snapdev::is_hexdigit(invalid))
                 {
                     char buf[16];
                     wctombs(buf, invalid, sizeof(buf));
@@ -305,8 +305,8 @@ CATCH_TEST_CASE("hexadecimal_string_invalid_input", "[hexadecimal_string][error]
             }
 
             CATCH_REQUIRE_THROWS_MATCHES(
-                      snap::hex_to_bin(ss.str())
-                    , snap::hexadecimal_string_invalid_parameter
+                      snapdev::hex_to_bin(ss.str())
+                    , snapdev::hexadecimal_string_invalid_parameter
                     , Catch::Matchers::ExceptionMessage(
                               "hexadecimal_string_exception: the input character is not an hexadecimal digit."));
         }
@@ -325,8 +325,8 @@ CATCH_TEST_CASE("hexadecimal_string_invalid_input", "[hexadecimal_string][error]
             std::stringstream ss;
             ss << value;
             CATCH_REQUIRE_THROWS_MATCHES(
-                      snap::hex_to_int<std::uint8_t>(ss.str())
-                    , snap::hexadecimal_string_out_of_range
+                      snapdev::hex_to_int<std::uint8_t>(ss.str())
+                    , snapdev::hexadecimal_string_out_of_range
                     , Catch::Matchers::ExceptionMessage(
                               "hexadecimal_string_out_of_range: input string has an hexadecimal number which is too large for the output integer type."));
         }

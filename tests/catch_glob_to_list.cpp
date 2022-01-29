@@ -118,9 +118,9 @@ CATCH_TEST_CASE("glob_to_list", "[glob_to_list]")
         // read all the files (*)
         //
         typedef std::set<std::string> strings_t;
-        snap::glob_to_list<strings_t> all_glob;
+        snapdev::glob_to_list<strings_t> all_glob;
         CATCH_REQUIRE(all_glob.read_path<
-                snap::glob_to_list_flag_t::GLOB_FLAG_RECURSIVE>(top_dir + "/*"));
+                snapdev::glob_to_list_flag_t::GLOB_FLAG_RECURSIVE>(top_dir + "/*"));
 
         // soft-links are followed and the realpath() function returns
         // the target; here we "computed" what the glob() is expected to
@@ -148,9 +148,9 @@ CATCH_TEST_CASE("glob_to_list", "[glob_to_list]")
         // read all text files (*.txt)
         //
         typedef std::set<std::string> strings_t;
-        snap::glob_to_list<strings_t> txt_glob;
+        snapdev::glob_to_list<strings_t> txt_glob;
         CATCH_REQUIRE(txt_glob.read_path<
-                snap::glob_to_list_flag_t::GLOB_FLAG_RECURSIVE>(top_dir + "/*.txt"));
+                snapdev::glob_to_list_flag_t::GLOB_FLAG_RECURSIVE>(top_dir + "/*.txt"));
 
         CATCH_REQUIRE(txt_glob.size() == 6);
         CATCH_REQUIRE(txt_glob.count(txt_glob.get_real_path(bar_txt)) == 1);
@@ -163,9 +163,9 @@ CATCH_TEST_CASE("glob_to_list", "[glob_to_list]")
         // read text file within the bar sub-directory
         //
         typedef std::set<std::string> strings_t;
-        snap::glob_to_list<strings_t> sub_bar_glob;
+        snapdev::glob_to_list<strings_t> sub_bar_glob;
         CATCH_REQUIRE(sub_bar_glob.read_path<
-                snap::glob_to_list_flag_t::GLOB_FLAG_RECURSIVE>(sub_bar_dir + "/*.txt"));
+                snapdev::glob_to_list_flag_t::GLOB_FLAG_RECURSIVE>(sub_bar_dir + "/*.txt"));
 
         CATCH_REQUIRE(sub_bar_glob.size() == 2);
         CATCH_REQUIRE(sub_bar_glob.count(soft_link_link) == 1);
@@ -174,10 +174,10 @@ CATCH_TEST_CASE("glob_to_list", "[glob_to_list]")
         // read text files within the bar sub-directory and follow symlinks
         //
         typedef std::set<std::string> strings_t;
-        snap::glob_to_list<strings_t> symlink_glob;
+        snapdev::glob_to_list<strings_t> symlink_glob;
         CATCH_REQUIRE(symlink_glob.read_path<
-                snap::glob_to_list_flag_t::GLOB_FLAG_FOLLOW_SYMLINK
-              , snap::glob_to_list_flag_t::GLOB_FLAG_RECURSIVE>(sub_bar_dir + "/*.txt"));
+                snapdev::glob_to_list_flag_t::GLOB_FLAG_FOLLOW_SYMLINK
+              , snapdev::glob_to_list_flag_t::GLOB_FLAG_RECURSIVE>(sub_bar_dir + "/*.txt"));
 
         CATCH_REQUIRE(symlink_glob.size() == 4);
         CATCH_REQUIRE(symlink_glob.count(symlink_glob.get_real_path(bar_txt)) == 1);

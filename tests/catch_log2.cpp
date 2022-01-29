@@ -47,7 +47,7 @@ CATCH_TEST_CASE("log2", "[math]")
 {
     CATCH_START_SECTION("log2: zero")
     {
-        CATCH_REQUIRE(snap::log2(0) == -1);
+        CATCH_REQUIRE(snapdev::log2(0) == -1);
     }
     CATCH_END_SECTION()
 
@@ -56,7 +56,7 @@ CATCH_TEST_CASE("log2", "[math]")
         for(int i = 0; i < 64; ++i)
         {
             std::uint64_t const v = 1ULL << i;
-            CATCH_REQUIRE(snap::log2(v) == i);
+            CATCH_REQUIRE(snapdev::log2(v) == i);
         }
     }
     CATCH_END_SECTION()
@@ -72,7 +72,7 @@ CATCH_TEST_CASE("log2", "[math]")
             // same difference, all the lower bits are ignored in the
             // computation
             //
-            CATCH_REQUIRE(snap::log2(v) == i);
+            CATCH_REQUIRE(snapdev::log2(v) == i);
         }
     }
     CATCH_END_SECTION()

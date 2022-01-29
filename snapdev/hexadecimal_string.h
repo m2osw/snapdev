@@ -31,7 +31,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -282,5 +282,5 @@ T hex_to_int(std::string const & hex)
 }
 
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

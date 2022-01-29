@@ -54,7 +54,7 @@
  * statements. This is quite practical if managing a state.
  */
 
-namespace snap
+namespace snapdev
 {
 
 /** \brief Set a value context safe.
@@ -201,6 +201,5 @@ private:
 
 
 
-}
-// snap namespace
+} // namespace snapdev
 // vim: ts=4 sw=4 et

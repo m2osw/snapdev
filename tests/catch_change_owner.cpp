@@ -61,7 +61,7 @@ CATCH_TEST_CASE("chownnm", "[os]")
             CATCH_REQUIRE(user != nullptr);
             if(strcmp(user, "root") != 0)
             {
-                std::set<std::string> our_groups(snap::user_group_names<std::set<std::string>>(user));
+                std::set<std::string> our_groups(snapdev::user_group_names<std::set<std::string>>(user));
                 if(our_groups.find("snapwebsites") == our_groups.end())
                 {
                     permitted = false;
@@ -72,7 +72,7 @@ CATCH_TEST_CASE("chownnm", "[os]")
             if(permitted)
             {
                 std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/group-test.txt");
-                snap::file_contents system_groups(filename);
+                snapdev::file_contents system_groups(filename);
                 system_groups.contents("test file--testing changing group\n");
                 system_groups.write_all();
 
@@ -83,7 +83,7 @@ CATCH_TEST_CASE("chownnm", "[os]")
                     std::cerr << "warning: your default group is \"snapwebsites\" so the test is not going to change anything\n";
                 }
 
-                CATCH_REQUIRE(snap::chownnm(filename, std::string(), "snapwebsites") == 0);
+                CATCH_REQUIRE(snapdev::chownnm(filename, std::string(), "snapwebsites") == 0);
                 struct stat verify;
                 CATCH_REQUIRE(stat(filename.c_str(), &verify) == 0);
                 CATCH_REQUIRE(verify.st_gid == grp->gr_gid);
@@ -92,7 +92,7 @@ CATCH_TEST_CASE("chownnm", "[os]")
                 //
                 struct group * org_group(getgrgid(st.st_gid));
                 CATCH_REQUIRE(org_group != nullptr);
-                CATCH_REQUIRE(snap::chownnm(filename, std::string(), org_group->gr_name) == 0);
+                CATCH_REQUIRE(snapdev::chownnm(filename, std::string(), org_group->gr_name) == 0);
                 CATCH_REQUIRE(stat(filename.c_str(), &verify) == 0);
                 CATCH_REQUIRE(verify.st_gid == org_group->gr_gid);
             }
@@ -115,7 +115,7 @@ CATCH_TEST_CASE("chownnm", "[os]")
         else
         {
             std::string const filename(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/owner-test.txt");
-            snap::file_contents system_groups(filename);
+            snapdev::file_contents system_groups(filename);
             system_groups.contents("test file--testing changing owner\n");
             system_groups.write_all();
 
@@ -129,7 +129,7 @@ CATCH_TEST_CASE("chownnm", "[os]")
                 std::cerr << "warning: your default owner is \"snapwebsites\" so the test is not going to change anything\n";
             }
 
-            CATCH_REQUIRE(snap::chownnm(filename, "snapwebsites", std::string()) == 0);
+            CATCH_REQUIRE(snapdev::chownnm(filename, "snapwebsites", std::string()) == 0);
             struct stat verify;
             CATCH_REQUIRE(stat(filename.c_str(), &verify) == 0);
             CATCH_REQUIRE(verify.st_uid == pwd->pw_uid);
@@ -138,7 +138,7 @@ CATCH_TEST_CASE("chownnm", "[os]")
             //
             struct passwd * org_owner(getpwuid(st.st_uid));
             CATCH_REQUIRE(org_owner != nullptr);
-            CATCH_REQUIRE(snap::chownnm(filename, std::string(), org_owner->pw_name) == 0);
+            CATCH_REQUIRE(snapdev::chownnm(filename, std::string(), org_owner->pw_name) == 0);
             CATCH_REQUIRE(stat(filename.c_str(), &verify) == 0);
             CATCH_REQUIRE(verify.st_uid == org_owner->pw_uid);
         }

@@ -18,7 +18,7 @@
 // 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
-namespace snap
+namespace snapdev
 {
 
 /** \brief Set an environment variable, context safe.
@@ -230,6 +230,5 @@ private:
 
 
 
-}
-// snap namespace
+} // namespace snapdev
 // vim: ts=4 sw=4 et

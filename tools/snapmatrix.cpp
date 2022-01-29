@@ -44,7 +44,7 @@ public:
     void            run();
 
 private:
-    typedef snap::matrix<double>        matrix_t;
+    typedef snapdev::matrix<double>        matrix_t;
 
     enum class token_t
     {
@@ -278,7 +278,7 @@ matrix_expr::token_t matrix_expr::get_token()
             return t;
         }
     }
-    snap::NOT_REACHED();
+    snapdev::NOT_REACHED();
 }
 
 

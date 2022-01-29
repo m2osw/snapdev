@@ -29,7 +29,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 /** \brief A debug/non-debug assert() which can include side effects.
@@ -59,6 +59,5 @@ void SAFE_ASSERT(bool test_result, Args && ... args)
 
 
 
-}
-// snap namespace
+} // snap namespacedev
 // vim: ts=4 sw=4 et

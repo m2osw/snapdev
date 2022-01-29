@@ -23,7 +23,7 @@
 #include    <string>
 
 
-namespace snap
+namespace snapdev
 {
 
 /** \brief Transform a set of strings in a string.
@@ -88,5 +88,5 @@ typename ContainerT::value_type join_strings(ContainerT & tokens
     return result;
 }
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

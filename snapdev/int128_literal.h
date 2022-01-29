@@ -31,7 +31,9 @@
 //#include    <sstream>
 
 
-namespace snap
+namespace snapdev
+{
+namespace literals
 {
 
 /** \brief Convert a literal to a signed __int128.
@@ -241,6 +243,6 @@ constexpr unsigned __int128 operator""_uint128(char const * literal)
 
 
 
-}
-// snap namespace
+} // namespace literals
+} // namespace snapdev
 // vim: ts=4 sw=4 et

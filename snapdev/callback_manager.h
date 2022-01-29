@@ -33,7 +33,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 /** \brief Manage a set of callbacks.
@@ -461,6 +461,5 @@ private:
 
 
 
-}
-// snap namespace
+} // snap namespacedev
 // vim: ts=4 sw=4 et

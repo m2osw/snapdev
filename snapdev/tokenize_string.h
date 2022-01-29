@@ -41,7 +41,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -212,5 +212,5 @@ size_t tokenize_string(ContainerT & tokens
     return tokens.size();
 }
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

@@ -24,7 +24,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -125,6 +125,5 @@ struct is_unique_ptr<std::unique_ptr<T>>
 
 
 
-}
-// snap namespace
+} // namespace snapdev
 // vim: ts=4 sw=4 et

@@ -25,7 +25,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -87,6 +87,5 @@ class has_equal_operator
 
 
 
-}
-// snap namespace
+} // snap namespacedev
 // vim: ts=4 sw=4 et

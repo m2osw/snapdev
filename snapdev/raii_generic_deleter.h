@@ -56,7 +56,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -475,5 +475,5 @@ struct shared_ptr_with_deleter
 typedef std::unique_ptr<FILE, raii_pointer_deleter<FILE, decltype(&::fclose), &::fclose>>     raii_file_t;
 
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

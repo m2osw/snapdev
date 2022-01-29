@@ -167,7 +167,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -262,5 +262,5 @@ constexpr typename std::enable_if<!std::is_same<T, F>::value, typename T::value_
 
 
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

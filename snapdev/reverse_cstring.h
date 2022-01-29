@@ -31,7 +31,7 @@
 //
 #include <iterator>
 
-namespace snap
+namespace snapdev
 {
 
 /** \brief Iterate a standard C string in reverse.
@@ -628,5 +628,5 @@ private:
 
 
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

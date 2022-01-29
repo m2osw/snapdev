@@ -22,7 +22,7 @@
 #pragma once
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -113,5 +113,5 @@ template<std::int64_t x>
 constexpr typename numeric_string<x>::type numeric_string<x>::value;
 
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

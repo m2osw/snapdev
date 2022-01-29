@@ -1,5 +1,5 @@
 ( This is a Forth-like script used by the snapmatrix tool to run computation
-  on matrix with the snap::matrix implementation.
+  on matrix with the snapdev::matrix implementation.
 )
 
 180 deg2rad rotatez

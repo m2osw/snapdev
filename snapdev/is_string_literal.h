@@ -48,7 +48,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -133,5 +133,5 @@ bool is_string_literal(T &)
 
 
 
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

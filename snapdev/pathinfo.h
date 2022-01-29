@@ -29,7 +29,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 namespace pathinfo
 {
@@ -197,5 +197,5 @@ StringT dirname(StringT const & path)
 }
 
 } // namespace pathinfo
-} // namespace snap
+} // namespace snapdev
 // vim: ts=4 sw=4 et

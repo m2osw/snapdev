@@ -38,7 +38,7 @@
 
 
 
-namespace snap
+namespace snapdev
 {
 
 
@@ -200,5 +200,5 @@ inline int mkdir_p(
 
 
 
-} // snap namespace
+} // snap namespacedev
 // vim: ts=4 sw=4 et
