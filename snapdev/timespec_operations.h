@@ -292,6 +292,10 @@ public:
      * This function reads the system time and saves it into this
      * timespec_ex object.
      *
+     * \todo
+     * Look into whether we want to return an error if clock_gettime()
+     * fails.
+     *
      * \param[in] clk_id  The type of clock you want to query.
      *
      * \return A timespec_ex representing the specified \p clk_id.
