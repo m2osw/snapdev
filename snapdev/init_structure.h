@@ -48,32 +48,32 @@
  *
  *     // class to setup the f_name field
  *     class FieldName
- *         : public snap::StructureValue<char const *>
+ *         : public snapdev::StructureValue<char const *>
  *     {
  *     public:
  *         constexpr FieldName()
- *             : snap::StructureValue<char const *>(nullptr)
+ *             : snapdev::StructureValue<char const *>(nullptr)
  *         {
  *         }
  *
  *         constexpr FieldName(char const * name)
- *             : snap::StructureValue<char const *>(name)
+ *             : snapdev::StructureValue<char const *>(name)
  *         {
  *         }
  *     };
  *
  *     // class to setup the f_size field
  *     class FieldSize
- *         : public snap::StructureValue<int>
+ *         : public snapdev::StructureValue<int>
  *     {
  *     public:
  *         constexpr FieldSize()
- *             : snap::StructureValue<int>(0)
+ *             : snapdev::StructureValue<int>(0)
  *         {
  *         }
  *
  *         constexpr FieldSize(int flags)
- *             : snap::StructureValue<int>(flags)
+ *             : snapdev::StructureValue<int>(flags)
  *         {
  *         }
  *     };
@@ -86,8 +86,8 @@
  *     #pragma GCC diagnostic ignored "-Wpedantic"
  *         foo s =
  *         {
- *             .f_name = snap::find_field<FieldName>(args...),                // no default, mandatory
- *             .f_size = snap::find_field<FieldSize>(args..., FieldSize()),   // include a default
+ *             .f_name = snapdev::find_field<FieldName>(args...),                // no default, mandatory
+ *             .f_size = snapdev::find_field<FieldSize>(args..., FieldSize()),   // include a default
  *         };
  *     #pragma GCC diagnostic pop
  *
@@ -229,7 +229,7 @@ private:
 template<typename T, typename F, class ...ARGS>
 constexpr typename std::enable_if<std::is_same<T, F>::value, typename T::value_t>::type find_field(F first, ARGS ...args)
 {
-    snap::NOT_USED(args...);
+    NOT_USED(args...);
     return first.get();
 }
 
@@ -256,7 +256,7 @@ constexpr typename std::enable_if<std::is_same<T, F>::value, typename T::value_t
 template<typename T, typename F, class ...ARGS>
 constexpr typename std::enable_if<!std::is_same<T, F>::value, typename T::value_t>::type find_field(F first, ARGS ...args)
 {
-    snap::NOT_USED(first);
+    NOT_USED(first);
     return find_field<T>(args...);
 }
 
