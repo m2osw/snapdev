@@ -44,19 +44,23 @@
 
 
 
+
 CATCH_TEST_CASE("timespec-operations", "[math]")
 {
     CATCH_START_SECTION("timespec-operations: simple add")
     {
-        timespec a{  5L, 345L };
-        timespec b{ 13L, 701L };
+        snapdev::timespec_ex a(timespec{  5L, 345L });
 
-        CATCH_REQUIRE(snapdev::valid_timespec(a));
-        CATCH_REQUIRE(snapdev::valid_timespec(b));
-        CATCH_REQUIRE_FALSE(snapdev::negative_timespec(a));
-        CATCH_REQUIRE_FALSE(snapdev::negative_timespec(b));
+        snapdev::timespec_ex b;
+        timespec raw{ 13L, 701L };
+        b = raw;
 
-        timespec c(a + b);
+        CATCH_REQUIRE(a.valid());
+        CATCH_REQUIRE(b.valid());
+        CATCH_REQUIRE_FALSE(a.negative());
+        CATCH_REQUIRE_FALSE(b.negative());
+
+        snapdev::timespec_ex c(a + b);
 
         a += b;
 
@@ -70,21 +74,38 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
         CATCH_REQUIRE(c.tv_nsec == 345L + 701L);
         CATCH_REQUIRE(a == c);
         CATCH_REQUIRE(c == a);
+
+        timespec d{ 3L, 55L };
+
+        a += d;
+
+        CATCH_REQUIRE(a.tv_sec == 5L + 13L + 3L);
+        CATCH_REQUIRE(a.tv_nsec == 345L + 701L + 55L);
+
+        a += 301L;
+
+        CATCH_REQUIRE(a.tv_sec == 5L + 13L + 3L);
+        CATCH_REQUIRE(a.tv_nsec == 345L + 701L + 55L + 301L);
+
+        a -= 1'000'000'259L;
+
+        CATCH_REQUIRE(a.tv_sec == 5L + 13L + 3L - 1L);
+        CATCH_REQUIRE(a.tv_nsec == 345L + 701L + 55L + 301L - 259L);
     }
     CATCH_END_SECTION()
 
     CATCH_START_SECTION("timespec-operations: simple subtract")
     {
-        timespec a{ 25L, 1'345L };
-        timespec b{ 13L,   701L };
+        snapdev::timespec_ex a(timespec{ 25L, 1'345L });
+        snapdev::timespec_ex b(timespec{ 13L,   701L });
 
-        CATCH_REQUIRE(snapdev::valid_timespec(a));
-        CATCH_REQUIRE(snapdev::valid_timespec(b));
+        CATCH_REQUIRE(a.valid());
+        CATCH_REQUIRE(b.valid());
 
-        timespec c(a - b);
-        timespec d(-b);
-        timespec e(a + d);
-        timespec f(a - 1'000L);   // -1us
+        snapdev::timespec_ex c(a - b);
+        snapdev::timespec_ex d(-b);
+        snapdev::timespec_ex e(a + d);
+        snapdev::timespec_ex f(a - 1'000L);   // -1us
 
         a -= b;
 
@@ -108,12 +129,12 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
 
     CATCH_START_SECTION("timespec-operations: add \"minus one day\"")
     {
-        timespec now{ 1629652541L, 345L };
-        timespec backward{ -86400L, 0L }; // -1 day
+        snapdev::timespec_ex now(timespec{ 1629652541L, 345L });
+        snapdev::timespec_ex backward(timespec{ -86400L, 0L }); // -1 day
 
         CATCH_REQUIRE(!!now);
         CATCH_REQUIRE_FALSE(!backward);
-        CATCH_REQUIRE(snapdev::negative_timespec(backward));
+        CATCH_REQUIRE(backward.negative());
 
         now += backward;
 
@@ -127,8 +148,8 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
 
     CATCH_START_SECTION("timespec-operations: add with nano overflow")
     {
-        timespec now{ 1629652541L, 913'788'345L };
-        timespec backward{ 86400L, 500'000'000L }; // +1 day and 0.5 seconds
+        snapdev::timespec_ex now(timespec{ 1629652541L, 913'788'345L });
+        snapdev::timespec_ex backward(timespec{ 86400L, 500'000'000L }); // +1 day and 0.5 seconds
 
         CATCH_REQUIRE(!!now);
         CATCH_REQUIRE(!!backward);
@@ -145,11 +166,11 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
 
     CATCH_START_SECTION("timespec-operations: subtract with nano underflow")
     {
-        timespec a{ 13L,   701L };
-        timespec b{ 25L, 1'345L };
+        snapdev::timespec_ex a(13L,   701L);
+        snapdev::timespec_ex b(25L, 1'345L);
 
-        CATCH_REQUIRE(snapdev::valid_timespec(a));
-        CATCH_REQUIRE(snapdev::valid_timespec(b));
+        CATCH_REQUIRE(a.valid());
+        CATCH_REQUIRE(b.valid());
 
         a -= b;
 
@@ -163,15 +184,15 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
 
     CATCH_START_SECTION("timespec-operations: -1, 0, +1")
     {
-        timespec a = {};
+        snapdev::timespec_ex a = {};
 
         CATCH_REQUIRE(!a);
-        CATCH_REQUIRE_FALSE(snapdev::negative_timespec(a));
+        CATCH_REQUIRE_FALSE(a.negative());
 
         --a;
 
         CATCH_REQUIRE_FALSE(!a);
-        CATCH_REQUIRE(snapdev::negative_timespec(a));
+        CATCH_REQUIRE(a.negative());
         CATCH_REQUIRE(a.tv_sec == -1L);
         CATCH_REQUIRE(a.tv_nsec == 999'999'999L);
 
@@ -184,7 +205,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
         ++a;
 
         CATCH_REQUIRE(!!a);
-        CATCH_REQUIRE_FALSE(snapdev::negative_timespec(a));
+        CATCH_REQUIRE_FALSE(a.negative());
         CATCH_REQUIRE(a.tv_sec == 0L);
         CATCH_REQUIRE(a.tv_nsec == 1L);
 
@@ -198,12 +219,12 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
 
     CATCH_START_SECTION("timespec-operations: add nanos")
     {
-        timespec now{ 1629652541L, 913'788'345L };
+        snapdev::timespec_ex now(1629652541L, 913'788'345L);
         std::int64_t nsec(500'000'000L);
 
         CATCH_REQUIRE(!!now);
 
-        timespec sum(now + nsec);
+        snapdev::timespec_ex sum(now + nsec);
 
         now += nsec;
 
@@ -221,7 +242,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
 
         nsec += 86400L * 1'000'000'000L;
 
-        timespec total(sum + nsec);
+        snapdev::timespec_ex total(sum + nsec);
 
         now += nsec;
 
@@ -244,7 +265,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
         CATCH_REQUIRE_FALSE(now > total);
         CATCH_REQUIRE(now >= total);
 
-        timespec pre(++total);
+        snapdev::timespec_ex pre(++total);
 
         CATCH_REQUIRE(pre == total);
         CATCH_REQUIRE_FALSE(pre != total);
@@ -260,7 +281,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
         CATCH_REQUIRE_FALSE(now > total);
         CATCH_REQUIRE_FALSE(now >= total);
 
-        timespec post(now++);
+        snapdev::timespec_ex post(now++);
 
         CATCH_REQUIRE_FALSE(post == total);
         CATCH_REQUIRE(post != total);
@@ -313,38 +334,36 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
 
     CATCH_START_SECTION("timespec-operations: load/save")
     {
-        timespec now{ 1629652549L, 913'788'345L };
+        snapdev::timespec_ex now(1629652549L, 913'788'345L);
 
-        std::int64_t nsec(0);
-        now >>= nsec;
+        std::int64_t nsec(now.to_nsec());
 
         CATCH_REQUIRE(nsec == 1629652549L * 1'000'000'000L + 913'788'345L);
 
-        timespec save = {};
+        snapdev::timespec_ex save;
         CATCH_REQUIRE(!save);
-        CATCH_REQUIRE(snapdev::valid_timespec(save));
-        save <<= nsec;
+        CATCH_REQUIRE(save.valid());
+        save = nsec;
 
         CATCH_REQUIRE(nsec == 1629652549L * 1'000'000'000L + 913'788'345L);
         CATCH_REQUIRE(save.tv_sec == 1629652549L);
         CATCH_REQUIRE(save.tv_nsec == 913'788'345L);
 
         double seconds(33.0);
-        save <<= seconds;
+        save = seconds;
         CATCH_REQUIRE(save.tv_sec == 33L);
         CATCH_REQUIRE(save.tv_nsec == 0L);
 
-        double precise_time(0.0);
-        save >>= precise_time;
+        double precise_time(save.to_sec());
         bool precise_result(precise_time >= 33.0 && precise_time <= 33.0);
         CATCH_REQUIRE(precise_result);
 
         seconds = 81.325611932;
-        save <<= seconds;
+        save = seconds;
         CATCH_REQUIRE(save.tv_sec == 81L);
         CATCH_REQUIRE(save.tv_nsec == 325'611'932L);
 
-        save >>= precise_time;
+        precise_time = save.to_sec();
         precise_result = precise_time >= 81.325611932 && precise_time <= 81.325611932;
         CATCH_REQUIRE(precise_result);
         CATCH_REQUIRE(save == 81.325611932);
@@ -358,50 +377,57 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
         CATCH_REQUIRE(save >= 81.324);
         CATCH_REQUIRE(save >= 81.325611932);
 
-        timespec plus(save + 3.000101);
-        plus >>= precise_time;
+        snapdev::timespec_ex plus(save + 3.000101);
+        precise_time = plus.to_sec();
         precise_result = precise_time >= 84.325712930 && precise_time <= 84.325712931; // we lose some precision here
 //std::cerr << "precise = " << std::setprecision(20) << std::setw(9) << precise_time
 //<< " expected " << 81.325611932 + 3.000101 << "\n";
         CATCH_REQUIRE(precise_result);
 
         save += 3.000101;
-        save >>= precise_time;
+        precise_time = save.to_sec();
         precise_result = precise_time >= 84.325712930 && precise_time <= 84.325712931; // we lose some precision here
 //std::cerr << "precise = " << std::setprecision(20) << std::setw(9) << precise_time
 //<< " expected " << 81.325611932 + 3.000101 << "\n";
         CATCH_REQUIRE(precise_result);
         CATCH_REQUIRE(save == plus);
 
-        timespec minus(save - 1.20050001);
-        minus >>= precise_time;
+        snapdev::timespec_ex minus(save - 1.20050001);
+        precise_time = minus.to_sec();
         precise_result = precise_time >= 83.125212920 && precise_time <= 83.125212921;
 //std::cerr << "precise = " << std::setprecision(20) << std::setw(9) << precise_time
 //<< " expected " << 81.325611932 + 3.000101 - 1.20050001 << "\n";
         CATCH_REQUIRE(precise_result);
 
         save -= 1.20050001;
-        save >>= precise_time;
+        precise_time = save.to_sec();
         precise_result = precise_time >= 83.125212920 && precise_time <= 83.125212921;
 //std::cerr << "precise = " << std::setprecision(20) << std::setw(9) << precise_time
 //<< " expected " << 81.325611932 + 3.000101 - 1.20050001 << "\n";
         CATCH_REQUIRE(precise_result);
         CATCH_REQUIRE(save == minus);
+
+        double neg(-701.445123421);
+        save = neg;
+        CATCH_REQUIRE(save.tv_sec == -702L);
+        precise_result = save.tv_nsec >= -445'123'420L + 1'000'000'000L
+                      || save.tv_nsec <= -445'123'422L + 1'000'000'000L;
+        CATCH_REQUIRE(precise_result);
     }
     CATCH_END_SECTION()
 
     CATCH_START_SECTION("timespec-operations: negative + negative")
     {
-        timespec pa{ 4511L, 913'788'345L };
-        timespec pb{  311L, 301'225'198L };
+        snapdev::timespec_ex pa(4511L, 913'788'345L);
+        snapdev::timespec_ex pb( 311L, 301'225'198L);
 
-        timespec na(-pa);
-        timespec nb(-pb);
+        snapdev::timespec_ex na(-pa);
+        snapdev::timespec_ex nb(-pb);
 
-        timespec sum_ab(na + nb);
-        timespec sum_ba(nb + na);
-        timespec diff_ab(na - nb);
-        timespec diff_ba(nb - na);
+        snapdev::timespec_ex sum_ab(na + nb);
+        snapdev::timespec_ex sum_ba(nb + na);
+        snapdev::timespec_ex diff_ab(na - nb);
+        snapdev::timespec_ex diff_ba(nb - na);
 
         CATCH_REQUIRE(sum_ab.tv_sec != -4511L + -311L);
         CATCH_REQUIRE(sum_ab.tv_sec == -4511L + -1L + -311L + -1L);
@@ -436,9 +462,24 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
     }
     CATCH_END_SECTION()
 
+    CATCH_START_SECTION("timespec-operations: system time")
+    {
+        snapdev::timespec_ex now;
+        timespec verify = {};
+
+        now = snapdev::timespec_ex::gettime();
+        clock_gettime(CLOCK_REALTIME, &verify);
+
+        snapdev::timespec_ex diff(now - verify);
+        snapdev::timespec_ex max_diff(100L);
+
+        CATCH_REQUIRE(diff < max_diff);
+    }
+    CATCH_END_SECTION()
+
     CATCH_START_SECTION("timespec-operations: ostream")
     {
-        timespec a{ 4511L, 913'788'345L };
+        snapdev::timespec_ex a(timespec{ 4511L, 913'788'345L });
 
         std::stringstream ss;
         ss << a;

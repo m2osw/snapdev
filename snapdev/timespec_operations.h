@@ -35,433 +35,658 @@
 
 
 
-inline timespec operator - (timespec const & t)
-{
-    // equivalent to `0 - t`
-    //
-    timespec result{ -t.tv_sec, -t.tv_nsec };
-    if(result.tv_nsec < 0)
-    {
-        --result.tv_sec;
-        result.tv_nsec += 1'000'000'000L;
-    }
-    return result;
-}
-
-
 namespace snapdev
 {
 
-
-inline bool valid_timespec(timespec const & t)
+class timespec_ex
+    : public timespec
 {
-    return t.tv_nsec < 1'000'000'000LL;
-}
-
-
-inline bool negative_timespec(timespec const & t)
-{
-    return t.tv_sec < 0LL;
-}
-
-
-inline timespec add_timespec(timespec const & lhs, timespec const & rhs)
-{
-    bool const lneg(negative_timespec(lhs));
-    bool const rneg(negative_timespec(rhs));
-
-    timespec lp(lneg ? -lhs : lhs);
-    timespec rp(rneg ? -rhs : rhs);
-
-    timespec result = {};
-
-    switch((lneg ? 1 : 0) + (rneg ? 2 : 0))
+public:
+    /** \brief Initialize a timespec_ex to zero.
+     *
+     * This constructor is used to initialize a new timespec_ex to the
+     * default value, which is 0.
+     */
+    timespec_ex()
     {
-    case 0:     // positive + positive
-        result.tv_sec = lp.tv_sec + rp.tv_sec;
-        result.tv_nsec = lp.tv_nsec + rp.tv_nsec;
-        break;
-
-    case 1:     // negative + positive
-        result.tv_sec = rp.tv_sec - lp.tv_sec;
-        result.tv_nsec = rp.tv_nsec - lp.tv_nsec;
-        break;
-
-    case 2:     // positive + negative
-        result.tv_sec = lp.tv_sec - rp.tv_sec;
-        result.tv_nsec = lp.tv_nsec - rp.tv_nsec;
-        break;
-
-    case 3:     // negative + negative
-        result.tv_sec = lp.tv_sec + rp.tv_sec;
-        result.tv_nsec = lp.tv_nsec + rp.tv_nsec;
-        break;
-
+        set(0L);
     }
 
-    if(result.tv_nsec < 0)
-    {
-        --result.tv_sec;
-        result.tv_nsec += 1'000'000'000L;
-    }
-    else if(result.tv_nsec >= 1'000'000'000)
-    {
-        ++result.tv_sec;
-        result.tv_nsec -= 1'000'000'000;
-    }
 
-    if(lneg && rneg)
+    /** \brief Initialize a timespec_ex from another.
+     *
+     * This constructors allows you to directly copy a timespec_ex
+     * in another new timespec_ex object.
+     *
+     * \param[in] t  The timespec_ex to directly copy.
+     */
+    timespec_ex(timespec_ex const & t)
     {
-        result = -result;
+        set(t);
     }
 
-    return result;
-}
 
-
-int compare_timespec(timespec const & lhs, timespec const & rhs)
-{
-    if(lhs.tv_sec == rhs.tv_sec)
+    /** \brief Initialize a timespec_ex from a timespec structure.
+     *
+     * This constructors allows you to directly set a timespec_ex
+     * to the specified timespec values.
+     *
+     * \param[in] t  The timespec to directly copy.
+     */
+    timespec_ex(timespec const & t)
     {
-        return lhs.tv_nsec == rhs.tv_nsec
-                ? 0
-                : (lhs.tv_nsec < rhs.tv_nsec ? -1 : 1);
+        set(t);
     }
 
-    return lhs.tv_sec < rhs.tv_sec ? -1 : 1;
-}
 
-
-
-} // namespace snapdev
-
-
-
-
-// This one is not possible as a static function
-//inline operator bool (timespec const & t)
-//{
-//    return t.tv_sec != 0 || tv.tv_nsec != 0;
-//}
-
-
-inline bool operator ! (timespec const & t)
-{
-    return t.tv_sec == 0 && t.tv_nsec == 0;
-}
-
-
-inline timespec & operator <<= (timespec & lhs, std::int64_t nsec)
-{
-    bool const neg(nsec < 0);
-    if(neg)
+    /** \brief Initialize a timespec_ex from seconds and nanoseconds.
+     *
+     * This constructors allows you to directly initialize a timespec_ex
+     * from seconds and nanoseconds.
+     *
+     * To create a valid timespec_ex object, you must pass a number
+     * between 0 and 999'999'999 for the \p nsec parameter.
+     *
+     * \param[in] sec  The number of seconds.
+     * \param[in] nsec  The number of nano-seconds.
+     */
+    timespec_ex(time_t sec, long nsec)
     {
-        nsec = -nsec;
+        set(sec, nsec);
     }
-    lhs.tv_sec = static_cast<time_t>(nsec / 1'000'000'000LL);
-    lhs.tv_nsec = static_cast<long>(llabs(nsec) % 1'000'000'000LL);
-    if(neg)
+
+
+    /** \brief Initialize a timespec_ex from an int64_t in nanoseconds.
+     *
+     * This constructors allows you to directly set a timespec_ex
+     * to the specified \p nsec value.
+     *
+     * \param[in] nsec  The nano-seconds to copy to timespec_ex.
+     */
+    timespec_ex(std::int64_t nsec)
     {
-        lhs = -lhs;
+        set(nsec);
     }
-    return lhs;
-}
 
 
-inline std::int64_t operator >>= (timespec & t, std::int64_t & nsec)
-{
-    nsec = t.tv_sec * 1'000'000'000LL + t.tv_nsec;
-    return nsec;
-}
-
-
-inline timespec & operator <<= (timespec & lhs, double sec)
-{
-    bool const neg(sec < 0.0);
-    if(neg)
+    /** \brief Initialize a timespec_ex from an double in seconds.
+     *
+     * This constructors allows you to directly set a timespec_ex
+     * to the specified \p sec value.
+     *
+     * \param[in] sec  The seconds to copy to timespec_ex.
+     */
+    timespec_ex(double sec)
     {
-        sec = -sec;
+        set(sec);
     }
-    lhs.tv_sec = static_cast<time_t>(floor(sec));
-    lhs.tv_nsec = static_cast<long>((sec - floor(sec)) * 1.0e9);
-    if(neg)
+
+
+    /** \brief Set the timespec_ex to the specified timespec_ex.
+     *
+     * This function copies the specified timespec_ex (\p t) to this
+     * timespec_ex object.
+     *
+     * \param[in] t  The timespec to copy in this timespec_ex.
+     *
+     * \return A reference to this object.
+     */
+    timespec_ex & operator = (timespec_ex t)
     {
-        lhs = -lhs;
+        tv_sec = t.tv_sec;
+        tv_nsec = t.tv_nsec;
+        return *this;
     }
-    return lhs;
-}
-
 
-inline std::int64_t operator >>= (timespec & t, double & nsec)
-{
-    nsec = t.tv_sec + t.tv_nsec / 1'000'000'000.0;
-    return nsec;
-}
-
 
-inline timespec & operator += (timespec & lhs, timespec const & rhs)
-{
-    lhs = snapdev::add_timespec(lhs, rhs);
-    return lhs;
-}
-
-
-inline timespec & operator += (timespec & lhs, std::int64_t rhs)
-{
-    timespec t;
-    t <<= rhs;
-    lhs += t;
-    return lhs;
-}
-
+    /** \brief Set the timespec_ex to the specified timespec.
+     *
+     * This function copies the specified timespec to this timespec_ex
+     * object.
+     *
+     * \param[in] t  The timespec to copy in this timespec_ex.
+     *
+     * \return A reference to this object.
+     */
+    timespec_ex & operator = (timespec const & t)
+    {
+        tv_sec = t.tv_sec;
+        tv_nsec = t.tv_nsec;
+        return *this;
+    }
+
+
+    /** \brief Set the timespec_ex to the number of nanoseconds.
+     *
+     * This function saves the number of nanoseconds in \p nsec as a
+     * tv_sec and tv_nsec representation.
+     *
+     * \param[in] nsec  The nano-seconds to save in this timespec_ex.
+     *
+     * \return A reference to this object.
+     */
+    timespec_ex & operator = (std::int64_t nsec)
+    {
+        set(nsec);
+        return *this;
+    }
+
+
+    /** \brief Set this timespec_ex to the number of seconds in \p sec.
+     *
+     * This function transforms the specified double \p sec in a timespec_ex.
+     *
+     * \note
+     * At this time, the number of nanoseconds is floored.
+     *
+     * \param[in] sec  The number of seconds defined in a double.
+     *
+     * \return A reference to this object.
+     */
+    timespec_ex & operator = (double sec)
+    {
+        set(sec);
+        return *this;
+    }
+
+
+    /** \brief Set the timespec_ex to the number of nanoseconds.
+     *
+     * This function saves the number of nanoseconds in \p nsec as a
+     * tv_sec and tv_nsec representation.
+     *
+     * \param[in] t  The nano-seconds to save in this timespec_ex.
+     *
+     * \return A reference to this object.
+     */
+    void set(timespec_ex const & t)
+    {
+        tv_sec = t.tv_sec;
+        tv_nsec = t.tv_nsec;
+    }
+
+
+    /** \brief Set the timespec_ex to the specified timespec.
+     *
+     * This function copies the timespec in \p t in this timespec_ex object.
+     *
+     * \param[in] t  The timespec to save in this timespec_ex.
+     *
+     * \return A reference to this object.
+     */
+    void set(timespec const & t)
+    {
+        tv_sec = t.tv_sec;
+        tv_nsec = t.tv_nsec;
+    }
+
+
+    /** \brief Set the timespec_ex to the specified values.
+     *
+     * This function allows you to set the timespec_ex to the specified
+     * number of seconds (\p sec) and nano-seconds (\p nsec).
+     *
+     * \param[in] sec  The new number of seconds.
+     * \param[in] nsec  The new number of nano-seconds.
+     */
+    void set(time_t sec, long nsec)
+    {
+        tv_sec = sec;
+        tv_nsec = nsec;
+    }
+
+
+    /** \brief Set the timespec_ex to the number of nanoseconds.
+     *
+     * This function saves the number of nanoseconds in \p nsec as a
+     * tv_sec and tv_nsec representation.
+     *
+     * \param[in] nsec  The nano-seconds to save in this timespec_ex.
+     *
+     * \return A reference to this object.
+     */
+    void set(std::int64_t nsec)
+    {
+        bool const neg(nsec < 0);
+        if(neg)
+        {
+            nsec = -nsec;
+        }
+        tv_sec = static_cast<time_t>(nsec / 1'000'000'000LL);
+        tv_nsec = static_cast<long>(nsec % 1'000'000'000LL);
+        if(neg)
+        {
+            *this = -*this;
+        }
+    }
+
+
+    /** \brief Set this timespec_ex to the number of seconds in \p sec.
+     *
+     * This function transforms the specified double \p sec in a timespec_ex.
+     *
+     * \note
+     * At this time, the number of nanoseconds is floored.
+     *
+     * \param[in] sec  The number of seconds defined in a double.
+     *
+     * \return A reference to this object.
+     */
+    void set(double sec)
+    {
+        bool const neg(sec < 0.0);
+        if(neg)
+        {
+            sec = -sec;
+        }
+        tv_sec = static_cast<time_t>(floor(sec));
+        tv_nsec = static_cast<long>((sec - floor(sec)) * 1.0e9);
+        if(neg)
+        {
+            *this = -*this;
+        }
+    }
+
+    /** \brief Get system time.
+     *
+     * This function reads the system time and saves it into this
+     * timespec_ex object.
+     *
+     * \param[in] clk_id  The type of clock you want to query.
+     *
+     * \return A timespec_ex representing the specified \p clk_id.
+     */
+    static timespec_ex gettime(clockid_t clk_id = CLOCK_REALTIME)
+    {
+        timespec_ex result;
+        clock_gettime(clk_id, &result);
+        return result;
+    }
+
+
+    /** \brief Extract the timespec_ex as an int64_t value.
+     *
+     * This function transforms a timespec_ex structure in an int64_t
+     * in nanoseconds.
+     *
+     * \return This timespec_ex converted to nanoseconds.
+     */
+    std::int64_t to_nsec() const
+    {
+        return tv_nsec
+             + tv_sec * 1'000'000'000LL;
+    }
+
+
+    /** \brief Extract the timespec_ex as a double value.
+     *
+     * This function transforms a timespec_ex structure into a double
+     * in seconds. The nanoseconds are added as one billionth of a
+     * second.
+     *
+     * \return The timespec_ex converted the seconds.
+     */
+    double to_sec() const
+    {
+        return static_cast<double>(tv_sec)
+             + static_cast<double>(tv_nsec) / 1.0e9;
+    }
+
+
+    /** \brief Validate this timespec_ex structure.
+     *
+     * This function returns true if this timespec_ex structure is considered
+     * valid.
+     *
+     * At this time, the validation consists of verifying that the
+     * nanoseconds is a number between 0 and 1 billion (maximum excluded).
+     *
+     * \note
+     * Negative timespec_ex are represented by a negative tv_sec. The
+     * tv_nsec can never be negative after a valid operation.
+     *
+     * \return true if the timespec_ex is considered valid.
+     */
+    bool valid() const
+    {
+        return tv_nsec < 1'000'000'000LL;
+    }
+
+
+    /** \brief Check whether this timespec_ex is negative.
+     *
+     * This function checks whether the number represents a negative
+     * timespec_ex. This is true if the number of seconds is negative.
+     *
+     * \note
+     * The first negative timespec_ex is { -1, 999,999,999 }.
+     *
+     * \return true if the timespec_ex is considered negative.
+     */
+    bool negative() const
+    {
+        return tv_sec < 0LL;
+    }
+
+
+    /** \brief Add two timespec_ex together.
+     *
+     * This function adds \p rhs to this timespec_ex value and returns a
+     * new timespec_ex with the result. This timespec_ex is not modified.
+     *
+     * \param[in] rhs  The right handside to add to this number.
+     *
+     * \return A new timespec_ex representing the sum of 'this' and rhs.
+     */
+    timespec_ex add(timespec_ex const & rhs) const
+    {
+        bool const lneg(negative());
+        bool const rneg(rhs.negative());
+
+        timespec_ex lp(lneg ? -*this : *this);
+        timespec_ex rp(rneg ? -rhs : rhs);
+
+        timespec_ex result;
+
+        switch((lneg ? 1 : 0) + (rneg ? 2 : 0))
+        {
+        case 0:     // positive + positive
+        case 3:     // negative + negative
+            result.tv_sec = lp.tv_sec + rp.tv_sec;
+            result.tv_nsec = lp.tv_nsec + rp.tv_nsec;
+            break;
+
+        case 1:     // negative + positive
+            result.tv_sec = rp.tv_sec - lp.tv_sec;
+            result.tv_nsec = rp.tv_nsec - lp.tv_nsec;
+            break;
+
+        case 2:     // positive + negative
+            result.tv_sec = lp.tv_sec - rp.tv_sec;
+            result.tv_nsec = lp.tv_nsec - rp.tv_nsec;
+            break;
+
+        }
+
+        if(result.tv_nsec < 0)
+        {
+            --result.tv_sec;
+            result.tv_nsec += 1'000'000'000L;
+        }
+        else if(result.tv_nsec >= 1'000'000'000)
+        {
+            ++result.tv_sec;
+            result.tv_nsec -= 1'000'000'000;
+        }
+
+        if(lneg && rneg)
+        {
+            result = -result;
+        }
+
+        return result;
+    }
+
+
+    /** \brief Compare two timespec_ex together.
+     *
+     * This function compares two timespecs and determine whether they
+     * are equal (0), 'this' is smaller (-1) or \p rhs is smaller (1).
+     *
+     * \param[in] rhs  The right handside to compare.
+     *
+     * \return -1, 0, or 1 depending on the order between \p lhs and \p rhs.
+     */
+    int compare(timespec_ex const & rhs) const
+    {
+        if(tv_sec == rhs.tv_sec)
+        {
+            return tv_nsec == rhs.tv_nsec
+                    ? 0
+                    : (tv_nsec < rhs.tv_nsec ? -1 : 1);
+        }
+
+        return tv_sec < rhs.tv_sec ? -1 : 1;
+    }
+
+
+    /** \brief Check whether the timespec_ex is zero.
+     *
+     * This function returns true if the timespec_ex represents zero
+     * (i.e. zero seconds and zero nano-seconds).
+     *
+     * \return true if the timespec_ex is zero, false if not zero.
+     */
+    bool operator ! ()
+    {
+        return tv_sec == 0 && tv_nsec == 0;
+    }
+
+
+    /** \brief Add the right handside to this timespec_ex.
+     *
+     * This operator adds the right handside to this object.
+     *
+     * \param[in] rhs  Another timespec_ex to add to this one.
+     *
+     * \return A reference to this timespec_ex object.
+     */
+    timespec_ex & operator += (timespec_ex const & rhs)
+    {
+        *this = add(rhs);
+        return *this;
+    }
+
+
+    /** \brief Add 1 nanosecond to this timespec_ex object.
+     *
+     * This function adds exactly one nanonsecond to this timespec_ex
+     * object.
+     *
+     * \return A reference to this timespec_ex object.
+     */
+    timespec_ex & operator ++ ()
+    {
+        *this += 1L;
+        return *this;
+    }
+
+
+    /** \brief Add 1 nanosecond to this timespec_ex object.
+     *
+     * This function adds exactly one nanonsecond to this timespec_ex
+     * object and returns the original value.
+     *
+     * \return A copy of this timespec_ex object before the add() occurs.
+     */
+    timespec_ex operator ++ (int)
+    {
+        timespec_ex result(*this);
+        *this += 1L;
+        return result;
+    }
+
+
+    /** \brief Add two timespec_ex objects and return the result.
+     *
+     * This function computes the addition of this timespec_ex object
+     * and the \p t timespec_ex and returns the result. The inputs
+     * are not modified.
+     *
+     * \param[in] t  The right handside to add to this timespex_ex object.
+     *
+     * \return The sum of the inputs in a new timespec_ex object.
+     */
+    timespec_ex operator + (timespec_ex const & t) const
+    {
+        timespec_ex result(*this);
+        result += t;
+        return result;
+    }
+
+
+    /** \brief Subtract the right handside from this timespec_ex.
+     *
+     * This operator subtracts the right handside from this object.
+     *
+     * \param[in] rhs  Another timespec_ex to subtract from this one.
+     *
+     * \return A reference to this timespec_ex object.
+     */
+    timespec_ex & operator -= (timespec_ex const & rhs)
+    {
+        *this = add(-rhs);
+        return *this;
+    }
+
+
+    /** \brief Subtract 1 nanosecond from timespec_ex object.
+     *
+     * This function subtracts exactly one nanonsecond from this
+     * timespec_ex object.
+     *
+     * \return A reference to this timespec_ex object.
+     */
+    timespec_ex & operator -- ()
+    {
+        *this -= 1L;
+        return *this;
+    }
+
+
+    /** \brief Subtract 1 nanosecond from timespec_ex object.
+     *
+     * This function subtracts exactly one nanonsecond from this
+     * timespec_ex object and returns the original value.
+     *
+     * \return A copy of this timespec_ex object before the subtract occurs.
+     */
+    timespec_ex operator -- (int)
+    {
+        timespec_ex result(*this);
+        *this -= 1L;
+        return result;
+    }
+
+
+    /** \brief Compute the additive opposite of the right handside timespec_ex.
+     *
+     * This function computers the opposite of the right handside timespec_ex
+     * and returns a copy with the result.
+     *
+     * This is equivalent to computing `0 - t`.
+     *
+     * \param[in] t  The right handside time to negate.
+     *
+     * \return A timespec_ex representing the additive opposite of the input.
+     */
+    timespec_ex operator - () const
+    {
+        timespec_ex result(timespec{ -tv_sec, -tv_nsec });
+        if(result.tv_nsec < 0)
+        {
+            --result.tv_sec;
+            result.tv_nsec += 1'000'000'000L;
+        }
+        return result;
+    }
+
+
+    /** \brief Subtract \p t from this timespec_ex object.
+     *
+     * This function computes the difference of this timespec_ex object
+     * and the \p t timespec_ex object and returns the result. The inputs
+     * are not modified.
+     *
+     * \param[in] rhs  The right handside to subtract from this timespex_ex
+     * object.
+     *
+     * \return The different of the inputs in a new timespec_ex object.
+     */
+    timespec_ex operator - (timespec_ex const & rhs) const
+    {
+        timespec_ex result(*this);
+        result -= rhs;
+        return result;
+    }
+
+
+    /** \brief Compare whether the two timespec_ex are equal.
+     *
+     * \param[in] t  The time to compare against.
+     *
+     * \return true if both timespec_ex objects are equal.
+     */
+    bool operator == (timespec_ex const & t) const
+    {
+        return compare(t) == 0;
+    }
+
+
+    /** \brief Compare whether the two timespec_ex are not equal.
+     *
+     * \param[in] t  The time to compare against.
+     *
+     * \return true if both timespec_ex objects are not equal.
+     */
+    bool operator != (timespec_ex const & t) const
+    {
+        return compare(t) != 0;
+    }
+
+
+    /** \brief Compare whether the left handside is smaller.
+     *
+     * \param[in] t  The time to compare against.
+     *
+     * \return true if the left handside timespec_ex object is smaller.
+     */
+    bool operator < (timespec_ex const & t) const
+    {
+        return compare(t) == -1;
+    }
+
+
+    /** \brief Compare whether the left handside is smaller or equal.
+     *
+     * \param[in] t  The time to compare against.
+     *
+     * \return true if the left handside timespec_ex object is smaller
+     * or equal.
+     */
+    bool operator <= (timespec_ex const & t) const
+    {
+        return compare(t) <= 0;
+    }
+
+
+    /** \brief Compare whether the left handside is larger.
+     *
+     * \param[in] t  The time to compare against.
+     *
+     * \return true if the left handside timespec_ex object is larger.
+     */
+    bool operator > (timespec_ex const & t) const
+    {
+        return compare(t) == 1;
+    }
+
+
+    /** \brief Compare whether the left handside is larger or equal.
+     *
+     * \param[in] t  The time to compare against.
+     *
+     * \return true if the left handside timespec_ex object is larger
+     * or equal.
+     */
+    bool operator >= (timespec_ex const & t) const
+    {
+        return compare(t) >= 0;
+    }
+};
 
-inline timespec & operator += (timespec & lhs, double rhs)
-{
-    timespec t;
-    t <<= rhs;
-    lhs += t;
-    return lhs;
-}
-
 
-inline timespec & operator ++ (timespec & lhs)
-{
-    lhs += 1L;
-    return lhs;
-}
-
-
-inline timespec operator ++ (timespec & lhs, int)
-{
-    timespec result(lhs);
-    lhs += 1L;
-    return result;
-}
-
 
-inline timespec operator + (timespec const & lhs, timespec const & rhs)
-{
-    timespec result(lhs);
-    result += rhs;
-    return result;
-}
-
-
-inline timespec operator + (timespec const & lhs, std::int64_t rhs)
-{
-    timespec result;
-    result <<= rhs;
-    result += lhs;
-    return result;
-}
-
-
-inline timespec operator + (timespec const & lhs, double rhs)
-{
-    timespec result;
-    result <<= rhs;
-    result += lhs;
-    return result;
-}
-
-
-inline timespec & operator -= (timespec & lhs, timespec const & rhs)
-{
-    timespec const neg(-rhs);
-    lhs = snapdev::add_timespec(lhs, neg);
-    return lhs;
-}
-
-
-inline timespec & operator -= (timespec & lhs, std::int64_t rhs)
-{
-    timespec result;
-    result <<= rhs;
-    lhs -= result;
-    return lhs;
-}
-
-
-inline timespec & operator -= (timespec & lhs, double rhs)
-{
-    timespec result;
-    result <<= rhs;
-    lhs -= result;
-    return lhs;
-}
-
-
-inline timespec & operator -- (timespec & lhs)
-{
-    lhs -= 1L;
-    return lhs;
-}
-
-
-inline timespec operator -- (timespec & lhs, int)
-{
-    timespec result(lhs);
-    lhs -= 1L;
-    return result;
-}
-
-
-inline timespec operator - (timespec const & lhs, timespec const & rhs)
-{
-    timespec result(lhs);
-    result -= rhs;
-    return result;
-}
-
-
-inline timespec operator - (timespec const & lhs, std::int64_t rhs)
-{
-    timespec result;
-    result <<= -rhs;
-    result += lhs;
-    return result;
-}
-
-
-inline timespec operator - (timespec const & lhs, double rhs)
-{
-    timespec result;
-    result <<= -rhs;
-    result += lhs;
-    return result;
-}
-
-
-inline bool operator == (timespec const & lhs, timespec const & rhs)
-{
-    return snapdev::compare_timespec(lhs, rhs) == 0;
-}
-
-
-inline bool operator == (timespec const & lhs, std::int64_t rhs)
-{
-    timespec t;
-    t <<= rhs;
-    return snapdev::compare_timespec(lhs, t) == 0;
-}
-
-
-inline bool operator == (timespec const & lhs, double rhs)
-{
-    timespec t;
-    t <<= rhs;
-    return snapdev::compare_timespec(lhs, t) == 0;
-}
-
-
-inline bool operator != (timespec const & lhs, timespec const & rhs)
-{
-    return snapdev::compare_timespec(lhs, rhs) != 0;
-}
-
-
-inline bool operator != (timespec const & lhs, std::int64_t rhs)
-{
-    timespec t;
-    t <<= rhs;
-    return snapdev::compare_timespec(lhs, t) != 0;
-}
-
-
-inline bool operator != (timespec const & lhs, double rhs)
-{
-    timespec t;
-    t <<= rhs;
-    return snapdev::compare_timespec(lhs, t) != 0;
-}
-
-
-inline bool operator < (timespec const & lhs, timespec const & rhs)
-{
-    return snapdev::compare_timespec(lhs, rhs) == -1;
-}
-
-
-inline bool operator < (timespec const & lhs, std::int64_t rhs)
-{
-    timespec t;
-    t <<= rhs;
-    return snapdev::compare_timespec(lhs, t) == -1;
-}
-
-
-inline bool operator < (timespec const & lhs, double rhs)
-{
-    timespec t;
-    t <<= rhs;
-    return snapdev::compare_timespec(lhs, t) == -1;
-}
-
-
-inline bool operator <= (timespec const & lhs, timespec const & rhs)
-{
-    return snapdev::compare_timespec(lhs, rhs) <= 0;
-}
-
-
-inline bool operator <= (timespec const & lhs, std::int64_t rhs)
-{
-    timespec t;
-    t <<= rhs;
-    return snapdev::compare_timespec(lhs, t) <= 0;
-}
-
-
-inline bool operator <= (timespec const & lhs, double rhs)
-{
-    timespec t;
-    t <<= rhs;
-    return snapdev::compare_timespec(lhs, t) <= 0;
-}
-
-
-inline bool operator > (timespec const & lhs, timespec const & rhs)
-{
-    return snapdev::compare_timespec(lhs, rhs) == 1;
-}
-
-
-inline bool operator > (timespec const & lhs, std::int64_t rhs)
-{
-    timespec t;
-    t <<= rhs;
-    return snapdev::compare_timespec(lhs, t) == 1;
-}
-
-
-inline bool operator > (timespec const & lhs, double rhs)
-{
-    timespec t;
-    t <<= rhs;
-    return snapdev::compare_timespec(lhs, t) == 1;
-}
-
-
-inline bool operator >= (timespec const & lhs, timespec const & rhs)
-{
-    return snapdev::compare_timespec(lhs, rhs) >= 0;
-}
-
-
-inline bool operator >= (timespec const & lhs, std::int64_t rhs)
-{
-    timespec t;
-    t <<= rhs;
-    return snapdev::compare_timespec(lhs, t) >= 0;
-}
-
-
-inline bool operator >= (timespec const & lhs, double rhs)
-{
-    timespec t;
-    t <<= rhs;
-    return snapdev::compare_timespec(lhs, t) >= 0;
-}
 
 
 
@@ -499,5 +724,5 @@ std::basic_ostream<CharT, Traits> & operator << (std::basic_ostream<CharT, Trait
 }
 
 
-
+} // namespace snapdev
 // vim: ts=4 sw=4 et
