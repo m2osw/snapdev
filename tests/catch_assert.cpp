@@ -52,7 +52,7 @@ CATCH_TEST_CASE("safe_assert", "[foo]")
     {
         constexpr bool invalid(false);
         snapdev::SAFE_ASSERT(invalid, "this \"passes\"", ", but really it's not compiled in in Release mode");
-        CATCH_REQUIRE_FALSE(valid);
+        CATCH_REQUIRE_FALSE(invalid);
     }
     CATCH_END_SECTION()
 #endif
