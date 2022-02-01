@@ -63,7 +63,7 @@ StringT string_replace_many(StringT const & input
                    , std::vector<std::pair<typename std::decay<StringT>::type, typename std::decay<StringT>::type> > search)
 {
     typename StringT::size_type pos(0);
-    typename StringT::size_type len(input.length());
+    typename StringT::size_type const len(input.length());
     StringT result;
 
     while(pos < len)
@@ -71,12 +71,12 @@ StringT string_replace_many(StringT const & input
         auto const & match(std::find_if(
                 search.begin(),
                 search.end(),
-                [input, pos](auto const & nr)
+                [input, len, pos](auto const & nr)
                 {
                     // check whether we still have enough characters first
                     // and if so, compare against the input string for equality
                     //
-                    if(input.length() - pos >= nr.first.length()
+                    if(len - pos >= nr.first.length()
                     && input.compare(pos, nr.first.length(), nr.first) == 0)
                     {
                         // we found a match so return true
