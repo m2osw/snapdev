@@ -53,14 +53,15 @@ namespace snapdev
  * Add another version which uses regex to do the compares.
  *
  * \param[in] input  The input string where replacements will occur.
- * \param[in] search  The search parameters, the vector of needles/replacement
+ * \param[in] search_and_replace  The search parameters, the vector of needles/replacement
  *                    strings.
  *
- * \return A new string with the search applied to the input string.
+ * \return A new string with the search_and_replace applied to the input string.
  */
 template < class StringT >
 StringT string_replace_many(StringT const & input
-                   , std::vector<std::pair<typename std::decay<StringT>::type, typename std::decay<StringT>::type> > search)
+                   , std::vector<std::pair<typename std::decay<StringT>::type,
+                                           typename std::decay<StringT>::type> > search_and_replace)
 {
     typename StringT::size_type pos(0);
     typename StringT::size_type const len(input.length());
@@ -69,8 +70,8 @@ StringT string_replace_many(StringT const & input
     while(pos < len)
     {
         auto const & match(std::find_if(
-                search.begin(),
-                search.end(),
+                search_and_replace.begin(),
+                search_and_replace.end(),
                 [input, len, pos](auto const & nr)
                 {
                     // check whether we still have enough characters first
@@ -86,7 +87,7 @@ StringT string_replace_many(StringT const & input
                     return false;
                 }));
 
-        if(match == search.end())
+        if(match == search_and_replace.end())
         {
             // no match found, copy the character as is
             //
