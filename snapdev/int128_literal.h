@@ -46,6 +46,11 @@ namespace literals
  * \todo
  * Make sure that the first '\0' represents the end of the string.
  *
+ * \todo
+ * Support the negative (and positive) sign at the start of the string
+ * (with number literal, it is viewed as an operator so it works as is,
+ * with with string literals, we have to handle those ourselves).
+ *
  * \param[in] literal  A 128 bit literal number.
  *
  * \return The __int128 number.
