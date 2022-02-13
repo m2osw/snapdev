@@ -19,16 +19,12 @@
 #pragma once
 
 /** \file
- * \brief Convert a string literal to a 128 bit value.
+ * \brief Convert a numeric or string literal to a 128 bit value.
  *
- * These functions transform string literals to 128 bit values as supported
- * by g++. We support signed and unsigned in decimal, hexadecimal, octal,
- * and binary.
+ * These functions transform string literals or numeric literals to 128 bit
+ * values as supported by g++. We support signed and unsigned in decimal,
+ * hexadecimal, octal, and binary.
  */
-
-// C++ lib
-//
-//#include    <sstream>
 
 
 namespace snapdev
@@ -41,18 +37,32 @@ namespace literals
  * This function converts a literal string to a signed __int128 integer
  * number.
  *
+ * \code
+ * using namespace snapdev::literals;
+ *
+ * __int128 value = "0xabcd000000000000"_int128;
+ * \endcode
+ *
+ * \todo
+ * Make sure that the first '\0' represents the end of the string.
+ *
  * \param[in] literal  A 128 bit literal number.
  *
  * \return The __int128 number.
  *
- * \sa operator""_uint128()
+ * \sa operator ""_uint128()
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-constexpr __int128 operator""_int128(char const * literal)
+constexpr __int128 operator ""_int128(char const * literal, std::size_t len)
 {
     __int128 result(0);
     __int128 base(10);
+
+    if(len == 0)
+    {
+        throw std::invalid_argument("A string literal of a int128 must be at least one cahracter.");
+    }
 
     if(*literal == '0')
     {
@@ -139,23 +149,54 @@ constexpr __int128 operator""_int128(char const * literal)
 #pragma GCC diagnostic pop
 
 
+/** \brief Convert a literal number to an __int128.
+ *
+ * This function converts a literal number to an __int128. For example:
+ *
+ * \code
+ * using namespace snapdev::literals;
+ *
+ * __int128 value = 123_int128;
+ * \endcode
+ *
+ * \param[in] literal  A literal number.
+ *
+ * \return The literal number converted to an __int128 value.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+constexpr __int128 operator ""_int128(char const * literal)
+{
+    return operator ""_int128(literal, strlen(literal));
+}
+#pragma GCC diagnostic pop
+
+
 /** \brief Convert a literal to an unsigned __int128.
  *
  * This function converts a literal string to an unsigned __int128 integer
  * number.
  *
+ * \todo
+ * Make sure that the first '\0' represents the end of the string.
+ *
  * \param[in] literal  A 128 bit literal number.
  *
  * \return The unsigned __int128 number.
  *
- * \sa operator""_uint128()
+ * \sa operator ""_int128()
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-constexpr unsigned __int128 operator""_uint128(char const * literal)
+constexpr unsigned __int128 operator ""_uint128(char const * literal, std::size_t len)
 {
     unsigned __int128 result(0);
     unsigned __int128 base(10);
+
+    if(len == 0)
+    {
+        throw std::invalid_argument("A string literal of a uint128 must be at least one cahracter.");
+    }
 
     if(*literal == '0')
     {
@@ -238,6 +279,30 @@ constexpr unsigned __int128 operator""_uint128(char const * literal)
     }
 
     return result;
+}
+#pragma GCC diagnostic pop
+
+
+/** \brief Convert a literal number to an unsigned __int128 value.
+ *
+ * This function converts a literal number to an unsigned __int128.
+ * For example:
+ *
+ * \code
+ * using namespace snapdev::literals;
+ *
+ * unsigned __int128 value = 123_uint128;
+ * \endcode
+ *
+ * \param[in] literal  A literal number.
+ *
+ * \return The literal number converted to an unsigned __int128 value.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+constexpr unsigned __int128 operator ""_uint128(char const * literal)
+{
+    return operator ""_uint128(literal, strlen(literal));
 }
 #pragma GCC diagnostic pop
 
