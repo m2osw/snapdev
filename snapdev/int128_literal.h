@@ -26,6 +26,10 @@
  * hexadecimal, octal, and binary.
  */
 
+// C++ lib
+//
+#include    <limits>
+
 
 namespace snapdev
 {

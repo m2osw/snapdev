@@ -1,3 +1,9 @@
+snapdev (1.1.20.0~bionic) bionic; urgency=high
+
+  * Added a missing #include for limits.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 13 Feb 2022 13:43:02 -0800
+
 snapdev (1.1.19.0~bionic) bionic; urgency=high
 
   * Fixed int128 literal check of invalid digits.
