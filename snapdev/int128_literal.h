@@ -103,7 +103,7 @@ constexpr __int128 operator""_int128(char const * literal)
             //
             return result;
         }
-        int digit(0);
+        int digit(std::numeric_limits<int>::max());
         if(c >= '0' && c <= '9')
         {
             digit = c - '0';
@@ -206,7 +206,7 @@ constexpr unsigned __int128 operator""_uint128(char const * literal)
             //
             return result;
         }
-        unsigned int digit(0);
+        unsigned int digit(std::numeric_limits<unsigned int>::max());
         if(c >= '0' && c <= '9')
         {
             digit = c - '0';
