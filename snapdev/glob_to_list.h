@@ -55,8 +55,10 @@ namespace snapdev
  * we have to get the lstat()'s. This object represents one file found
  * in the directory with it's lstat()'s.
  *
- * Note that since we use lstat() you get the statistics about the very
- * file named in the object, not the target of the symbolic link.
+ * Note that the regular functions use `lstat()` to read the file
+ * statistics. The `target_...()` functions read the target statistics.
+ * In other words, if the file is a symbolic link, the both functions
+ * will return different results.
  */
 class file
 {
@@ -382,10 +384,10 @@ private:
  * Usage:
  *
  * \code
- *     snap::glob_to_list<std::vector<std::string>> glob;
+ *     snapdev::glob_to_list<std::vector<std::string>> glob;
  *     if(glob.read_path<
- *              snap::glob_to_list_flag_t::GLOB_FLAG_IGNORE_ERRORS,
- *              snap::glob_to_list_flag_t::GLOB_FLAG_PERIOD>(pattern))
+ *              snapdev::glob_to_list_flag_t::GLOB_FLAG_IGNORE_ERRORS,
+ *              snapdev::glob_to_list_flag_t::GLOB_FLAG_PERIOD>(pattern))
  *     {
  *         if(!glob.empty())
  *         {
@@ -451,8 +453,8 @@ enum class glob_to_list_flag_t
  *
  * This template is able to call glob() and insert the results to your
  * container object. If the type of the container is std::string, then
- * only the filenames are returned. If the type is set to a snap::file,
- * then the function returns a set of snap::file objects.
+ * only the filenames are returned. If the type is set to a snapdev::file,
+ * then the function returns a set of snapdev::file objects.
  *
  * The supported flags allow for selecting which files to ignore. By
  * default, files that start with a period (.) are ignored.
@@ -461,7 +463,7 @@ enum class glob_to_list_flag_t
  *
  * \code
  *     glob_to_list<std::vector<std::string>> dir;
- *     if(!dir.read_path<snap::glob_to_list_flag_t::GLOB_FLAG_ONLY_DIRECTORIES>("/proc/[0-9]*"))
+ *     if(!dir.read_path<snapdev::glob_to_list_flag_t::GLOB_FLAG_ONLY_DIRECTORIES>("/proc/[0-9]*"))
  *     {
  *         ...handle error...
  *         return;
