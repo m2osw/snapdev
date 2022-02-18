@@ -56,6 +56,7 @@ install(
         pathinfo.h
         poison.h
         qcaseinsensitivestring.h
+        qstring_extensions.h
         raii_generic_deleter.h
         reverse_cstring.h
         safe_assert.h
