@@ -34,6 +34,7 @@ install(
         callback_manager.h
         chownnm.h
         empty_set_intersection.h
+        enumerate.h
         file_contents.h
         glob_to_list.h
         has_member_function.h

@@ -446,6 +446,7 @@ enum class glob_to_list_flag_t
     GLOB_FLAG_TILDE,              // transform "~/..." with "$HOME/..."
     GLOB_FLAG_RECURSIVE,          // when a directory is found, read it too
     GLOB_FLAG_FOLLOW_SYMLINK,     // in recursive mode, do or do not follow symlinks
+    GLOB_FLAG_EMPTY,              // on a GLOB_NOMATCH error, still return true
 };
 
 
@@ -497,7 +498,7 @@ public:
      * This function runs the glob() function with the given path.
      *
      * The \p path variable is expected to include a path with glob() like
-     * patterns (i.e. `*.txt`, `0?.mp3`, etc.)
+     * patterns (i.e. `*.txt`, `sound/0?.mp3`, etc.)
      *
      * Note that the glob()-ing is done on the entire path. However, only
      * the last part (after the last slash) is used in case you use the
@@ -716,6 +717,10 @@ private:
             f_follow_symlinks = true;
             return flags_merge<args...>();
 
+        case glob_to_list_flag_t::GLOB_FLAG_EMPTY:
+            f_empty = true;
+            return flags_merge<args...>();
+
         }
 
         throw std::logic_error("unimplemented GLOB_FLAG_... in flags_merge()");
@@ -766,6 +771,10 @@ private:
                 break;
 
             case GLOB_NOMATCH:
+                if(f_empty)
+                {
+                    return true;
+                }
                 f_last_error_message = "glob(\""
                         + path
                         + "\") could not find any files matching the pattern.";
@@ -881,6 +890,7 @@ private:
     int                         f_last_error_errno = 0;
     bool                        f_recursive = false;
     bool                        f_follow_symlinks = false;
+    bool                        f_empty = false;
 };
 
 
