@@ -36,7 +36,7 @@
 #include    "snapdev/reverse_cstring.h"
 
 
-// C++ lib
+// C++
 //
 #include    <algorithm>
 #include    <cwctype>

@@ -32,10 +32,12 @@ configure_file(
 install(
     FILES
         callback_manager.h
+        case_insensitive_string.h
         chownnm.h
         empty_set_intersection.h
         enumerate.h
         file_contents.h
+        gethostname.h
         glob_to_list.h
         has_member_function.h
         hexadecimal_string.h
@@ -49,6 +51,7 @@ install(
         map_keyset.h
         matrix.h
         mkdir_p.h
+        mounts.h
         not_reached.h
         not_used.h
         numeric_string.h
@@ -67,6 +70,8 @@ install(
         timespec_operations.h
         timestamp.h
         tokenize_string.h
+        to_lower.h
+        to_upper.h
         trim_string.h
         user_groups.h
         ${CMAKE_CURRENT_BINARY_DIR}/version.h

@@ -150,6 +150,42 @@ private:
      *
      * If you have more than one callback registered, they all get called
      * as long as the previous callback returned `true`. If a callback
+     * returns `false`, then the loop ends early and the
+     * call_member_pointer() function returns `false`.
+     *
+     * \tparam F  The type of the member function to call.
+     * \tparam ARGS  The types of the list of arguments.
+     * \param[in] func  The member function that gets called.
+     * \param[in] args  The arguments to pass to the member function.
+     *
+     * \return true if all the callbacks returned true, false otherwise.
+     */
+    template<typename F, typename ... ARGS>
+    bool call_member_pointer(F func, ARGS ... args)
+    {
+        auto callbacks(f_callbacks);
+        for(auto & c : callbacks)
+        {
+            if(!(c.f_callback.get()->*func)(args...))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /** \brief Function used when the "callbacks" are objects.
+     *
+     * In this case, we are managing a container of shared pointers to
+     * objects. The call() function expects the first parameter to be
+     * a member function \em pointer (it's really an offset), instead of
+     * a parameter to the callback.
+     *
+     * The callback does not need to include any arguments.
+     *
+     * If you have more than one callback registered, they all get called
+     * as long as the previous callback returned `true`. If a callback
      * returns `false`, then the loop ends early and the call_member()
      * function returns `false`.
      *
@@ -166,7 +202,7 @@ private:
         auto callbacks(f_callbacks);
         for(auto & c : callbacks)
         {
-            if(!(c.f_callback.get()->*func)(args...))
+            if(!(c.f_callback.*func)(args...))
             {
                 return false;
             }
@@ -404,6 +440,43 @@ public:
     typename std::enable_if<std::is_same<U, T>::value
                 && std::is_member_function_pointer<F>::value
                 && is_shared_ptr<U>::value
+            , bool>::type
+    call(F func, ARGS ... args)
+    {
+        return call_member_pointer(func, args...);
+    }
+
+
+    /** \brief Call the managed callbacks.
+     *
+     * This function calls all the managed callbacks with the specified
+     * \p args.
+     *
+     * This version of the function calls the specified member function
+     * (the very first argument) of the objects this callback_manager
+     * handles.
+     *
+     * \code
+     *     call(&foo::member_function, arg1, arg2, arg3, ...);
+     * \endcode
+     *
+     * \note
+     * This function verifies that the first parameter is a member function.
+     * If not, then no matching call() function is found and the compiler
+     * fails.
+     *
+     * \tparam F  The type of member functon.
+     * \tparam ARGS  The type of each of the function arguments.
+     * \tparam U  A copy of the callback type.
+     * \param[in] func  The member function to be called.
+     * \param[in] args  The arguments to pass to the callback functions.
+     *
+     * \return true if all the callback functions returned true.
+     */
+    template<typename F, typename ... ARGS, typename U = T>
+    typename std::enable_if<std::is_same<U, T>::value
+                && std::is_member_function_pointer<F>::value
+                && !is_shared_ptr<U>::value
             , bool>::type
     call(F func, ARGS ... args)
     {

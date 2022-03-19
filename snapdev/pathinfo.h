@@ -48,6 +48,8 @@ namespace pathinfo
  *              , "in.") == "basename"
  * \endcode
  *
+ * To remove the suffix, whatever it is, use the special pattern ".*".
+ *
  * \tparam StringT  The type of string to parse.
  * \param[in] path  The path from which basename gets retrieved.
  * \param[in] suffix  If the path ends with that suffix, remove it.
@@ -57,8 +59,8 @@ namespace pathinfo
  */
 template<class StringT>
 StringT basename(StringT const & path
-                               , typename std::decay<StringT>::type const & suffix = ""
-                               , typename std::decay<StringT>::type const & prefix = "")
+               , typename std::decay<StringT>::type const & suffix = ""
+               , typename std::decay<StringT>::type const & prefix = "")
 {
     // ignore path if present
     //
@@ -84,13 +86,27 @@ StringT basename(StringT const & path
 
     // if the path ends with suffix, then return the path without it
     //
-    if(suffix.length() <= path.length() - pos
-    && path.compare(path.length() - suffix.length(), suffix.length(), suffix) == 0)
+    if(suffix.length() == 2
+    && suffix[0] == '.'
+    && suffix[1] == '*')
     {
+        typename StringT::size_type end(path.rfind('.'));
+        if(end != StringT::npos && end > pos)
+        {
+            // whatever the suffix is
+            //
+            return path.substr(pos, end - pos);
+        }
+    }
+    else if(suffix.length() <= path.length() - pos
+         && path.compare(path.length() - suffix.length(), suffix.length(), suffix) == 0)
+    {
+        // remove a specific suffix
+        //
         return path.substr(pos, path.length() - pos - suffix.length());
     }
 
-    // no suffix in this case
+    // ignore possible suffix
     //
     return path.substr(pos);
 }
