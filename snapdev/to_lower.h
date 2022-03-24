@@ -26,7 +26,7 @@
  * Here is a function to do that inline.
  */
 
-// C++ lib
+// C++
 //
 #include    <algorithm>
 #include    <string>

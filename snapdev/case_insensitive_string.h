@@ -112,7 +112,13 @@ typedef std::basic_string<char32_t, case_insensitive_traits<char32_t>>  case_ins
 template<typename _CharT>
 std::basic_string<_CharT, case_insensitive_traits<_CharT>> to_case_insensitive_string(std::basic_string<_CharT> const & input)
 {
-    return std::basic_string<_CharT, case_insensitive_traits<_CharT>>(input, input.length());
+    return std::basic_string<_CharT, case_insensitive_traits<_CharT>>(input.c_str(), input.length());
+}
+
+template<typename _CharT>
+std::basic_string<_CharT> to_string(std::basic_string<_CharT, case_insensitive_traits<_CharT>> const & input)
+{
+    return std::basic_string<_CharT>(input.c_str(), input.length());
 }
 
 } // namespace snapdev

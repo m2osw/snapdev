@@ -40,19 +40,21 @@
  * with `open(2)` returns -1 as an equivalent to a nullptr.)
  */
 
-// snapdev lib
+// snapdev
 //
-#include "snapdev/not_used.h"
+#include    <snapdev/not_used.h>
 
-// C++ lib
-//
-#include <memory>
-#include <iostream>
 
-// C lib
+// C++
 //
-#include <unistd.h>
-#include <stdio.h>
+#include    <memory>
+#include    <iostream>
+
+
+// C
+//
+#include    <unistd.h>
+#include    <stdio.h>
 
 
 

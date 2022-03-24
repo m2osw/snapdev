@@ -23,7 +23,7 @@
 #include    <snapdev/not_used.h>
 
 
-// C++ lib
+// C++
 //
 #include    <iostream>
 

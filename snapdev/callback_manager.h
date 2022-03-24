@@ -284,7 +284,7 @@ public:
      * \sa remove_callback()
      * \sa call()
      */
-    callback_id_t add_callback(T callback, priority_t priority = DEFAULT_PRIORITY)
+    callback_id_t add_callback(value_type callback, priority_t priority = DEFAULT_PRIORITY)
     {
         ++f_next_id;
         if(f_next_id == NULL_CALLBACK_ID)

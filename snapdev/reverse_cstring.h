@@ -27,9 +27,9 @@
  * function which would not otherwise accept rbegin() and rend().
  */
 
-// C++ lib
+// C++
 //
-#include <iterator>
+#include    <iterator>
 
 namespace snapdev
 {

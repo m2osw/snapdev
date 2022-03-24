@@ -45,6 +45,7 @@ install(
         int128_literal.h
         is_smart_pointer.h
         is_string_literal.h
+        is_vector.h
         join_strings.h
         lockfile.h
         log2.h
