@@ -27,9 +27,9 @@
  * the name in an std::string.
  */
 
-// C++ lib
+// libexcept
 //
-#include    <string>
+#include    <libexcept/exception.h>
 
 
 // C lib
@@ -43,16 +43,21 @@ namespace snapdev
 {
 
 
+DECLARE_MAIN_EXCEPTION(gethostname_error);
+
+DECLARE_EXCEPTION(gethostname_error, retrieval_failed);
+
+
 /** \brief Get the hostname.
  *
  * This function retrieves this server current hostname.
  *
- * \exception std::runtime_error
+ * \exception retrieval_failed
  * This exception is raised if the hostname is not available.
  *
  * \return The hostname in a string.
  */
-std::string gethostname()
+inline std::string gethostname()
 {
     std::string result;
 
@@ -63,7 +68,7 @@ std::string gethostname()
     || host[0] == '\0')
     {
         int const e(errno);
-        throw std::runtime_error(
+        throw retrieval_failed(
                   "::gethostname() failed with "
                 + std::to_string(e)
                 + ", "
