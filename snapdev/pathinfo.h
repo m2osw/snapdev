@@ -42,7 +42,7 @@ namespace pathinfo
  *
  * \code
  *     // the following returns true
- *     snap::string_pathinfo_basename(
+ *     snapdev::pathinfo::basename(
  *                "/usr/share/snapwebsites/in.basename.txt"
  *              , ".txt"
  *              , "in.") == "basename"
