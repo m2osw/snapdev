@@ -18,6 +18,11 @@
 // 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
+// libexcept
+//
+#include    <libexcept/exception.h>
+
+
 // C++
 //
 #include    <cmath>
@@ -31,12 +36,18 @@
 //
 #include    <stdlib.h>
 #include    <sys/time.h>
+#include    <time.h>
 
 
 
 
 namespace snapdev
 {
+
+DECLARE_MAIN_EXCEPTION(timespec_ex_exception);
+
+DECLARE_EXCEPTION(timespec_ex_exception, overflow);
+
 
 class timespec_ex
     : public timespec
@@ -334,6 +345,58 @@ public:
     {
         return static_cast<double>(tv_sec)
              + static_cast<double>(tv_nsec) / 1.0e9;
+    }
+
+
+    /** \brief Format the date to the specified format.
+     *
+     * This function transforms the time in a string and returns that string.
+     * The function uses the strftime(). See that manual page to define
+     * the format properly.
+     *
+     * \param[in] format  The format used to transform the date and time in
+     * a string.
+     * \param[in] local  Whether to generate a local time or use UTC.
+     *
+     * \return The formatted date and time.
+     */
+    std::string to_string(std::string const & format = std::string(), bool local = false) const
+    {
+        struct tm date_and_time = {};
+        struct tm * ptr(nullptr);
+        if(local)
+        {
+            ptr = localtime_r(&tv_sec, &date_and_time);
+        }
+        else
+        {
+            ptr = gmtime_r(&tv_sec, &date_and_time);
+        }
+        if(ptr == nullptr)
+        {
+            throw overflow("the specified number of seconds could not be transformed in a 'struct tm'");
+        }
+        std::string f(format);
+        if(f.empty())
+        {
+            f = "%c";
+        }
+        char buf[256];
+        size_t const sz(strftime(buf, sizeof(buf), format.c_str(), &date_and_time));
+        if(sz == 0)
+        {
+            // this happens with just a "%p" and "wrong locale"
+            // or when the buffer is too small, which should not
+            // be the case unless you add much more than the format
+            // in that string
+            //
+            throw overflow(
+                  "the specified strftime() format \""
+                + format
+                + "\" failed.");
+        }
+
+        return std::string(buf, sz);
     }
 
 

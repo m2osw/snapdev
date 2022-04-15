@@ -20,15 +20,17 @@
 
 // libexcept
 //
-#include <libexcept/exception.h>
+#include    <libexcept/exception.h>
+
 
 // C++ lib
 //
-#include <iostream>
+#include    <iostream>
+
 
 // C lib
 //
-#include <stdlib.h>
+#include    <stdlib.h>
 
 
 
