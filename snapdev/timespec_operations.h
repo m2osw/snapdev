@@ -354,6 +354,10 @@ public:
      * The function uses the strftime(). See that manual page to define
      * the format properly.
      *
+     * Unless you use the `%N` extension, the output will not include the
+     * precision available in the timespec (i.e. without the %N, the output
+     * is to the second, the timespec has nanoseconds available).
+     *
      * \param[in] format  The format used to transform the date and time in
      * a string.
      * \param[in] local  Whether to generate a local time or use UTC.
@@ -379,10 +383,20 @@ public:
         std::string f(format);
         if(f.empty())
         {
-            f = "%c";
+            f = "%c.%N";
+        }
+        std::string::size_type pos(f.find("%N"));
+        if(pos != std::string::npos)
+        {
+            std::string n(std::to_string(tv_nsec));
+            while(n.length() < 9)
+            {
+                n = '0' + n;
+            }
+            f = f.substr(0, pos) + n + f.substr(pos + 2);
         }
         char buf[256];
-        size_t const sz(strftime(buf, sizeof(buf), format.c_str(), &date_and_time));
+        size_t const sz(strftime(buf, sizeof(buf), f.c_str(), &date_and_time));
         if(sz == 0)
         {
             // this happens with just a "%p" and "wrong locale"
