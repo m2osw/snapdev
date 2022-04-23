@@ -378,21 +378,27 @@ public:
         }
         if(ptr == nullptr)
         {
-            throw overflow("the specified number of seconds could not be transformed in a 'struct tm'");
+            throw overflow("the specified number of seconds could not be transformed in a 'struct tm'.");
         }
         std::string f(format);
         if(f.empty())
         {
+            // TODO: actually retrieve the locale() format and
+            //       search for "%T" or "%S" and insert ".%N"
+            //       right after either
+            //
             f = "%c.%N";
         }
         std::string::size_type pos(f.find("%N"));
         if(pos != std::string::npos)
         {
             std::string n(std::to_string(tv_nsec));
-            while(n.length() < 9)
+            if(n.length() > 9)
             {
-                n = '0' + n;
+                throw overflow("tv_nsec is 1 billion or more, which is invalid.");
             }
+            std::string const indent(9 - n.length(), '0');
+            n = indent + n;
             f = f.substr(0, pos) + n + f.substr(pos + 2);
         }
         char buf[256];

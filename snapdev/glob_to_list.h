@@ -475,6 +475,15 @@ enum class glob_to_list_flag_t
  *     }
  * \endcode
  *
+ * The Go-like pattern "..." is understood by this class. What happens
+ * when the filename is set to "..." is that the pattern is replaced with
+ * "*" and the GLOB_FLAG_RECURSIVE flag is set. This means all the files
+ * from the directory specified before the "..." patterns are returned.
+ * This means you will be responsible for checking the filenames if you
+ * need to have a more constraining patterns than "*". Otherwise, you
+ * may want to consider using a usual glob pattern and set the recursive
+ * flag _manually_.
+ *
  * \warning
  * The class is not multithread safe. The glob() function makes use of a
  * global variable to report errors so there is no way at this point to
@@ -535,25 +544,41 @@ public:
         // the pattern (last segment) first as the actual pattern
         //
         directories_t visited;
+        std::string pattern;
+        std::string real_path;
         std::string::size_type const pos(path.rfind('/'));
         if(pos == std::string::npos)
         {
+            real_path = get_real_path(".");
+
             // no directory in the path, only a pattern
             //
-            return recursive_read_path(
-                          get_real_path(".")
-                        , path
-                        , flags
-                        , visited);
+            if(path == "...")
+            {
+                pattern = "*";
+                f_recursive = true;
+            }
+            else
+            {
+                pattern = path;
+            }
         }
         else
         {
-            return recursive_read_path(
-                          get_real_path(path.substr(0, pos))
-                        , path.substr(pos + 1)
-                        , flags
-                        , visited);
+            real_path = get_real_path(path.substr(0, pos));
+            pattern = path.substr(pos + 1);
+            if(pattern == "...")
+            {
+                pattern = "*";
+                f_recursive = true;
+            }
         }
+
+        return recursive_read_path(
+                      real_path
+                    , pattern
+                    , flags
+                    , visited);
     }
 
     /** \brief Convert the input \p path in a canonicalized path.
