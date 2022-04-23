@@ -482,7 +482,8 @@ enum class glob_to_list_flag_t
  * This means you will be responsible for checking the filenames if you
  * need to have a more constraining patterns than "*". Otherwise, you
  * may want to consider using a usual glob pattern and set the recursive
- * flag _manually_.
+ * flag _manually_. Note that the "./" introducer is not required. It
+ * is assumed if not specified.
  *
  * \warning
  * The class is not multithread safe. The glob() function makes use of a
