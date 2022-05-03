@@ -546,37 +546,28 @@ public:
         //
         directories_t visited;
         std::string pattern;
+        std::string directory;
         std::string real_path;
         std::string::size_type const pos(path.rfind('/'));
         if(pos == std::string::npos)
         {
-            real_path = get_real_path(".");
-
-            // no directory in the path, only a pattern
-            //
-            if(path == "...")
-            {
-                pattern = "*";
-                f_recursive = true;
-            }
-            else
-            {
-                pattern = path;
-            }
+            directory = ".";
+            pattern = path;
         }
         else
         {
-            real_path = get_real_path(path.substr(0, pos));
+            directory = path.substr(0, pos);
             pattern = path.substr(pos + 1);
-            if(pattern == "...")
-            {
-                pattern = "*";
-                f_recursive = true;
-            }
+        }
+
+        if(pattern == "...")
+        {
+            pattern = "*";
+            f_recursive = true;
         }
 
         return recursive_read_path(
-                      real_path
+                      get_real_path(directory)
                     , pattern
                     , flags
                     , visited);
