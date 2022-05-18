@@ -54,6 +54,9 @@ namespace snapdev
  * \p trim_characters from the \p trim_start, the \p trim_end, and the
  * \p trim_inside.
  *
+ * If no \p trim_characters are specified (empty string) then the default
+ * applies. The default uses the `iswspace()` on each character.
+ *
  * \todo
  * Add support for UTF-8 (in which case we need to move this to our
  * libutf8 library?).
