@@ -6,6 +6,12 @@ snapdev (1.1.24.0~bionic) bionic; urgency=high
   * Added support for a non-pointer class callback function (.*).
   * Moved the "mounts" class to snapdev from libsnapwebsites.
   * Moved the code to retrieve the hostname to this library.
+  * Cleaned up the cmake file.
+  * Added support for the "..." pattern (like "*" + recursive).
+  * Added a timespec_ex::to_string() function, including %N for nanoseconds.
+  * Fixed some exceptions.
+  * Added support for an is_vector metaprogramming test.
+  * Added GLOB_FLAG_EMPTY to allow for empty listings in glob_to_list.
 
  -- Alexis Wilke <alexis@m2osw.com>  Sat, 12 Mar 2022 11:25:25 -0800
 
