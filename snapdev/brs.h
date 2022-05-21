@@ -59,7 +59,6 @@ DECLARE_EXCEPTION(brs_error, brs_unknown_type);
 typedef std::uint32_t               magic_t;
 typedef std::uint8_t                version_t;
 typedef std::string                 name_t;
-//typedef std::vector<std::uint8_t>   buffer_t;
 
 typedef std::uint32_t               type_t;
 
