@@ -42,7 +42,7 @@
 
 CATCH_TEST_CASE("basic_types", "[basic]")
 {
-    CATCH_SECTION("push/restore char")
+    CATCH_START_SECTION("brs: push/restore char")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -113,8 +113,9 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         bool const r(in.deserialize(func));
         CATCH_REQUIRE(r);
     }
+    CATCH_END_SECTION()
 
-    CATCH_SECTION("push/restore signed char")
+    CATCH_START_SECTION("brs: push/restore signed char")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -185,8 +186,9 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         bool const r(in.deserialize(func));
         CATCH_REQUIRE(r);
     }
+    CATCH_END_SECTION()
 
-    CATCH_SECTION("push/restore unsigned char")
+    CATCH_START_SECTION("brs: push/restore unsigned char")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -257,8 +259,9 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         bool const r(in.deserialize(func));
         CATCH_REQUIRE(r);
     }
+    CATCH_END_SECTION()
 
-    CATCH_SECTION("push/restore shorts (16 bits)")
+    CATCH_START_SECTION("brs: push/restore shorts (16 bits)")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -352,8 +355,9 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         bool const r(in.deserialize(func));
         CATCH_REQUIRE(r);
     }
+    CATCH_END_SECTION()
 
-    CATCH_SECTION("push/restore ints (32 bits)")
+    CATCH_START_SECTION("brs: push/restore ints (32 bits)")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -452,8 +456,9 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         bool const r(in.deserialize(func));
         CATCH_REQUIRE(r);
     }
+    CATCH_END_SECTION()
 
-    CATCH_SECTION("push/restore ints (64 bits)")
+    CATCH_START_SECTION("brs: push/restore ints (64 bits)")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -540,8 +545,9 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         bool const r(in.deserialize(func));
         CATCH_REQUIRE(r);
     }
+    CATCH_END_SECTION()
 
-    CATCH_SECTION("push/restore floats")
+    CATCH_START_SECTION("brs: push/restore floats")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -647,8 +653,9 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         bool const r(in.deserialize(func));
         CATCH_REQUIRE(r);
     }
+    CATCH_END_SECTION()
 
-    CATCH_SECTION("push/restore string")
+    CATCH_START_SECTION("brs: push/restore string")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -722,8 +729,9 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         bool const r(in.deserialize(func));
         CATCH_REQUIRE(r);
     }
+    CATCH_END_SECTION()
 
-    CATCH_SECTION("push/restore array (varying name)")
+    CATCH_START_SECTION("brs: push/restore array (varying name)")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -810,8 +818,9 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         bool const r(in.deserialize(func));
         CATCH_REQUIRE(r);
     }
+    CATCH_END_SECTION()
 
-    CATCH_SECTION("push/restore array (same name)")
+    CATCH_START_SECTION("brs: push/restore array (same name)")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -899,8 +908,9 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         bool const r(in.deserialize(func));
         CATCH_REQUIRE(r);
     }
+    CATCH_END_SECTION()
 
-    CATCH_SECTION("push/restore map")
+    CATCH_START_SECTION("brs: push/restore map")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -992,8 +1002,9 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         bool const r(in.deserialize(func));
         CATCH_REQUIRE(r);
     }
+    CATCH_END_SECTION()
 
-    CATCH_SECTION("push/restore recursive")
+    CATCH_START_SECTION("brs: push/restore recursive")
     {
         class t1
         {
@@ -1186,6 +1197,7 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         bool const r(in.deserialize(func));
         CATCH_REQUIRE(r);
     }
+    CATCH_END_SECTION()
 }
 
 

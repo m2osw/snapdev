@@ -1,6 +1,9 @@
 snapdev (1.1.27.0~bionic) bionic; urgency=high
 
+  * Added the as_root class.
   * Removed a commented out #include.
+  * Fixed a couple of URL in brs files.
+  * Fixed the brs tests: use the start/end section so we get verbosity.
 
  -- Alexis Wilke <alexis@m2osw.com>  Fri, 20 May 2022 21:27:38 -0700
 
