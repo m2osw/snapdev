@@ -45,15 +45,15 @@ CATCH_TEST_CASE("basic_types", "[basic]")
     CATCH_SECTION("push/restore char")
     {
         std::stringstream buffer;
-        brs::serializer out(buffer);
+        snapdev::serializer out(buffer);
 
         std::string data(buffer.str());
-        CATCH_REQUIRE(data.length() == sizeof(brs::magic_t));
+        CATCH_REQUIRE(data.length() == sizeof(snapdev::magic_t));
 
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         char value = 33;
         out.add_value("orange", value);
@@ -63,7 +63,7 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         CATCH_REQUIRE(data[4] == 6 << 2);  // hunk_sizes_t
         CATCH_REQUIRE(data[5] == 1 << 1);
@@ -82,8 +82,8 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         struct processor
         {
             static bool process_hunk(
-                          brs::deserializer<std::stringstream> & in
-                        , brs::field_t const & field)
+                          snapdev::deserializer<std::stringstream> & in
+                        , snapdev::field_t const & field)
             {
                 CATCH_REQUIRE(field.f_name == "orange");
                 CATCH_REQUIRE(field.f_sub_name.empty());
@@ -101,12 +101,12 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         //
         buffer.clear();
 
-        brs::deserializer in(buffer);
+        snapdev::deserializer in(buffer);
 
         // WARNING: we want to use CATCH_...() macros inside the callback
         //          so make sure not to use one around unserialize_buffer().
         //
-        brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+        snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                       &processor::process_hunk
                     , std::placeholders::_1
                     , std::placeholders::_2));
@@ -117,15 +117,15 @@ CATCH_TEST_CASE("basic_types", "[basic]")
     CATCH_SECTION("push/restore signed char")
     {
         std::stringstream buffer;
-        brs::serializer out(buffer);
+        snapdev::serializer out(buffer);
 
         std::string data(buffer.str());
-        CATCH_REQUIRE(data.length() == sizeof(brs::magic_t));
+        CATCH_REQUIRE(data.length() == sizeof(snapdev::magic_t));
 
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         signed char value = -43;
         out.add_value("orange", value);
@@ -135,7 +135,7 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         CATCH_REQUIRE(data[4] == 6 << 2);  // hunk_sizes_t
         CATCH_REQUIRE(data[5] == 1 << 1);
@@ -154,8 +154,8 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         struct processor
         {
             static bool process_hunk(
-                          brs::deserializer<std::stringstream> & in
-                        , brs::field_t const & field)
+                          snapdev::deserializer<std::stringstream> & in
+                        , snapdev::field_t const & field)
             {
                 CATCH_REQUIRE(field.f_name == "orange");
                 CATCH_REQUIRE(field.f_sub_name.empty());
@@ -173,12 +173,12 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         //
         buffer.clear();
 
-        brs::deserializer in(buffer);
+        snapdev::deserializer in(buffer);
 
         // WARNING: we want to use CATCH_...() macros inside the callback
         //          so make sure not to use one around unserialize_buffer().
         //
-        brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+        snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                       &processor::process_hunk
                     , std::placeholders::_1
                     , std::placeholders::_2));
@@ -189,15 +189,15 @@ CATCH_TEST_CASE("basic_types", "[basic]")
     CATCH_SECTION("push/restore unsigned char")
     {
         std::stringstream buffer;
-        brs::serializer out(buffer);
+        snapdev::serializer out(buffer);
 
         std::string data(buffer.str());
-        CATCH_REQUIRE(data.length() == sizeof(brs::magic_t));
+        CATCH_REQUIRE(data.length() == sizeof(snapdev::magic_t));
 
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         unsigned char value = 200;
         out.add_value("orange", value);
@@ -207,7 +207,7 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         CATCH_REQUIRE(data[4] == 6 << 2);  // hunk_sizes_t
         CATCH_REQUIRE(data[5] == 1 << 1);
@@ -226,8 +226,8 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         struct processor
         {
             static bool process_hunk(
-                          brs::deserializer<std::stringstream> & in
-                        , brs::field_t const & field)
+                          snapdev::deserializer<std::stringstream> & in
+                        , snapdev::field_t const & field)
             {
                 CATCH_REQUIRE(field.f_name == "orange");
                 CATCH_REQUIRE(field.f_sub_name.empty());
@@ -245,12 +245,12 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         //
         buffer.clear();
 
-        brs::deserializer in(buffer);
+        snapdev::deserializer in(buffer);
 
         // WARNING: we want to use CATCH_...() macros inside the callback
         //          so make sure not to use one around unserialize_buffer().
         //
-        brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+        snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                       &processor::process_hunk
                     , std::placeholders::_1
                     , std::placeholders::_2));
@@ -261,15 +261,15 @@ CATCH_TEST_CASE("basic_types", "[basic]")
     CATCH_SECTION("push/restore shorts (16 bits)")
     {
         std::stringstream buffer;
-        brs::serializer out(buffer);
+        snapdev::serializer out(buffer);
 
         std::string data(buffer.str());
-        CATCH_REQUIRE(data.length() == sizeof(brs::magic_t));
+        CATCH_REQUIRE(data.length() == sizeof(snapdev::magic_t));
 
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         std::int16_t const purple = 3003;
         out.add_value("purple", purple);
@@ -282,7 +282,7 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         CATCH_REQUIRE(data[4] == 6 << 2);  // hunk_sizes_t
         CATCH_REQUIRE(data[5] == 2 << 1);
@@ -305,8 +305,8 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         struct processor
         {
             static bool process_hunk(
-                          brs::deserializer<std::stringstream> & in
-                        , brs::field_t const & field
+                          snapdev::deserializer<std::stringstream> & in
+                        , snapdev::field_t const & field
                         , std::int16_t purple
                         , std::uint16_t black)
             {
@@ -338,12 +338,12 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         //
         buffer.clear();
 
-        brs::deserializer in(buffer);
+        snapdev::deserializer in(buffer);
 
         // WARNING: we want to use CATCH_...() macros inside the callback
         //          so make sure not to use one around unserialize_buffer().
         //
-        brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+        snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                       &processor::process_hunk
                     , std::placeholders::_1
                     , std::placeholders::_2
@@ -356,15 +356,15 @@ CATCH_TEST_CASE("basic_types", "[basic]")
     CATCH_SECTION("push/restore ints (32 bits)")
     {
         std::stringstream buffer;
-        brs::serializer out(buffer);
+        snapdev::serializer out(buffer);
 
         std::string data(buffer.str());
-        CATCH_REQUIRE(data.length() == sizeof(brs::magic_t));
+        CATCH_REQUIRE(data.length() == sizeof(snapdev::magic_t));
 
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         std::int32_t const red = static_cast<std::int32_t>(SNAP_CATCH2_NAMESPACE::rand_int64());
         out.add_value("red", red);
@@ -377,7 +377,7 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         CATCH_REQUIRE(data[4] == 3 << 2);  // hunk_sizes_t
         CATCH_REQUIRE(data[5] == 4 << 1);
@@ -405,8 +405,8 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         struct processor
         {
             static bool process_hunk(
-                          brs::deserializer<std::stringstream> & in
-                        , brs::field_t const & field
+                          snapdev::deserializer<std::stringstream> & in
+                        , snapdev::field_t const & field
                         , std::int32_t red
                         , std::uint32_t blue)
             {
@@ -438,12 +438,12 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         //
         buffer.clear();
 
-        brs::deserializer in(buffer);
+        snapdev::deserializer in(buffer);
 
         // WARNING: we want to use CATCH_...() macros inside the callback
         //          so make sure not to use one around unserialize_buffer().
         //
-        brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+        snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                       &processor::process_hunk
                     , std::placeholders::_1
                     , std::placeholders::_2
@@ -456,15 +456,15 @@ CATCH_TEST_CASE("basic_types", "[basic]")
     CATCH_SECTION("push/restore ints (64 bits)")
     {
         std::stringstream buffer;
-        brs::serializer out(buffer);
+        snapdev::serializer out(buffer);
 
         std::string data(buffer.str());
-        CATCH_REQUIRE(data.length() == sizeof(brs::magic_t));
+        CATCH_REQUIRE(data.length() == sizeof(snapdev::magic_t));
 
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         std::int64_t const white = static_cast<std::int32_t>(SNAP_CATCH2_NAMESPACE::rand_int64());
         out.add_value("white", white);
@@ -477,7 +477,7 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         CATCH_REQUIRE(data[4] == 5 << 2);  // hunk_sizes_t
         CATCH_REQUIRE(data[5] == 8 << 1);
@@ -493,8 +493,8 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         struct processor
         {
             static bool process_hunk(
-                          brs::deserializer<std::stringstream> & in
-                        , brs::field_t const & field
+                          snapdev::deserializer<std::stringstream> & in
+                        , snapdev::field_t const & field
                         , std::int64_t white
                         , std::uint64_t gray)
             {
@@ -526,12 +526,12 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         //
         buffer.clear();
 
-        brs::deserializer in(buffer);
+        snapdev::deserializer in(buffer);
 
         // WARNING: we want to use CATCH_...() macros inside the callback
         //          so make sure not to use one around unserialize_buffer().
         //
-        brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+        snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                       &processor::process_hunk
                     , std::placeholders::_1
                     , std::placeholders::_2
@@ -544,15 +544,15 @@ CATCH_TEST_CASE("basic_types", "[basic]")
     CATCH_SECTION("push/restore floats")
     {
         std::stringstream buffer;
-        brs::serializer out(buffer);
+        snapdev::serializer out(buffer);
 
         std::string data(buffer.str());
-        CATCH_REQUIRE(data.length() == sizeof(brs::magic_t));
+        CATCH_REQUIRE(data.length() == sizeof(snapdev::magic_t));
 
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         float const green = static_cast<float>(SNAP_CATCH2_NAMESPACE::rand_int64())
                           / static_cast<float>(SNAP_CATCH2_NAMESPACE::rand_int64());
@@ -571,7 +571,7 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         CATCH_REQUIRE(data[4] == 5 << 2);  // hunk_sizes_t
         CATCH_REQUIRE(data[5] == 4 << 1);
@@ -587,8 +587,8 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         struct processor
         {
             static bool process_hunk(
-                          brs::deserializer<std::stringstream> & in
-                        , brs::field_t const & field
+                          snapdev::deserializer<std::stringstream> & in
+                        , snapdev::field_t const & field
                         , float green
                         , double yellow
                         , long double fushia)
@@ -632,12 +632,12 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         //
         buffer.clear();
 
-        brs::deserializer in(buffer);
+        snapdev::deserializer in(buffer);
 
         // WARNING: we want to use CATCH_...() macros inside the callback
         //          so make sure not to use one around unserialize_buffer().
         //
-        brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+        snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                       &processor::process_hunk
                     , std::placeholders::_1
                     , std::placeholders::_2
@@ -651,15 +651,15 @@ CATCH_TEST_CASE("basic_types", "[basic]")
     CATCH_SECTION("push/restore string")
     {
         std::stringstream buffer;
-        brs::serializer out(buffer);
+        snapdev::serializer out(buffer);
 
         std::string data(buffer.str());
-        CATCH_REQUIRE(data.length() == sizeof(brs::magic_t));
+        CATCH_REQUIRE(data.length() == sizeof(snapdev::magic_t));
 
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         std::string message("this is the message we are going to serialize");
         out.add_value("message",  message);
@@ -669,7 +669,7 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         CATCH_REQUIRE(data[4] == 7 << 2);  // hunk_sizes_t
         CATCH_REQUIRE(data[5] == 45 << 1);
@@ -687,8 +687,8 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         struct processor
         {
             static bool process_hunk(
-                          brs::deserializer<std::stringstream> & in
-                        , brs::field_t const & field
+                          snapdev::deserializer<std::stringstream> & in
+                        , snapdev::field_t const & field
                         , std::string message)
             {
                 CATCH_REQUIRE(field.f_name == "message");
@@ -709,12 +709,12 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         //
         buffer.clear();
 
-        brs::deserializer in(buffer);
+        snapdev::deserializer in(buffer);
 
         // WARNING: we want to use CATCH_...() macros inside the callback
         //          so make sure not to use one around unserialize_buffer().
         //
-        brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+        snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                       &processor::process_hunk
                     , std::placeholders::_1
                     , std::placeholders::_2
@@ -726,15 +726,15 @@ CATCH_TEST_CASE("basic_types", "[basic]")
     CATCH_SECTION("push/restore array (varying name)")
     {
         std::stringstream buffer;
-        brs::serializer out(buffer);
+        snapdev::serializer out(buffer);
 
         std::string data(buffer.str());
-        CATCH_REQUIRE(data.length() == sizeof(brs::magic_t));
+        CATCH_REQUIRE(data.length() == sizeof(snapdev::magic_t));
 
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         std::vector<int> order;
         typedef std::map<int, std::string> value_t;
@@ -767,13 +767,13 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         struct processor
         {
             static bool process_hunk(
-                          brs::deserializer<std::stringstream> & in
-                        , brs::field_t const & field
+                          snapdev::deserializer<std::stringstream> & in
+                        , snapdev::field_t const & field
                         , value_t & values)
             {
                 CATCH_REQUIRE(field.f_sub_name.empty());
@@ -797,12 +797,12 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         //
         buffer.clear();
 
-        brs::deserializer in(buffer);
+        snapdev::deserializer in(buffer);
 
         // WARNING: we want to use CATCH_...() macros inside the callback
         //          so make sure not to use one around unserialize_buffer().
         //
-        brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+        snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                       &processor::process_hunk
                     , std::placeholders::_1
                     , std::placeholders::_2
@@ -814,15 +814,15 @@ CATCH_TEST_CASE("basic_types", "[basic]")
     CATCH_SECTION("push/restore array (same name)")
     {
         std::stringstream buffer;
-        brs::serializer out(buffer);
+        snapdev::serializer out(buffer);
 
         std::string data(buffer.str());
-        CATCH_REQUIRE(data.length() == sizeof(brs::magic_t));
+        CATCH_REQUIRE(data.length() == sizeof(snapdev::magic_t));
 
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         // order does not matter and we can have gaps, to test that, create
         // a map of a few values and corresponding strings
@@ -858,13 +858,13 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         struct processor
         {
             static bool process_hunk(
-                          brs::deserializer<std::stringstream> & in
-                        , brs::field_t const & field
+                          snapdev::deserializer<std::stringstream> & in
+                        , snapdev::field_t const & field
                         , value_t & values)
             {
                 CATCH_REQUIRE(field.f_name == "unique");
@@ -886,12 +886,12 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         //
         buffer.clear();
 
-        brs::deserializer in(buffer);
+        snapdev::deserializer in(buffer);
 
         // WARNING: we want to use CATCH_...() macros inside the callback
         //          so make sure not to use one around unserialize_buffer().
         //
-        brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+        snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                       &processor::process_hunk
                     , std::placeholders::_1
                     , std::placeholders::_2
@@ -903,15 +903,15 @@ CATCH_TEST_CASE("basic_types", "[basic]")
     CATCH_SECTION("push/restore map")
     {
         std::stringstream buffer;
-        brs::serializer out(buffer);
+        snapdev::serializer out(buffer);
 
         std::string data(buffer.str());
-        CATCH_REQUIRE(data.length() == sizeof(brs::magic_t));
+        CATCH_REQUIRE(data.length() == sizeof(snapdev::magic_t));
 
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         // order does not matter and we can have gaps, to test that, create
         // a map of a few values and corresponding strings
@@ -951,13 +951,13 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         struct processor
         {
             static bool process_hunk(
-                          brs::deserializer<std::stringstream> & in
-                        , brs::field_t const & field
+                          snapdev::deserializer<std::stringstream> & in
+                        , snapdev::field_t const & field
                         , value_t & values)
             {
                 CATCH_REQUIRE(field.f_name == "mapping");
@@ -979,12 +979,12 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         //
         buffer.clear();
 
-        brs::deserializer in(buffer);
+        snapdev::deserializer in(buffer);
 
         // WARNING: we want to use CATCH_...() macros inside the callback
         //          so make sure not to use one around unserialize_buffer().
         //
-        brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+        snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                       &processor::process_hunk
                     , std::placeholders::_1
                     , std::placeholders::_2
@@ -998,14 +998,14 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         class t1
         {
         public:
-            void serialize(brs::serializer<std::stringstream> & out) const
+            void serialize(snapdev::serializer<std::stringstream> & out) const
             {
                 out.add_value("name", f_name);
             }
 
             bool process_hunk(
-                  brs::deserializer<std::stringstream> & in
-                , brs::field_t const & field)
+                  snapdev::deserializer<std::stringstream> & in
+                , snapdev::field_t const & field)
             {
                 CATCH_REQUIRE(field.f_sub_name.empty());
                 CATCH_REQUIRE(field.f_index == -1);
@@ -1036,7 +1036,7 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         class t2
         {
         public:
-            void serialize(brs::serializer<std::stringstream> & out) const
+            void serialize(snapdev::serializer<std::stringstream> & out) const
             {
                 for(std::size_t idx(0); idx < std::size(f_sizes); ++idx)
                 {
@@ -1045,8 +1045,8 @@ CATCH_TEST_CASE("basic_types", "[basic]")
             }
 
             bool process_hunk(
-                  brs::deserializer<std::stringstream> & in
-                , brs::field_t const & field)
+                  snapdev::deserializer<std::stringstream> & in
+                , snapdev::field_t const & field)
             {
                 if(field.f_name == "size")
                 {
@@ -1092,26 +1092,26 @@ CATCH_TEST_CASE("basic_types", "[basic]")
                 }
             }
 
-            void serialize(brs::serializer<std::stringstream> & out) const
+            void serialize(snapdev::serializer<std::stringstream> & out) const
             {
                 out.add_value("count", f_count);
 
                 int const max(static_cast<int>(f_t1.size()));
                 for(int idx(0); idx < max; ++idx)
                 {
-                    brs::recursive r(out, "t1_array");
+                    snapdev::recursive r(out, "t1_array");
                     f_t1[idx].serialize(out);
                 }
 
                 {
-                    brs::recursive r(out, "t2");
+                    snapdev::recursive r(out, "t2");
                     f_t2.serialize(out);
                 }
             }
 
             bool process_hunk(
-                  brs::deserializer<std::stringstream> & in
-                , brs::field_t const & field)
+                  snapdev::deserializer<std::stringstream> & in
+                , snapdev::field_t const & field)
             {
                 if(field.f_name == "count")
                 {
@@ -1123,7 +1123,7 @@ CATCH_TEST_CASE("basic_types", "[basic]")
                 {
                     CATCH_REQUIRE(static_cast<std::size_t>(field.f_index) < f_t1.size());
 
-                    brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+                    snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                                   &t1::process_hunk
                                 , &f_t1[field.f_index]
                                 , std::placeholders::_1
@@ -1133,7 +1133,7 @@ CATCH_TEST_CASE("basic_types", "[basic]")
                 }
                 else if(field.f_name == "t2")
                 {
-                    brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+                    snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                                   &t2::process_hunk
                                 , &f_t2
                                 , std::placeholders::_1
@@ -1158,27 +1158,27 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         c o;
 
         std::stringstream buffer;
-        brs::serializer out(buffer);
+        snapdev::serializer out(buffer);
 
         std::string data(buffer.str());
-        CATCH_REQUIRE(data.length() == sizeof(brs::magic_t));
+        CATCH_REQUIRE(data.length() == sizeof(snapdev::magic_t));
 
         CATCH_REQUIRE(data[0] == 'B');
         CATCH_REQUIRE(data[1] == 'R');
         CATCH_REQUIRE(data[2] == 'L');
-        CATCH_REQUIRE(data[3] == brs::BRS_VERSION);
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
         // Note: you don't usually end up re-using the serializer buffer
         //       but here it's practical
         //
         buffer.clear();
 
-        brs::deserializer in(buffer);
+        snapdev::deserializer in(buffer);
 
         // WARNING: we want to use CATCH_...() macros inside the callback
         //          so make sure not to use one around unserialize_buffer().
         //
-        brs::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+        snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
                       &c::process_hunk
                     , &o
                     , std::placeholders::_1
