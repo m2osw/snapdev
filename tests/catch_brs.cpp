@@ -28,9 +28,9 @@
 #include    "catch_main.h"
 
 
-// brs
+// snapdev
 //
-#include    <brs/brs.h>
+#include    <snapdev/brs.h>
 
 
 // C++
