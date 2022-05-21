@@ -29,6 +29,7 @@ if(SnapCatch2_FOUND)
     add_executable(${PROJECT_NAME}
         catch_main.cpp
 
+        catch_as_root.cpp
         catch_assert.cpp
         catch_brs.cpp
         catch_callback_manager.cpp
