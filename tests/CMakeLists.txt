@@ -30,6 +30,7 @@ if(SnapCatch2_FOUND)
         catch_main.cpp
 
         catch_assert.cpp
+        catch_brs.cpp
         catch_callback_manager.cpp
         catch_change_owner.cpp
         catch_file_contents.cpp

@@ -1,3 +1,9 @@
+snapdev (1.1.25.0~bionic) bionic; urgency=high
+
+  * Moved the brs.h header here. No need for a separate project.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Fri, 20 May 2022 20:05:18 -0700
+
 snapdev (1.1.24.1~bionic) bionic; urgency=high
 
   * Updated the compat version to 10.

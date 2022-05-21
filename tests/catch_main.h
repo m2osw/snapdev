@@ -85,6 +85,15 @@ inline char32_t rand_char(bool full_range = false)
 }
 
 
+inline std::int64_t rand_int64()
+{
+    return (static_cast<std::int64_t>(rand()) << 48)
+         | (static_cast<std::int64_t>(rand()) << 32)
+         | (static_cast<std::int64_t>(rand()) << 16)
+         | (static_cast<std::int64_t>(rand()) <<  0);
+}
+
+
 
 }
 // unittest namespace
