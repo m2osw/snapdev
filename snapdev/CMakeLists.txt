@@ -51,6 +51,7 @@ install(
         lockfile.h
         log2.h
         map_keyset.h
+        math.h
         matrix.h
         mkdir_p.h
         mounts.h

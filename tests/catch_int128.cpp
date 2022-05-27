@@ -18,12 +18,13 @@
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 /** \file
- * \brief Verify the various __int128 input/output support.
+ * \brief Verify the various __int128 extension functions.
  *
  * This file implements tests to verify:
  *
  * * support printing out 128 bit numbers
  * * support of 128 bit literals
+ * * support of 128 bit powers
  */
 
 // self
@@ -36,6 +37,7 @@
 //
 #include    <snapdev/ostream_int128.h>
 #include    <snapdev/int128_literal.h>
+#include    <snapdev/math.h>
 
 
 // last include
@@ -2468,6 +2470,35 @@ CATCH_TEST_CASE("int128_literal", "[literal][int128]")
     }
     CATCH_END_SECTION()
 }
+
+
+CATCH_TEST_CASE("int128_powers", "[math][int128]")
+{
+    CATCH_START_SECTION("int128: 2^n with n from 0 to 127")
+    {
+        using namespace snapdev::literals;
+
+        __int128 v(1);
+        for(int p(0); p < 128; ++p, v *= 2)
+        {
+            CATCH_REQUIRE(snapdev::power128(2_int128, p) == v);
+        }
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("uint128: 2^n with n from 0 to 127")
+    {
+        using namespace snapdev::literals;
+
+        unsigned __int128 v(1);
+        for(int p(0); p < 128; ++p, v *= 2)
+        {
+            CATCH_REQUIRE(snapdev::power128(2_uint128, p) == v);
+        }
+    }
+    CATCH_END_SECTION()
+}
+
 
 
 // vim: ts=4 sw=4 et

@@ -26,7 +26,7 @@
  * hexadecimal, octal, and binary.
  */
 
-// C++ lib
+// C++
 //
 #include    <limits>
 
@@ -143,11 +143,14 @@ constexpr __int128 operator ""_int128(char const * literal, std::size_t len)
                 + "' too large for the selected base");
         }
 
-        __int128 old(result);
+        __int128 const old(result);
         result = result * base + digit;
         if(result < old)
         {
             // overflow
+            //
+            // IMPORTANT NOTE: This test works because we do not deal with
+            // the '-' sign which the C++ compiler handles for us
             //
             throw std::domain_error("signed __int128 literal too large.");
         }
@@ -277,7 +280,7 @@ constexpr unsigned __int128 operator ""_uint128(char const * literal, std::size_
                 + "' too large for the selected base");
         }
 
-        unsigned __int128 old(result);
+        unsigned __int128 const old(result);
         result = result * base + digit;
         if(result < old)
         {
