@@ -28,6 +28,7 @@
 
 // C++
 //
+#include    <cstring>
 #include    <limits>
 
 
