@@ -18,9 +18,14 @@
 // 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #pragma once
 
+// C++
+//
 #include    <algorithm>
+#include    <array>
 #include    <numeric>
 #include    <string>
+#include    <string_view>
+
 
 
 namespace snapdev
@@ -40,9 +45,9 @@ namespace snapdev
  * it does not know how long the final string is going to be.)
  *
  * \note
- * You may also be interested by the boost::string::join algorithm. Like
- * the accumulate, it won't reserve the space first, but it works with
- * pretty much any kind of container, not just vectors.
+ * The separator is added whether the token being added is empty or not.
+ * If you do not want to add separators between empty strings, make sure
+ * to remove them from your container first.
  *
  * \param[in] tokens  The container of strings.
  * \param[in] separator  The separator to add between each string.
@@ -50,8 +55,9 @@ namespace snapdev
  * \return the number of items in the resulting container.
  */
 template<class ContainerT>
-typename ContainerT::value_type join_strings(ContainerT & tokens
-                                            , typename ContainerT::value_type const & separator)
+typename ContainerT::value_type join_strings(
+        ContainerT const & tokens
+      , typename ContainerT::value_type const & separator)
 {
     typename ContainerT::value_type result;
 
@@ -87,6 +93,164 @@ typename ContainerT::value_type join_strings(ContainerT & tokens
 
     return result;
 }
+
+
+namespace detail
+{
+
+/** \brief Join strings at compile time.
+ *
+ * Here is a template to concatate a set of `std::string_view`'s.
+ *
+ * If you have two or more string views that you want to join at compile
+ * time, the join_string_views template uses this template and returns
+ * an std::string_view.
+ */
+template<std::string_view const & ...strings>
+struct join_string_views_impl
+{
+    // join all strings into a single std::array of chars
+    //
+    static constexpr auto concatenate() noexcept
+    {
+        constexpr std::size_t const len = (strings.size() + ... + 0);
+        std::array<char, len + 1> arr{};
+        auto append = [i = 0, &arr](auto const & s) mutable
+        {
+            for(auto c : s)
+            {
+                arr[i] = c;
+                ++i;
+            }
+        };
+        (append(strings), ...);
+        arr[len] = 0;
+        return arr;
+    }
+
+    // give the joined string static storage
+    //
+    static constexpr auto concatenated_strings = concatenate();
+
+    // view as a std::string_view
+    //
+    static constexpr std::string_view value{
+              concatenated_strings.data()
+            , concatenated_strings.size() - 1
+        };
+};
+
+/** \brief Join strings at compile time with a separator.
+ *
+ * This template is similar to the previous one, only it allows us to also
+ * add a separator betweene each string.
+ *
+ * If you have two or more string views that you want to join with a
+ * separator at compile time, the join_string_views_with_separator template
+ * uses this template and returns an std::string_view.
+ *
+ * \tparam separator  The separator to add between each string
+ * \tparam strings  The string views to concatanate
+ */
+template<
+      std::string_view const & separator
+    , std::string_view const & ...strings>
+struct join_string_views_with_separator_impl
+{
+    // join all strings into a single std::array of chars
+    //
+    static constexpr auto concatenate() noexcept
+    {
+        constexpr std::size_t const count = sizeof...(strings); //std::tuple_size<std::tuple<strings...>>::value;
+        constexpr std::size_t const len = (strings.size() + ... + 0) + separator.length() * (count - 1);
+        std::array<char, len + 1> arr{};
+        auto append = [i = 0, &arr](auto const & s) mutable
+        {
+            if(i != 0)
+            {
+                for(auto c : separator)
+                {
+                    arr[i] = c;
+                    ++i;
+                }
+            }
+            for(auto c : s)
+            {
+                arr[i] = c;
+                ++i;
+            }
+        };
+        (append(strings), ...);
+        arr[len] = 0;
+        return arr;
+    }
+
+    // give the joined string static storage
+    //
+    static constexpr auto concatenated_strings = concatenate();
+
+    // view as a std::string_view
+    //
+    static constexpr std::string_view value{
+              concatenated_strings.data()
+            , concatenated_strings.size() - 1
+        };
+};
+
+} // namespace detail
+
+
+/** \brief Join string views at compile time.
+ *
+ * Whenever you create a string view (i.e. a string literal in C++17 and newer
+ * compilers), you can concatenate them using the join_string_views template.
+ *
+ * Here is an example on how to use this template:
+ *
+ * \code
+ *     // various strings
+ *     //
+ *     constexpr std::string_view hello = "Hello";
+ *     constexpr std::string_view space = " ";
+ *     constexpr std::string_view world = "world";
+ *     constexpr std::string_view bang = "!";
+ *
+ *     // concatenated strings
+ *     //
+ *     constexpr std::string_view hello_world = join_string_views<hello, space, world, bang>;
+ * \endcode
+ *
+ * \source
+ * https://stackoverflow.com/questions/38955940
+ */
+template<std::string_view const & ...strings>
+static constexpr auto join_string_views = detail::join_string_views_impl<strings...>::value;
+
+
+/** \brief Join string views with a separator at compile time.
+ *
+ * Whenever you create a string view (i.e. a string literal in C++17 and newer
+ * compilers), you can concatenate them using the
+ * join_string_views_with_separator template.
+ *
+ * Here is an example on how to use this template:
+ *
+ * \code
+ *     // various strings
+ *     //
+ *     constexpr std::string_view space = " ";
+ *     constexpr std::string_view hello = "Hello";
+ *     constexpr std::string_view every = "every";
+ *     constexpr std::string_view body = "body";
+ *
+ *     // concatenated strings
+ *     //
+ *     constexpr std::string_view hello_everyone = join_string_views<space, hello, every, body>;
+ * \endcode
+ */
+template<std::string_view const & separator, std::string_view const & ...strings>
+static constexpr auto join_string_views_with_separator = detail::join_string_views_with_separator_impl<separator, strings...>::value;
+
 
 } // namespace snapdev
 // vim: ts=4 sw=4 et
