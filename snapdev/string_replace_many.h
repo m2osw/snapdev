@@ -62,10 +62,10 @@ namespace snapdev
  *
  * \return A new string with the search_and_replace applied to the input string.
  */
-template < class StringT >
+template<class StringT>
 StringT string_replace_many(StringT const & input
                    , std::vector<std::pair<typename std::decay<StringT>::type,
-                                           typename std::decay<StringT>::type> > search_and_replace)
+                                           typename std::decay<StringT>::type>> search_and_replace)
 {
     typename StringT::size_type pos(0);
     typename StringT::size_type const len(input.length());

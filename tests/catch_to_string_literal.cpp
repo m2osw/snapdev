@@ -44,19 +44,27 @@ namespace
 // convert a port number to a string at compile time
 //
 constexpr int const         LOCAL_PORT = 9123;
-constexpr std::string_view  g_port_decimal = snapdev::to_string_literal<LOCAL_PORT>.data();
-constexpr std::string_view  g_port_decimal_explicit = snapdev::to_string_literal<LOCAL_PORT, 10>.data();
-constexpr std::string_view  g_port_hexadecimal = snapdev::to_string_literal<LOCAL_PORT, 16>.data();
-constexpr std::string_view  g_port_hexadecimal_uppercase = snapdev::to_string_literal<LOCAL_PORT, 16, true>.data();
-constexpr std::string_view  g_port_octal = snapdev::to_string_literal<LOCAL_PORT, 8>.data();
-constexpr std::string_view  g_port_binary = snapdev::to_string_literal<LOCAL_PORT, 2>.data();
+constexpr std::string_view  g_port_decimal = snapdev::integer_to_string_literal<LOCAL_PORT>.data();
+constexpr std::string_view  g_port_decimal_explicit = snapdev::integer_to_string_literal<LOCAL_PORT, 10>.data();
+constexpr std::string_view  g_port_hexadecimal = snapdev::integer_to_string_literal<LOCAL_PORT, 16>.data();
+constexpr std::string_view  g_port_hexadecimal_uppercase = snapdev::integer_to_string_literal<LOCAL_PORT, 16, true>.data();
+constexpr std::string_view  g_port_octal = snapdev::integer_to_string_literal<LOCAL_PORT, 8>.data();
+constexpr std::string_view  g_port_binary = snapdev::integer_to_string_literal<LOCAL_PORT, 2>.data();
+
+// these require C++20, becaue double_wrapper() is not otherwise accepted as a type to pass values as is
+//constexpr float const       CONSTANT_ROOT_TWO = 1.414213562373095048801688724209698078;
+//constexpr double const      CONSTANT_PI = 3.141592653589793238462643383279502884;
+//constexpr long double const CONSTANT_E = 2.718281828459045235360287471352662497;
+//constexpr std::string_view  g_root_two = snapdev::floating_point_to_string_literal<snapdev::detail::double_wrapper(CONSTANT_ROOT_TWO)>.data();
+//constexpr std::string_view  g_pi = snapdev::floating_point_to_string_literal<CONSTANT_PI>.data();
+//constexpr std::string_view  g_e = snapdev::floating_point_to_string_literal<CONSTANT_E>.data();
 
 }
 
 
 CATCH_TEST_CASE("to_string_literal", "[basic][strings]")
 {
-    CATCH_START_SECTION("to_string_literal: verify literals")
+    CATCH_START_SECTION("integer_to_string_literal: verify integral literals")
     {
         std::stringstream ds;
         ds << std::setbase(10) << LOCAL_PORT;
@@ -88,6 +96,23 @@ CATCH_TEST_CASE("to_string_literal", "[basic][strings]")
         CATCH_REQUIRE(std::string(binary + q) == std::string(g_port_binary));
     }
     CATCH_END_SECTION()
+
+// this requires C++20 to compile...
+//
+//    CATCH_START_SECTION("floating_point_to_string_literal: verify float literals")
+//    {
+////constexpr float const       CONSTANT_ROOT_TWO = 1.414213562373095048801688724209698078;
+////constexpr double const      CONSTANT_PI = 3.141592653589793238462643383279502884;
+////constexpr long double const CONSTANT_E = 2.718281828459045235360287471352662497;
+////constexpr std::string_view  g_root_two = snapdev::floating_point_to_string_literal(CONSTANT_ROOT_TWO);
+////constexpr std::string_view  g_pi = snapdev::floating_point_to_string_literal(CONSTANT_PI);
+////constexpr std::string_view  g_e = snapdev::floating_point_to_string_literal(CONSTANT_E);
+//
+//        std::stringstream ds;
+//        ds << std::setprecision(12) << CONSTANT_ROOT_TWO;
+//        CATCH_REQUIRE(ds.str() == std::string(g_root_two));
+//    }
+//    CATCH_END_SECTION()
 }
 
 

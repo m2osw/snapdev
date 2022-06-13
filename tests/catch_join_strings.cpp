@@ -55,7 +55,7 @@ namespace
 //
 constexpr int const         LOCAL_PORT = 4040;
 constexpr std::string_view  g_communicatord_default_ip = "127.0.0.1";
-constexpr std::string_view  g_communicatord_default_port = snapdev::to_string_literal<LOCAL_PORT>.data();
+constexpr std::string_view  g_communicatord_default_port = snapdev::integer_to_string_literal<LOCAL_PORT>.data();
 constexpr std::string_view  g_communicatord_colon = ":";
 constexpr std::string_view  g_communicatord_default_ip_port = snapdev::join_string_views<g_communicatord_default_ip, g_communicatord_colon, g_communicatord_default_port>;
 
