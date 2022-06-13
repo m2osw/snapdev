@@ -703,7 +703,7 @@ private:
         switch(flag)
         {
         case glob_to_list_flag_t::GLOB_FLAG_NONE:
-            return GLOB_ONLYDIR | flags_merge<args...>();
+            return flags_merge<args...>();
 
         case glob_to_list_flag_t::GLOB_FLAG_BRACE:
             return GLOB_BRACE | flags_merge<args...>();

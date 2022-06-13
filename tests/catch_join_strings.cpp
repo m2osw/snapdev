@@ -29,6 +29,8 @@
 //
 #include    <snapdev/join_strings.h>
 
+#include    <snapdev/to_string_literal.h>
+
 
 // self
 //
@@ -53,7 +55,7 @@ namespace
 //
 constexpr int const         LOCAL_PORT = 4040;
 constexpr std::string_view  g_communicatord_default_ip = "127.0.0.1";
-constexpr std::string_view  g_communicatord_default_port = BOOST_PP_STRINGIZE(LOCAL_PORT);
+constexpr std::string_view  g_communicatord_default_port = snapdev::to_string_literal<LOCAL_PORT>.data();
 constexpr std::string_view  g_communicatord_colon = ":";
 constexpr std::string_view  g_communicatord_default_ip_port = snapdev::join_string_views<g_communicatord_default_ip, g_communicatord_colon, g_communicatord_default_port>;
 
@@ -69,7 +71,7 @@ CATCH_TEST_CASE("join_string_view", "[basic][strings]")
     {
         std::string concat(g_communicatord_default_ip);
         concat += ':';
-        concat += g_communicatord_default_port;
+        concat += std::to_string(LOCAL_PORT);
 
         // the cast here is because catch2 doesn't handle the
         //
@@ -88,7 +90,7 @@ CATCH_TEST_CASE("join_strings", "[basic][strings]")
     {
         std::string manual_concat(g_communicatord_default_ip);
         manual_concat += ':';
-        manual_concat += g_communicatord_default_port;
+        manual_concat += std::to_string(LOCAL_PORT);
 
         std::vector<std::string> const list = {
                   std::string(g_communicatord_default_ip)

@@ -108,6 +108,12 @@ public:
  * use this template with an `std::uint64_t` or numbers larger than 64 bits.
  * I'd like to look at whether it would be possible to auto define the type
  * instead.
+ *
+ * \note
+ * If you can deal with std::string_view, the snapdev::to_string_literal
+ * is much more useful as it converts strings with any base and the
+ * class offers many options (begin()/end(), cast back to char *, different
+ * type of characters, etc.)
  */
 template<std::int64_t x>
 constexpr typename numeric_string<x>::type numeric_string<x>::value;

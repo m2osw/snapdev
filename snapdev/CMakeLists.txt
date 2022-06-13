@@ -74,6 +74,7 @@ install(
         timestamp.h
         tokenize_string.h
         to_lower.h
+        to_string_literal.h
         to_upper.h
         trim_string.h
         user_groups.h

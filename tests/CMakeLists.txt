@@ -45,6 +45,7 @@ if(SnapCatch2_FOUND)
         catch_pathinfo.cpp
         catch_timespec_operations.cpp
         catch_tokenize_string.cpp
+        catch_to_string_literal.cpp
         catch_trim_string.cpp
         catch_user_groups.cpp
     )
