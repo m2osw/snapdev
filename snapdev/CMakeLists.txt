@@ -48,6 +48,7 @@ install(
         is_string_literal.h
         is_vector.h
         join_strings.h
+        limits_int128.h
         lockfile.h
         log2.h
         map_keyset.h
