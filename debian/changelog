@@ -11,6 +11,8 @@ snapdev (1.1.27.0~bionic) bionic; urgency=high
   * Fixed the mask used in brs as the size is actually 23 bits.
   * Fixed the int128 functions with inlines since these are in headers.
   * Fixed in brs test that could generate duplicate keys.
+  * Added a SIZEOF_BITFIELD() macro defines size of a bitfield at compile time.
+  * Fixed brs masks using the SIZEOF_BITFIELD() macro.
 
  -- Alexis Wilke <alexis@m2osw.com>  Fri, 20 May 2022 21:27:38 -0700
 

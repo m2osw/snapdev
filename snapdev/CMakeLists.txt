@@ -69,6 +69,7 @@ install(
         safe_assert.h
         safe_setenv.h
         safe_variable.h
+        sizeof_bitfield.h
         string_replace_many.h
         timespec_operations.h
         timestamp.h

@@ -40,6 +40,23 @@
 
 
 
+CATCH_TEST_CASE("bitfield_size", "[bitfield]")
+{
+    CATCH_START_SECTION("brs: push/restore char")
+    {
+        constexpr std::size_t const sizeof_type(SIZEOF_BITFIELD(snapdev::hunk_sizes_t, f_type));
+        CATCH_REQUIRE(sizeof_type == 2);
+
+        constexpr std::size_t const sizeof_name(SIZEOF_BITFIELD(snapdev::hunk_sizes_t, f_name));
+        CATCH_REQUIRE(sizeof_name == 7);
+
+        constexpr std::size_t const sizeof_hunk(SIZEOF_BITFIELD(snapdev::hunk_sizes_t, f_hunk));
+        CATCH_REQUIRE(sizeof_hunk == 23);
+    }
+    CATCH_END_SECTION()
+}
+
+
 CATCH_TEST_CASE("basic_types", "[basic]")
 {
     CATCH_START_SECTION("brs: push/restore char")

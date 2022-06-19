@@ -27,6 +27,7 @@
 // snapdev
 //
 #include    <snapdev/is_vector.h>
+#include    <snapdev/sizeof_bitfield.h>
 
 
 // C++
@@ -205,7 +206,7 @@ public:
         hunk_sizes_t const hunk_sizes = {
             .f_type = TYPE_FIELD,
             .f_name = static_cast<std::uint8_t>(name.length()),
-            .f_hunk = static_cast<std::uint32_t>(size & 0x00FFFFFF),
+            .f_hunk = static_cast<std::uint32_t>(size & ((1 << SIZEOF_BITFIELD(hunk_sizes_t, f_hunk)) - 1)),
         };
 #pragma GCC diagnostic pop
 
@@ -242,7 +243,7 @@ public:
         hunk_sizes_t const hunk_sizes = {
             .f_type = TYPE_ARRAY,
             .f_name = static_cast<std::uint8_t>(name.length()),
-            .f_hunk = static_cast<std::uint32_t>(size & 0x007FFFFF),
+            .f_hunk = static_cast<std::uint32_t>(size & ((1 << SIZEOF_BITFIELD(hunk_sizes_t, f_hunk)) - 1)),
         };
 #pragma GCC diagnostic pop
         std::uint16_t const idx(static_cast<std::uint16_t>(index));
@@ -290,14 +291,14 @@ public:
         hunk_sizes_t const hunk_sizes = {
             .f_type = TYPE_MAP,
             .f_name = static_cast<std::uint8_t>(name.length()),
-            .f_hunk = static_cast<std::uint32_t>(size & 0x007FFFFF),
+            .f_hunk = static_cast<std::uint32_t>(size & ((1 << SIZEOF_BITFIELD(hunk_sizes_t, f_hunk)) - 1)),
         };
 #pragma GCC diagnostic pop
         std::uint8_t const len(static_cast<std::uint8_t>(sub_name.length()));
 
         if(hunk_sizes.f_name != name.length()
         || hunk_sizes.f_hunk != size
-        || sub_name.length() >= (1 << 8))
+        || sub_name.length() > std::numeric_limits<decltype(len)>::max())
         {
             throw brs_out_of_range("name, sub-name, or hunk too large");
         }
