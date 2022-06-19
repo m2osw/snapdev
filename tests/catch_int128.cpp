@@ -2481,7 +2481,7 @@ CATCH_TEST_CASE("int128_powers", "[math][int128]")
         __int128 v(1);
         for(int p(0); p < 128; ++p, v *= 2)
         {
-            CATCH_REQUIRE(snapdev::power128(2_int128, p) == v);
+            CATCH_REQUIRE(snapdev::pow(2_int128, p) == v);
         }
     }
     CATCH_END_SECTION()
@@ -2493,7 +2493,7 @@ CATCH_TEST_CASE("int128_powers", "[math][int128]")
         unsigned __int128 v(1);
         for(int p(0); p < 128; ++p, v *= 2)
         {
-            CATCH_REQUIRE(snapdev::power128(2_uint128, p) == v);
+            CATCH_REQUIRE(snapdev::pow(2_uint128, p) == v);
         }
     }
     CATCH_END_SECTION()

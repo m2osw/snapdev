@@ -103,6 +103,50 @@ constexpr magic_t const         BRS_MAGIC = BRS_MAGIC_LITTLE_ENDIAN;
  * This class is used to serialize your data. You create a serializer and
  * then call add_value() with each one of your fields.
  *
+ * The class supports named fields, fields representing arrays, and
+ * fields representing maps.
+ *
+ * \code
+ *     // create a serialize that writes to a stringstream
+ *     //
+ *     std::stringstream buffer;
+ *     snapdev::serializer out(buffer);
+ *
+ *     // add a value as is; all basic types, strings, etc. are supported
+ *     // in this case you pass 2 values
+ *     // note that my_value can be any basic struct type
+ *     //
+ *     // if you use a binary type (i.e. `std::int16_t`) then you must re-read
+ *     // the value with the exact same type; if the type changes later,
+ *     // if the size is different, you can detect which type using the size
+ *     // otherwise make sure to change the field name
+ *     //
+ *     out.add_value("field-name", my_value);
+ *
+ *     // for binary data in a buffer, pass a pointer and a size
+ *     //
+ *     out.add_value("field-name", my_buffer, size_of_my_buffer);
+ *
+ *     // add a value with an index (array)
+ *     // in this case you pass 3 values
+ *     // this also supports the buffer/size as above
+ *     //
+ *     out.add_value("field-name", 123, my_value);
+ *
+ *     // add a value with a sub-field name (map)
+ *     // in this case you pass 3 values, the second being a string as well
+ *     // this also supports the buffer/size as above
+ *     //
+ *     out.add_value("field-name", "sub-field", my_value);
+ *
+ *     // the add to the output stream is immediate
+ *     //
+ *     // so to save it to a file you could do this
+ *     //
+ *     std::ofstream p("my-data.brs");
+ *     p << buffer.str();
+ * \endcode
+ *
  * If you have a sub-class that you want to serialize within the parent,
  * you want to use the recursive class like so:
  *
@@ -115,6 +159,9 @@ constexpr magic_t const         BRS_MAGIC = BRS_MAGIC_LITTLE_ENDIAN;
  *         for(auto const & h : f_headers)
  *         {
  *             h.serialize(s);  // serialize one header
+ *
+ *             // for example, the header serialization may just be a name/value
+ *             //     s.add_value("header:" + f_name, f_value);
  *         }
  *     }
  *     // end the recursive entry
@@ -181,6 +228,7 @@ public:
                 , size);
     }
 
+
     template<typename T>
     void add_value(name_t name, int index, T const * ptr, std::size_t size)
     {
@@ -194,7 +242,7 @@ public:
         hunk_sizes_t const hunk_sizes = {
             .f_type = TYPE_ARRAY,
             .f_name = static_cast<std::uint8_t>(name.length()),
-            .f_hunk = static_cast<std::uint32_t>(size & 0x00FFFFFF),
+            .f_hunk = static_cast<std::uint32_t>(size & 0x007FFFFF),
         };
 #pragma GCC diagnostic pop
         std::uint16_t const idx(static_cast<std::uint16_t>(index));
@@ -223,6 +271,7 @@ public:
                 , size);
     }
 
+
     template<typename T>
     void add_value(name_t name, name_t sub_name, T const * ptr, std::size_t size)
     {
@@ -241,7 +290,7 @@ public:
         hunk_sizes_t const hunk_sizes = {
             .f_type = TYPE_MAP,
             .f_name = static_cast<std::uint8_t>(name.length()),
-            .f_hunk = static_cast<std::uint32_t>(size & 0x00FFFFFF),
+            .f_hunk = static_cast<std::uint32_t>(size & 0x007FFFFF),
         };
 #pragma GCC diagnostic pop
         std::uint8_t const len(static_cast<std::uint8_t>(sub_name.length()));
@@ -274,6 +323,7 @@ public:
                 , size);
     }
 
+
     /** \brief Save a basic type or struct of basic types.
      *
      * This one function saves the specified value as is. It is expected to be
@@ -282,7 +332,6 @@ public:
      * complex types such as a string need to be handled manually.
      *
      * \tparam T  The type of value,
-     * \param[out] buffer  The buffer where the value gets saved.
      * \param[in] name  The name of the field to be saved.
      * \param[in] value  The value to be saved with that name.
      */
@@ -301,8 +350,7 @@ public:
 
 
     template<typename T>
-    typename std::enable_if<std::is_same<T, typename std::string>::value
-            , void>::type
+    typename std::enable_if_t<!std::is_same_v<T, typename std::string>, void>
     add_value(name_t name, name_t sub_name, T const & value)
     {
         add_value(name, sub_name, &value, sizeof(value));

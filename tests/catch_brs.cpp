@@ -931,11 +931,20 @@ CATCH_TEST_CASE("basic_types", "[basic]")
         value_t values;
         for(int i(0); i < 25; ++i)
         {
+            int max(0);
             std::string index;
-            int max(rand() % 25 + 1);
-            for(int j(0); j < max; ++j)
+            for(;;)
             {
-                index += ' ' + rand() % ('~' + 1 - ' '); // ASCII except controls
+                max = rand() % 25 + 1;
+                for(int j(0); j < max; ++j)
+                {
+                    index += ' ' + rand() % ('~' + 1 - ' '); // ASCII except controls
+                }
+                if(values.find(index) == values.end())
+                {
+                    // index is unique, use it
+                    break;
+                }
             }
 
             std::string str;

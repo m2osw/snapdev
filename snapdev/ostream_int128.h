@@ -24,7 +24,7 @@
  * This function prints large integers (128 bits) to the specified iostream.
  */
 
-// C++ lib
+// C++
 //
 #include    <ostream>
 #include    <sstream>
@@ -43,7 +43,7 @@ namespace snapdev
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-std::string to_string(__int128 x)
+inline std::string to_string(__int128 x)
 {
     char buf[42];
 
@@ -81,7 +81,7 @@ std::string to_string(__int128 x)
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-std::string to_string(unsigned __int128 x)
+inline std::string to_string(unsigned __int128 x)
 {
     char buf[42];
 
@@ -120,7 +120,7 @@ std::string to_string(unsigned __int128 x)
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-std::ostream & operator << (std::ostream & os, __int128 x)
+inline std::ostream & operator << (std::ostream & os, __int128 x)
 {
     return os << snapdev::to_string(x);
 }
@@ -142,7 +142,7 @@ std::ostream & operator << (std::ostream & os, __int128 x)
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-std::ostream & operator << (std::ostream & os, unsigned __int128 x)
+inline std::ostream & operator << (std::ostream & os, unsigned __int128 x)
 {
     return os << snapdev::to_string(x);
 }

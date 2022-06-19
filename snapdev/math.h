@@ -28,78 +28,173 @@
 // self
 //
 #include    <snapdev/int128_literal.h>
+#include    <snapdev/limits_int128.h>
+#include    <snapdev/not_reached.h>
+
+
+// C
+//
+#include    <signal.h>
 
 
 namespace snapdev
 {
 
 
-/** \brief Computer a power of a 128 bit integer number.
+/** \brief Computer a power of an integer number.
  *
  * This function multiplies the specified \p value by itself \p power times.
  *
- * This is a function to computer an integer power so \p power must be an
- * integer.
+ * This is a function to compute an integer power so \p power must be an
+ * integer and is generally expected to be positive. Since a negative power
+ * is legal, we handle the case, but in most likelihood, the result will
+ * be zero in this case.
+ *
+ * \note
+ * If \p power is 0, the result is always 1.
+ *
+ * \note
+ * If \p power is negative, the result is 0 unless \p value is 1 or -1 in
+ * which case the result is 1 or -1.
  *
  * \todo
  * The function does not check for overflow.
  *
- * \param[in] value  A 128 bit number.
- * \param[in] power  The number of times to multiply value by itself.
+ * \todo
+ * Once all versions use g++ v10 or more, we can remove the is_same_v<>
+ * against __int128.
  *
- * \return The resulting value ^ power.
+ * \param[in] value  An integer.
+ * \param[in] power  The number of times to multiply \p value by itself.
+ *
+ * \return The resulting "value ** power".
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-constexpr __int128 power128(__int128 value, int power)
+template<typename T>
+constexpr std::enable_if_t<std::is_integral_v<T>
+              || std::is_same_v<T, __int128>
+              || std::is_same_v<T, unsigned __int128>, T> pow(T value, int power)
 {
     using namespace snapdev::literals;
 
     if(power == 0)
     {
-        return 1_int128;
+        return static_cast<T>(1);
     }
-    __int128 result(value);
-    for(--power; power > 0; --power)
+    if(power < 0)
     {
-        result *= value;
+        // negative powers are similar to (1 / value ** power) which is
+        // 1 or -1 if value is 1 or -1
+        //
+        switch(value)
+        {
+        case -1:
+            return static_cast<T>((power & 1) == 0 ? 1 : -1);
+
+        case 1:
+            return static_cast<T>(1);
+
+        default:
+            return static_cast<T>(0);
+
+        }
+        snapdev::NOT_REACHED();
     }
-    return result;
+
+    T result(static_cast<T>(1));
+    for(;;)
+    {
+        if((power & 1) != 0)
+        {
+            result *= value;
+        }
+        power /= 2;
+        if(power == 0)
+        {
+            return result;
+        }
+        value *= value;
+    }
+    snapdev::NOT_REACHED();
 }
 #pragma GCC diagnostic pop
 
 
-/** \brief Computer a power of a 128 bit unsigned integer number.
+/** \brief Add two signed numbers, return min or max on overflow.
  *
- * This function multiplies the specified \p value by itself \p power times.
+ * This function adds \p lhs to \p rhs and returns the total unless there
+ * is an overflow in which case the minimum (if \p lhs and \p rhs are
+ * negative) or the maximum (if \p lhs and \p rhs are positive) is returned.
  *
- * This is a function to computer an unsigned integer power so \p power must
- * be an integer.
+ * \note
+ * This function is picked only if T is signed.
  *
- * \todo
- * The function does not check for overflow.
+ * \note
+ * T can be `signed __int128`.
  *
- * \param[in] value  A 128 bit unsigned number.
- * \param[in] power  The number of times to multiply value by itself.
+ * \tparam T  The type of integer concerned. \p lhs and \p rhs must be of the
+ * same type.
+ * \param[in] lhs  The left handside number to add.
+ * \param[in] rhs  The right handside number to add.
  *
- * \return The resulting value ^ power.
+ * \return Saturated lhs + rhs.
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-constexpr unsigned __int128 power128(unsigned __int128 value, int power)
+template<typename T>
+std::enable_if_t<(std::is_integral_v<T> && std::is_signed_v<T>)
+              || std::is_same_v<T, __int128>, T> saturated_add(T lhs, T rhs)
 {
-    using namespace snapdev::literals;
+    T const result(lhs + rhs);
+    T const sign(lhs ^ rhs);
+    if(sign < 0)
+    {
+        // no possible overflow (lhs & rhs are opposite signs)
+        //
+        return result;
+    }
+    T const result_sign(result ^ lhs);
+    if(result_sign >= 0)
+    {
+        // overflow did not happen (result is still the same sign)
+        //
+        return result;
+    }
+    return lhs < 0
+            ? std::numeric_limits<T>::min()
+            : std::numeric_limits<T>::max();
+}
+#pragma GCC diagnostic pop
 
-    if(power == 0)
-    {
-        return 1_uint128;
-    }
-    unsigned __int128 result(value);
-    for(--power; power > 0; --power)
-    {
-        result *= value;
-    }
-    return result;
+
+/** \brief Add two unsigned numbers, return max on overflow.
+ *
+ * This function adds \p lhs to \p rhs and returns the total unless there
+ * is an overflow in which case the maximum is returned.
+ *
+ * \note
+ * This function is picked only if T is unsigned.
+ *
+ * \note
+ * T can be `unsigned __int128`.
+ *
+ * \tparam T  The type of integer concerned. \p lhs and \p rhs must be of the
+ * same type.
+ * \param[in] lhs  The left handside number to add.
+ * \param[in] rhs  The right handside number to add.
+ *
+ * \return Saturated lhs + rhs.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+template<typename T>
+std::enable_if_t<(std::is_integral_v<T> && std::is_unsigned_v<T>)
+               || std::is_same_v<T, unsigned __int128>, T> saturated_add(T lhs, T rhs)
+{
+    return lhs > std::numeric_limits<T>::max() - rhs
+            ? std::numeric_limits<T>::max()
+            : lhs + rhs;
 }
 #pragma GCC diagnostic pop
 
