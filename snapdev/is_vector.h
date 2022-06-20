@@ -43,10 +43,10 @@ namespace snapdev
  *
  * \tparam T  The type of objects found in the vector.
  */
-template<typename T>
+template<typename T, typename _ = void>
 struct is_vector
+    : std::false_type
 {
-    static const bool value = false;
 };
 
 
@@ -59,12 +59,29 @@ struct is_vector
  *
  * \tparam T  The type of objects found in the vector.
  */
+//template<typename T>
+//struct is_vector<std::is_same_v<T, std::vector<typename T::value_type>>
+//{
+//    static constexpr bool const value = true;
+//};
 template<typename T>
-struct is_vector<std::vector<T>>
+struct is_vector<T, typename std::enable_if_t<std::is_same_v<
+                          typename std::decay_t<T>
+                        , std::vector<typename std::decay_t<T>::value_type, typename std::decay_t<T>::allocator_type>>>>
+    : std::true_type
 {
-    static const bool value = true;
 };
 
+
+/** \brief Simplified is_vector which directly returns the value.
+ *
+ * The newer versions of the standard library has this _v for value convention
+ * for meta-programming so we apply that here too.
+ *
+ * \tparam T  The type to be checked to know whether it is a vector or not.
+ */
+template<typename T>
+inline constexpr bool const is_vector_v = is_vector<T>::value;
 
 
 } // namespace snapdev

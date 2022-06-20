@@ -2497,6 +2497,85 @@ CATCH_TEST_CASE("int128_powers", "[math][int128]")
         }
     }
     CATCH_END_SECTION()
+
+    CATCH_START_SECTION("[u]int128: n^0 where n is a random number")
+    {
+        using namespace snapdev::literals;
+
+        for(int repeat(0); repeat < 10; ++repeat)
+        {
+            unsigned __int128 u(0_uint128);
+            for(int p(0); p < 16; ++p)
+            {
+                u <<= 8;
+                u |= rand() & 0x00FF;
+            }
+            CATCH_REQUIRE(snapdev::pow(u, 0) == 1);
+
+            __int128 v(0_uint128);
+            for(int p(0); p < 16; ++p)
+            {
+                v <<= 8;
+                v |= rand() & 0x00FF;
+            }
+            if((repeat & 1) == 0 && v > 0)
+            {
+                // make sure the value is negative at times
+                //
+                v = -v;
+            }
+            CATCH_REQUIRE(snapdev::pow(v, 0) == 1);
+        }
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("int128: 1^n with n < 0")
+    {
+        using namespace snapdev::literals;
+
+        for(int p(-128); p < 0; ++p)
+        {
+            CATCH_REQUIRE(snapdev::pow(1_int128, p) == 1);
+            CATCH_REQUIRE(snapdev::pow(1_uint128, p) == 1);
+
+            // for any other number, it becomes 0
+            //
+            CATCH_REQUIRE(snapdev::pow(2_int128, p) == 0);
+            CATCH_REQUIRE(snapdev::pow(2_uint128, p) == 0);
+            CATCH_REQUIRE(snapdev::pow(3_int128, p) == 0);
+            CATCH_REQUIRE(snapdev::pow(3_uint128, p) == 0);
+            CATCH_REQUIRE(snapdev::pow(4_int128, p) == 0);
+            CATCH_REQUIRE(snapdev::pow(4_uint128, p) == 0);
+            CATCH_REQUIRE(snapdev::pow(5_int128, p) == 0);
+            CATCH_REQUIRE(snapdev::pow(5_uint128, p) == 0);
+        }
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("int128: -1^n with n < 0")
+    {
+        using namespace snapdev::literals;
+
+        for(int p(-128); p < 0; ++p)
+        {
+            if((p & 1) == 0)
+            {
+                CATCH_REQUIRE(snapdev::pow(-1_int128, p) == 1);
+            }
+            else
+            {
+                CATCH_REQUIRE(snapdev::pow(-1_int128, p) == -1);
+            }
+
+            // for any other number, it becomes 0
+            //
+            CATCH_REQUIRE(snapdev::pow(-2_int128, p) == 0);
+            CATCH_REQUIRE(snapdev::pow(-3_int128, p) == 0);
+            CATCH_REQUIRE(snapdev::pow(-4_int128, p) == 0);
+            CATCH_REQUIRE(snapdev::pow(-5_int128, p) == 0);
+        }
+    }
+    CATCH_END_SECTION()
 }
 
 

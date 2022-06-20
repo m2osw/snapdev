@@ -27,6 +27,7 @@
 // snapdev
 //
 #include    <snapdev/is_vector.h>
+#include    <snapdev/not_used.h>
 #include    <snapdev/sizeof_bitfield.h>
 
 
@@ -325,6 +326,7 @@ public:
     }
 
 
+// *** FIELDS ***
     /** \brief Save a basic type or struct of basic types.
      *
      * This one function saves the specified value as is. It is expected to be
@@ -337,24 +339,24 @@ public:
      * \param[in] value  The value to be saved with that name.
      */
     template<typename T>
-    void add_value(name_t name, T const & value)
+    typename std::enable_if_t<!snapdev::is_vector_v<T>
+                            && !std::is_same_v<char const *, T>
+                            && !std::is_same_v<std::string const &, T>, void>
+    add_value(name_t name, T const & value)
     {
         add_value(name, &value, sizeof(value));
     }
 
 
-    template<typename T>
-    void add_value(name_t name, int index, T const & value)
+    void add_value(name_t name, std::nullptr_t)
     {
-        add_value(name, index, &value, sizeof(value));
+        NOT_USED(name);
     }
 
 
-    template<typename T>
-    typename std::enable_if_t<!std::is_same_v<T, typename std::string>, void>
-    add_value(name_t name, name_t sub_name, T const & value)
+    void add_value(name_t name, char const * value)
     {
-        add_value(name, sub_name, &value, sizeof(value));
+        add_value(name, value, strlen(value));
     }
 
 
@@ -373,9 +375,60 @@ public:
     }
 
 
+    template<typename T>
+    typename std::enable_if_t<snapdev::is_vector_v<T>>
+    add_value(name_t name, T const & value)
+    {
+        add_value(name, value.data(), value.size() * sizeof(typename T::value_type));
+    }
+
+
+// *** INDEXES ***
+    template<typename T>
+    typename std::enable_if_t<!snapdev::is_vector_v<T>
+                            && !std::is_same_v<char const *, T>, void>
+    add_value(name_t name, int index, T const & value)
+    {
+        add_value(name, index, &value, sizeof(value));
+    }
+
+
+    void add_value(name_t name, int index, std::nullptr_t)
+    {
+        NOT_USED(name, index);
+    }
+
+
+    void add_value(name_t name, int index, char const * value)
+    {
+        add_value(name, index, value, strlen(value));
+    }
+
+
     void add_value(name_t name, int index, std::string const & value)
     {
         add_value(name, index, value.c_str(), value.length());
+    }
+
+
+// *** MAPS ***
+    template<typename T>
+    typename std::enable_if_t<!std::is_same_v<T, typename std::string>, void>
+    add_value(name_t name, name_t sub_name, T const & value)
+    {
+        add_value(name, sub_name, &value, sizeof(value));
+    }
+
+
+    void add_value(name_t name, name_t sub_name, std::nullptr_t)
+    {
+        NOT_USED(name, sub_name);
+    }
+
+
+    void add_value(name_t name, name_t sub_name, char const * value)
+    {
+        add_value(name, sub_name, value, strlen(value));
     }
 
 
@@ -394,15 +447,7 @@ public:
     }
 
 
-    template<typename T>
-    typename std::enable_if<snapdev::is_vector<T>::value
-            , void>::type
-    add_value(name_t name, std::vector<T> & value)
-    {
-        add_value(name, value.data(), value.size());
-    }
-
-
+// *** SUB-FIELDS ***
     void start_subfield(name_t name)
     {
         if(name.empty())
@@ -650,17 +695,17 @@ public:
     template<typename T>
     bool read_data(std::vector<T> & data)
     {
-        if(f_field.f_size % sizeof(data.value_type) != 0)
+        if(f_field.f_size % sizeof(T) != 0)
         {
             throw brs_logic_error(
                       "hunk size ("
                     + std::to_string(f_field.f_size)
                     + ") is not a multiple of the vector item size: "
-                    + std::to_string(sizeof(data.value_type))
+                    + std::to_string(sizeof(T))
                     + '.');
         }
 
-        data.resize(f_field.f_size / sizeof(data.value_type));
+        data.resize(f_field.f_size / sizeof(T));
         f_input.read(reinterpret_cast<typename S::char_type *>(data.data()), f_field.f_size);
         return verify_size(f_field.f_size);
     }
@@ -668,7 +713,7 @@ public:
 private:
     bool verify_size(std::size_t expected_size)
     {
-        return f_input && static_cast<ssize_t>(expected_size) != f_input.gcount();
+        return f_input && static_cast<ssize_t>(expected_size) == f_input.gcount();
     }
 
     S &         f_input;
