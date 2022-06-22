@@ -177,7 +177,9 @@ std::enable_if_t<(std::is_integral_v<T> && std::is_signed_v<T>)
  * This function is picked only if T is unsigned.
  *
  * \note
- * T can be `unsigned __int128`.
+ * T can be `unsigned __int128`. This is currently checked explicitly
+ * because older C++ standard libraries do not view __int128 as an integral
+ * type (it is not included in the list of types checked).
  *
  * \tparam T  The type of integer concerned. \p lhs and \p rhs must be of the
  * same type.
@@ -195,6 +197,37 @@ std::enable_if_t<(std::is_integral_v<T> && std::is_unsigned_v<T>)
     return lhs > std::numeric_limits<T>::max() - rhs
             ? std::numeric_limits<T>::max()
             : lhs + rhs;
+}
+#pragma GCC diagnostic pop
+
+
+/** \brief Subtract an unsigned number from another, return min on overflow.
+ *
+ * This function subtract \p rhs from \p lhs and returns the difference
+ * unless there is an underflow in which case the minimum (0) is returned.
+ *
+ * \note
+ * This function is picked only if T is unsigned.
+ *
+ * \note
+ * T can be `unsigned __int128`. This is currently checked explicitly
+ * because older C++ standard libraries do not view __int128 as an integral
+ * type (it is not included in the list of types checked).
+ *
+ * \tparam T  The type of integer concerned. \p lhs and \p rhs must be of the
+ * same type.
+ * \param[in] lhs  The left handside number to subtract from.
+ * \param[in] rhs  The right handside number to subtract.
+ *
+ * \return Saturated lhs - rhs.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+template<typename T>
+std::enable_if_t<(std::is_integral_v<T> && std::is_unsigned_v<T>)
+               || std::is_same_v<T, unsigned __int128>, T> saturated_subtract(T lhs, T rhs)
+{
+    return lhs < rhs ? 0 : lhs - rhs;
 }
 #pragma GCC diagnostic pop
 

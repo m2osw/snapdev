@@ -6,6 +6,7 @@ snapdev (1.1.27.0~bionic) bionic; urgency=high
   * Fixed the brs tests: use the start/end section so we get verbosity.
   * Added the pow() function for integers.
   * Added the saturated_add() functions for integers.
+  * Added the saturated_subtract() functions for unsigned integers.
   * Added a couple of missing const in the int128 literal functions.
   * Fixed the std::numerical_limits for int128 numbers.
   * Fixed the mask used in brs as the size is actually 23 bits.

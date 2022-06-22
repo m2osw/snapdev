@@ -226,7 +226,7 @@ CATCH_TEST_CASE("saturated_add_uint", "[math]")
 
 CATCH_TEST_CASE("saturated_add_int", "[math]")
 {
-    CATCH_START_SECTION("saturated_add_uint8: test all possible cases with 8 bits")
+    CATCH_START_SECTION("saturated_add_int8: test all possible cases with 8 bits")
     {
         for(std::int32_t n(-128); n < 128; ++n)
         {
