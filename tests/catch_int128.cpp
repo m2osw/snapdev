@@ -56,9 +56,39 @@ CATCH_TEST_CASE("ostream_int128", "[ostream][int128]")
         for(int i(-10); i <= 10; ++i)
         {
             __int128 l(i);
-            std::stringstream ss;
-            ss << l;
-            CATCH_REQUIRE(ss.str() == std::to_string(i));
+            std::stringstream vd;  // decimal
+            vd << l;
+            CATCH_REQUIRE(vd.str() == std::to_string(i));
+
+            std::stringstream vh, evh;  // hexadecimal
+            vh << std::hex << l;
+            evh << (i < 0 ? "ffffffffffffffffffffffff" : "") << std::hex << i;
+            CATCH_REQUIRE(vh.str() == evh.str());
+
+            std::stringstream vu, evu;  // hexadecimal in uppercase
+            vu << std::hex << std::uppercase << l;
+            evu << (i < 0 ? "FFFFFFFFFFFFFFFFFFFFFFFF" : "") << std::hex << std::uppercase << i;
+            CATCH_REQUIRE(vu.str() == evu.str());
+
+            std::stringstream vi, evi;  // hexadecimal with base
+            vi << std::hex << std::showbase << l;
+            evi << (i < 0 ? "0xffffffffffffffffffffffff" : "0x") << std::hex << i;
+            CATCH_REQUIRE(vi.str() == evi.str());
+
+            std::stringstream va, eva;  // hexadecimal all
+            va << std::hex << std::showbase << std::uppercase << l;
+            eva << (i < 0 ? "0XFFFFFFFFFFFFFFFFFFFFFFFF" : "0X") << std::hex << std::uppercase << i;
+            CATCH_REQUIRE(va.str() == eva.str());
+
+            std::stringstream vo, evo;  // octal
+            vo << std::oct << l;
+            evo << (i < 0 ? "37777777777777777777777777777777" : "") << std::oct << (i & 0x1FFFFFFFF);
+            CATCH_REQUIRE(vo.str() == evo.str());
+
+            std::stringstream vb, evb;  // octal with base
+            vb << std::oct << std::showbase << l;
+            evb << (i < 0 ? "037777777777777777777777777777777" : "0") << std::oct << (i & 0x1FFFFFFFF);
+            CATCH_REQUIRE(vb.str() == evb.str());
         }
     }
     CATCH_END_SECTION()
@@ -93,9 +123,31 @@ CATCH_TEST_CASE("ostream_int128", "[ostream][int128]")
     {
         unsigned __int128 l(0);
         l = ~l;
-        std::stringstream ss;
-        ss << l;
-        CATCH_REQUIRE(ss.str() == "340282366920938463463374607431768211455");
+        {
+            std::stringstream ss;
+            ss << l;
+            CATCH_REQUIRE(ss.str() == "340282366920938463463374607431768211455");
+        }
+        {
+            std::stringstream ss;
+            ss << std::hex << l;
+            CATCH_REQUIRE(ss.str() == "ffffffffffffffffffffffffffffffff");
+        }
+        {
+            std::stringstream ss;
+            ss << std::hex << std::uppercase << l;
+            CATCH_REQUIRE(ss.str() == "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+        }
+        {
+            std::stringstream ss;
+            ss << std::hex << std::showbase << l;
+            CATCH_REQUIRE(ss.str() == "0xffffffffffffffffffffffffffffffff");
+        }
+        {
+            std::stringstream ss;
+            ss << std::hex << std::uppercase << std::showbase << l;
+            CATCH_REQUIRE(ss.str() == "0XFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+        }
     }
     CATCH_END_SECTION()
 
@@ -103,9 +155,16 @@ CATCH_TEST_CASE("ostream_int128", "[ostream][int128]")
     {
         __int128 l(1);
         l <<= 127;
-        std::stringstream ss;
-        ss << l;
-        CATCH_REQUIRE(ss.str() == "-170141183460469231731687303715884105728");
+        {
+            std::stringstream ss;
+            ss << l;
+            CATCH_REQUIRE(ss.str() == "-170141183460469231731687303715884105728");
+        }
+        {
+            std::stringstream ss;
+            ss << std::hex << l;
+            CATCH_REQUIRE(ss.str() == "80000000000000000000000000000000");
+        }
     }
     CATCH_END_SECTION()
 }

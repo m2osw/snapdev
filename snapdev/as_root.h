@@ -94,7 +94,7 @@ public:
     {
         if(f_errno == 0)
         {
-            NOT_USED(seteuid(f_user_uid));
+            NOT_USED(seteuid(f_user_uid));  // LCOV_EXCL_LINE -- our unit tests cannot switch to root user
         }
     }
 

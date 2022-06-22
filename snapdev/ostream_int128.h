@@ -43,23 +43,32 @@ namespace snapdev
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-inline std::string to_string(__int128 x)
+inline std::string to_string(__int128 x, __int128 base = 10, bool uppercase = false)
 {
-    char buf[42];
+    char buf[129];  // binary requires 128 + '-' = 129 chars
+
+    char const adjust((uppercase ? 'A' : 'a') - ('9' + 1));
 
     int idx(sizeof(buf));
     unsigned __int128 y(x < 0
         ? -static_cast<unsigned __int128>(x)
         : static_cast<unsigned __int128>(x));
-    constexpr unsigned __int128 const limit(9);
-    while(y > limit)
+    while(y >= static_cast<unsigned __int128>(base))
     {
         --idx;
-        buf[idx] = y % 10 + '0';
-        y /= 10;
+        buf[idx] = y % base + '0';
+        if(buf[idx] > '9')
+        {
+            buf[idx] += adjust;
+        }
+        y /= base;
     }
     --idx;
     buf[idx] = y + '0';
+    if(buf[idx] > '9')
+    {
+        buf[idx] += adjust;
+    }
     if(x < 0)
     {
         --idx;
@@ -81,19 +90,29 @@ inline std::string to_string(__int128 x)
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-inline std::string to_string(unsigned __int128 x)
+inline std::string to_string(unsigned __int128 x, unsigned __int128 base = 10, bool uppercase = false)
 {
-    char buf[42];
+    char buf[128];  // binary requires 128 chars
+
+    char const adjust((uppercase ? 'A' : 'a') - ('9' + 1));
 
     int idx(sizeof(buf));
-    while(x > 9)
+    while(x >= base)
     {
         --idx;
-        buf[idx] = x % 10 + '0';
-        x /= 10;
+        buf[idx] = x % base + '0';
+        if(buf[idx] > '9')
+        {
+            buf[idx] += adjust;
+        }
+        x /= base;
     }
     --idx;
     buf[idx] = x + '0';
+    if(buf[idx] > '9')
+    {
+        buf[idx] += adjust;
+    }
 
     return std::string(buf + idx, sizeof(buf) - idx);
 }
@@ -107,11 +126,23 @@ inline std::string to_string(unsigned __int128 x)
 
 /** \brief Output an __int128 number.
  *
+ * This function outputs the specified __int128 number to this output
+ * stream. It respects the base and for hexadecimal, it also respects
+ * the uppercase format.
+ *
+ * \note
+ * The hexadecimal and octal formats do not understand negative numbers.
+ * This function respects the C++ definition and prints out unsigned
+ * numbers when one of the std::hex or std::oct format are set. If you
+ * would prefer a negative number (i.e. -0x1 instead of 0xfff...fff)
+ * then make sure to directly call the snapdev::to_string() function
+ * instead.
+ *
  * \warning
  * This implementation does not offer proper formatting.
  * It will first generate a string then output that string
  * which means the result is not what you'd expect if you
- * used formatting such as std::hex and std::setw().
+ * used formatting such as std::setfill() and std::setw().
  *
  * \param[in] os  The output stream.
  * \param[in] x  The value to be output in \p os.
@@ -122,6 +153,30 @@ inline std::string to_string(unsigned __int128 x)
 #pragma GCC diagnostic ignored "-Wpedantic"
 inline std::ostream & operator << (std::ostream & os, __int128 x)
 {
+    std::ios_base::fmtflags const fmt(os.flags() & std::ios_base::basefield);
+    if(fmt == std::ios_base::oct)
+    {
+        if(os.flags() & std::ios_base::showbase)
+        {
+            os << '0';
+        }
+        return os << snapdev::to_string(static_cast<unsigned __int128>(x), 8);
+    }
+    else if(fmt == std::ios_base::hex)
+    {
+        if(os.flags() & std::ios_base::showbase)
+        {
+            if(os.flags() & std::ios_base::uppercase)
+            {
+                os << "0X";
+            }
+            else
+            {
+                os << "0x";
+            }
+        }
+        return os << snapdev::to_string(static_cast<unsigned __int128>(x), 16, (os.flags() & std::ios_base::uppercase) != 0);
+    }
     return os << snapdev::to_string(x);
 }
 #pragma GCC diagnostic pop
@@ -129,11 +184,15 @@ inline std::ostream & operator << (std::ostream & os, __int128 x)
 
 /** \brief Output an unsigned __int128 number.
  *
+ * This function outputs the specified __int128 number to this output
+ * stream. It respects the base and for hexadecimal, it also respects
+ * the uppercase format.
+ *
  * \warning
  * This implementation does not offer proper formatting.
  * It will first generate a string then output that string
  * which means the result is not what you'd expect if you
- * used formatting such as std::hex and std::setw().
+ * used formatting such as std::setfill() and std::setw().
  *
  * \param[in] os  The output stream.
  * \param[in] x  The value to be output in \p os.
@@ -144,7 +203,34 @@ inline std::ostream & operator << (std::ostream & os, __int128 x)
 #pragma GCC diagnostic ignored "-Wpedantic"
 inline std::ostream & operator << (std::ostream & os, unsigned __int128 x)
 {
-    return os << snapdev::to_string(x);
+    std::ios_base::fmtflags const fmt(os.flags() & std::ios_base::basefield);
+    int base(10);
+    bool uppercase(false);
+    if(fmt == std::ios_base::oct)
+    {
+        base = 8;
+        if(os.flags() & std::ios_base::showbase)
+        {
+            os << '0';
+        }
+    }
+    else if(fmt == std::ios_base::hex)
+    {
+        uppercase = (os.flags() & std::ios_base::uppercase) != 0;
+        base = 16;
+        if(os.flags() & std::ios_base::showbase)
+        {
+            if(uppercase)
+            {
+                os << "0X";
+            }
+            else
+            {
+                os << "0x";
+            }
+        }
+    }
+    return os << snapdev::to_string(x, base, uppercase);
 }
 #pragma GCC diagnostic pop
 
