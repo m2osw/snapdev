@@ -33,6 +33,7 @@
 
 // C++
 //
+#include    <cstring>
 #include    <functional>
 #include    <map>
 #include    <memory>
