@@ -38,6 +38,7 @@ if(SnapCatch2_FOUND)
         catch_glob_to_list.cpp
         catch_hexadecimal_string.cpp
         catch_int128.cpp
+        catch_isatty.cpp
         catch_join_strings.cpp
         catch_log2.cpp
         catch_matrix.cpp

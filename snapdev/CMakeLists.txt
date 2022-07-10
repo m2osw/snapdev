@@ -44,6 +44,7 @@ install(
         hexadecimal_string.h
         init_structure.h
         int128_literal.h
+        isatty.h
         is_smart_pointer.h
         is_string_literal.h
         is_vector.h
