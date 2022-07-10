@@ -91,15 +91,6 @@ bool isatty(std::basic_ios<_CharT, _Traits> const & s)
         }
     }
 
-    {
-        typedef __gnu_cxx::stdio_filebuf<_CharT, _Traits> io_buffer_t;
-        io_buffer_t * buffer(dynamic_cast<io_buffer_t *>(s.rdbuf()));
-        if(buffer != nullptr)
-        {
-            return ::isatty(fileno(buffer->file()));
-        }
-    }
-
     // in this case, we first do a dynamic_cast<>() to make sure we find the
     // correct buffer; if present we can do a static_cast<>() to gain access
     // to the _M_file field and thus the file() function (there is also an
@@ -116,6 +107,17 @@ bool isatty(std::basic_ios<_CharT, _Traits> const & s)
             {
                 return ::isatty(fileno(buffer->file()));
             }
+        }
+    }
+
+    // older versions (C++98) used this class -- it is probably never
+    // going to be true so I put it last
+    {
+        typedef __gnu_cxx::stdio_filebuf<_CharT, _Traits> io_buffer_t;
+        io_buffer_t * buffer(dynamic_cast<io_buffer_t *>(s.rdbuf()));
+        if(buffer != nullptr)
+        {
+            return ::isatty(fileno(buffer->file()));
         }
     }
 
