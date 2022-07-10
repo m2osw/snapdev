@@ -1,8 +1,8 @@
 # Copyright (c) 2011-2022  Made to Order Software Corp.  All Rights Reserved
 #
-# https://snapwebsites.org/
+# https://snapwebsites.org/project/snapdev
 # contact@m2osw.com
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
