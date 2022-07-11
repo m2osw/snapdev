@@ -72,9 +72,8 @@ namespace snapdev
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 template<typename T>
-constexpr std::enable_if_t<std::is_integral_v<T>
-              || std::is_same_v<T, __int128>
-              || std::is_same_v<T, unsigned __int128>, T> pow(T value, int power)
+constexpr std::enable_if_t<(std::is_integral_v<T> && std::is_signed_v<T>)
+              || std::is_same_v<T, __int128>, T> pow(T value, int power)
 {
     using namespace snapdev::literals;
 
@@ -92,6 +91,54 @@ constexpr std::enable_if_t<std::is_integral_v<T>
         case -1:
             return static_cast<T>((power & 1) == 0 ? 1 : -1);
 
+        case 1:
+            return static_cast<T>(1);
+
+        default:
+            return static_cast<T>(0);
+
+        }
+        snapdev::NOT_REACHED();
+    }
+
+    T result(static_cast<T>(1));
+    for(;;)
+    {
+        if((power & 1) != 0)
+        {
+            result *= value;
+        }
+        power /= 2;
+        if(power == 0)
+        {
+            return result;
+        }
+        value *= value;
+    }
+    snapdev::NOT_REACHED();
+}
+#pragma GCC diagnostic pop
+
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+template<typename T>
+constexpr std::enable_if_t<(std::is_integral_v<T> && !std::is_signed_v<T>)
+              || std::is_same_v<T, unsigned __int128>, T> pow(T value, int power)
+{
+    using namespace snapdev::literals;
+
+    if(power == 0)
+    {
+        return static_cast<T>(1);
+    }
+    if(power < 0)
+    {
+        // negative powers are similar to (1 / value ** power) which is
+        // 1 if value is 1
+        //
+        switch(value)
+        {
         case 1:
             return static_cast<T>(1);
 

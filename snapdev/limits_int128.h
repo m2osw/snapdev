@@ -200,7 +200,9 @@ __INT_N(__int128, 128,
           __INT_N_201103 (__int128),
           __INT_N_U201103 (__int128))
 #pragma GCC diagnostic pop
-#endif
 
 } // std namespace
+
+#endif
+// if __GNUC__ < 10
 // vim: ts=4 sw=4 et
