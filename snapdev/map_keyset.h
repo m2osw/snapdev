@@ -57,7 +57,7 @@ constexpr bool has_member_impl(...) { return false; }
 
 /** \brief This function retrieves the keys of a map.
  *
- * This function is used to retreives the keys of a map in a different
+ * This function is used to retreive the keys of a map in a different
  * container. At this, it is useful to have a copy of the keys.
  *
  * \note

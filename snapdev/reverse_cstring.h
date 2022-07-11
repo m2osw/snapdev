@@ -38,8 +38,8 @@ namespace snapdev
  *
  * This function lets you iterate a standard C string, such as "12345",
  * in reverse order. The begin() and end() functions return a reverse
- * iterator (watch out!) We do not offer a rbegin() and rend() since
- * in most cases, using the string pointers as is would have to exact
+ * iterator (watch out!) We do not offer an rbegin() and rend() since
+ * in most cases, using the string pointers as is would have the exact
  * same effect.
  *
  * \note
