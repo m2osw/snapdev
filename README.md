@@ -77,8 +77,8 @@ The project currently includes:
 * `glob_to_list.h`
 
   Read a directory with a glob pattern and return a container with the
-  resulting filenames. You choose the type of container (vector, set, etc.)
-  and you get full paths making it easier to access the files found.
+  resulting filenames. You choose the type of container (vector, list, set,
+  etc.) and you get full paths making it easier to access the files found.
 
 * `has_member_function.h`
 
