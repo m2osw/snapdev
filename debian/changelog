@@ -1,5 +1,11 @@
 snapdev (1.1.28.0~bionic) bionic; urgency=high
 
+  * Added a #include for brs. The <limits> may be missint.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Tue, 12 Jul 2022 16:42:11 -0700
+
+snapdev (1.1.28.0~bionic) bionic; urgency=high
+
   * Fixed pow() of unsigned value.
   * Fixed a #endif location.
 
