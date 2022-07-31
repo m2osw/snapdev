@@ -70,7 +70,7 @@ public:
             throw std::logic_error("the name of an environment variable cannot be empty.");
         }
 
-        if(setenv(name.c_str(), value.c_str(), overwrite ? 1 : 0) != 0)
+        if(setenv(f_name.c_str(), value.c_str(), overwrite ? 1 : 0) != 0)
         {
             if(errno == EINVAL)
             {
