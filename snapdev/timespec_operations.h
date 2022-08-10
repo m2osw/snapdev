@@ -544,7 +544,7 @@ public:
      *
      * \return true if the timespec_ex is zero, false if not zero.
      */
-    bool operator ! ()
+    bool operator ! () const
     {
         return tv_sec == 0 && tv_nsec == 0;
     }
