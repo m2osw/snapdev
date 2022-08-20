@@ -333,6 +333,25 @@ public:
     }
 
 
+    /** \brief Extract the timespec_ex as an int64_t value.
+     *
+     * This function transforms a timespec_ex structure in an int64_t
+     * in microseconds. The bottom 3 digits are lost. No rounding
+     * happens.
+     *
+     * \note
+     * To can round the value up by first adding 500 (round) or 999 (ceil)
+     * to the timespec_ex value.
+     *
+     * \return This timespec_ex converted to microseconds.
+     */
+    std::int64_t to_usec() const
+    {
+        return tv_nsec / 1'000LL
+             + tv_sec * 1'000'000LL;
+    }
+
+
     /** \brief Extract the timespec_ex as a double value.
      *
      * This function transforms a timespec_ex structure into a double

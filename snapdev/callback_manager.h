@@ -74,7 +74,9 @@ namespace snapdev
  * member function in the previous example).
  *
  * \code
- *     typedef std::function<bool (*)(int, float, std::string const &)> F;
+ *     // note that the function MUST return `bool`
+ *     //
+ *     typedef std::function<bool(int, float, std::string const &)> F;
  *     callback_manager<F> callbacks;
  *
  *     snap::callback_manager::callback_id_t save1(callbacks.add_callback(std::bind(&T::member_function, obj1, std::placeholders::_1, std::placeholders::_2, ...)));
@@ -465,7 +467,7 @@ public:
      * If not, then no matching call() function is found and the compiler
      * fails.
      *
-     * \tparam F  The type of member functon.
+     * \tparam F  The type of member function.
      * \tparam ARGS  The type of each of the function arguments.
      * \tparam U  A copy of the callback type.
      * \param[in] func  The member function to be called.

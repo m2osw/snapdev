@@ -290,12 +290,12 @@ The project currently includes:
   accepts one input string and a map of `key` and `replacement` strings. If
   `key` is found in the input string, it gets replaced by `replacement`.
 
-* `timespec_operations.h`
+* `timespec_ex.h`
 
   The `timespec` structure is annoying to work with since it presents a
   fixed number. The bottom 9 digits are defined in a separate integer.
-  The `timespec_ex` class allows you to do all sorts of operations
-  (additions, subtractions, etc.) with such numbers.
+  The `timespec_ex` class allows you to seemlessly do all sorts of
+  operations (additions, subtractions, etc.) with such numbers.
 
 * `timestamp.h`
 

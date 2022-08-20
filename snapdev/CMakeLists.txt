@@ -73,7 +73,7 @@ install(
         safe_variable.h
         sizeof_bitfield.h
         string_replace_many.h
-        timespec_operations.h
+        timespec_ex.h
         timestamp.h
         tokenize_string.h
         to_lower.h
