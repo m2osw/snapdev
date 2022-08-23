@@ -399,7 +399,8 @@ private:
  *             // no files case
  *         }
  *     }
- *     else {
+ *     else
+ *     {
  *         // handle error
  *     }
  * \endcode
