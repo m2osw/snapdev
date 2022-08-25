@@ -157,6 +157,17 @@ StringT replace_suffix(
         , typename std::decay<StringT>::type const & new_suffix = ""
         , bool no_change_on_missing = false)
 {
+    if(old_suffix == ".*")
+    {
+        std::size_t const slash(path.find('/') + 1);
+        std::size_t const pos(path.find('.'));
+        if(pos <= slash)
+        {
+            return path + new_suffix;
+        }
+        return path.substr(0, pos) + new_suffix;
+    }
+
     // TODO: with C++20 we could use:   path.ends_with(old_suffix)
     //
     if(path.length() >= old_suffix.length()
