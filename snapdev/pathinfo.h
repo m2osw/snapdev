@@ -64,7 +64,7 @@ StringT basename(StringT const & path
 {
     // ignore path if present
     //
-    typename StringT::size_type pos(path.find_last_of('/'));
+    typename StringT::size_type pos(path.rfind('/'));
     if(pos == StringT::npos)
     {
         // if no '/' in string, the entire name is a basename
@@ -131,6 +131,11 @@ StringT basename(StringT const & path
  *                "/usr/share/snapwebsites/replace"
  *              , ".cpp"
  *              , ".h") == "/usr/share/snapwebsites/replace.h"
+ *
+ *     snap::string_pathinfo_replace_suffix(
+ *                "/usr/share/snapwebsites/replace.txt"
+ *              , ".*"
+ *              , ".h") == "/usr/share/snapwebsites/replace.h"
  * \endcode
  *
  * \note
@@ -159,8 +164,8 @@ StringT replace_suffix(
 {
     if(old_suffix == ".*")
     {
-        std::size_t const slash(path.find('/') + 1);
-        std::size_t const pos(path.find('.'));
+        std::size_t const slash(path.rfind('/') + 1);
+        std::size_t const pos(path.rfind('.'));
         if(pos <= slash)
         {
             return path + new_suffix;
@@ -204,7 +209,7 @@ StringT replace_suffix(
 template < class StringT >
 StringT dirname(StringT const & path)
 {
-    typename StringT::size_type pos(path.find_last_of('/'));
+    typename StringT::size_type pos(path.rfind('/'));
     if(pos == StringT::npos)
     {
         return StringT();
