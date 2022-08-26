@@ -535,20 +535,12 @@ public:
         f_follow_symlinks = false;
         int const flags = GLOB_NOSORT | flags_merge<args...>();
 
-        if(!f_recursive)
-        {
-            return read_directory(path, flags);
-        }
-
-        // in recursive mode we want to collect the list of directories
-        // along whatever the user wants to collect and then process
-        // those directories as well; this also requires us to retrieve
-        // the pattern (last segment) first as the actual pattern
+        // we want to get the pattern in case it is recursive, only the
+        // pattern itself may imply recursivity (i.e. the "..." Go-like
+        // pattern) so we extract it no matter what
         //
-        directories_t visited;
         std::string pattern;
         std::string directory;
-        std::string real_path;
         std::string::size_type const pos(path.rfind('/'));
         if(pos == std::string::npos)
         {
@@ -567,8 +559,24 @@ public:
             f_recursive = true;
         }
 
+        if(!f_recursive)
+        {
+            return read_directory(path, flags);
+        }
+
+        std::string const real_dir(get_real_path(directory));
+        if(real_dir.empty())
+        {
+            return false;
+        }
+
+        // in recursive mode we want to collect the list of directories
+        // along whatever the user wants to collect and then process
+        // those directories as well
+        //
+        directories_t visited;
         return recursive_read_path(
-                      get_real_path(directory)
+                      real_dir
                     , pattern
                     , flags
                     , visited);
