@@ -67,6 +67,7 @@ install(
         qcaseinsensitivestring.h
         qstring_extensions.h
         raii_generic_deleter.h
+        remove_duplicates.h
         reverse_cstring.h
         safe_assert.h
         safe_setenv.h

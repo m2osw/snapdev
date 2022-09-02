@@ -34,7 +34,7 @@
 #include    <snapdev/reverse_cstring.h>
 
 
-// C++ lib
+// C++
 //
 #include    <string>
 #include    <algorithm>
