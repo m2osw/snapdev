@@ -85,7 +85,49 @@ typename ContainerT::value_type join_strings(
         std::for_each(
                   std::next(tokens.begin())
                 , tokens.end()
-                , [&separator, &result](auto const & s)
+                , [separator, &result](auto const & s)
+                        {
+                            result += separator + s;
+                        });
+    }
+
+    return result;
+}
+
+
+template<class InputIt>
+typename std::iterator_traits<InputIt>::value_type join_strings(
+        InputIt const & first
+      , InputIt const & last
+      , typename std::iterator_traits<InputIt>::value_type const & separator)
+{
+    typename std::iterator_traits<InputIt>::value_type result;
+
+    // we have a special case because we want to access the first
+    // item (see tokens[0] below) to make the for_each() simpler.
+    //
+    if(first != last)
+    {
+        // calculate the final size, which is way faster than reallocating
+        // over and over again in the 'result += string' below
+        //
+        size_t const total_size(std::accumulate(first, last, separator.length() * (std::distance(first, last) - 1),
+                                [](size_t & sum, typename std::iterator_traits<InputIt>::value_type const & str)
+                                {
+                                    return sum + str.length();
+                                }));
+
+        result.reserve(total_size);
+
+        // avoid special case in the loop
+        // (i.e. no separator before the first or after the last token)
+        //
+        result += *first;
+
+        std::for_each(
+                  std::next(first)
+                , last
+                , [separator, &result](auto const & s)
                         {
                             result += separator + s;
                         });
