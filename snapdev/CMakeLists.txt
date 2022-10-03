@@ -70,6 +70,7 @@ install(
         remove_duplicates.h
         reverse_cstring.h
         safe_assert.h
+        safe_chdir.h
         safe_setenv.h
         safe_variable.h
         sizeof_bitfield.h
