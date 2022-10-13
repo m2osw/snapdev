@@ -1,3 +1,9 @@
+snapdev (1.1.30.0~bionic) bionic; urgency=high
+
+  * Added the static_to_dynamic_buffer.h header.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Wed, 12 Oct 2022 19:50:30 -0700
+
 snapdev (1.1.29.0~bionic) bionic; urgency=high
 
   * Added a #include for brs. The <limits> may be missint.

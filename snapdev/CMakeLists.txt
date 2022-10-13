@@ -74,6 +74,7 @@ install(
         safe_setenv.h
         safe_variable.h
         sizeof_bitfield.h
+        static_to_dynamic_buffer.h
         string_replace_many.h
         timespec_ex.h
         timestamp.h
