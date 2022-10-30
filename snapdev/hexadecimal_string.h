@@ -28,6 +28,7 @@
 //
 #include    <algorithm>
 #include    <climits>
+#include    <iomanip>
 
 
 
@@ -94,10 +95,18 @@ int hexdigit_to_number(charT c)
     {
         return c - ('A' - 10);
     }
+    if(static_cast<typename std::make_unsigned<charT>::type>(c) < 0x80)
+    {
+        throw hexadecimal_string_invalid_parameter(
+                  std::string("input character '")
+                + static_cast<char>(c)
+                + "' is not an hexadecimal digit.");
+    }
+    // if character represents a UTF-8 charater, we do not have all the
+    // bytes to convert it so just use a plan error message
+    //
     throw hexadecimal_string_invalid_parameter(
-              std::string("input character '")
-            + c
-            + "' is not an hexadecimal digit.");
+              "input character is not an hexadecimal digit.");
 }
 
 

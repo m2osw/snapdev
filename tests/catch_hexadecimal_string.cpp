@@ -31,6 +31,7 @@
 #include    "catch_main.h"
 
 
+
 // C++ lib
 //
 #include    <iomanip>
@@ -267,7 +268,8 @@ CATCH_TEST_CASE("hexadecimal_string_invalid_input", "[hexadecimal_string][error]
     {
         int left(0);
         int right(0);
-        while(left < 25 && right < 25)
+        bool small_char(false);
+        while(left < 25 || right < 25 || !small_char)
         {
             std::stringstream ss;
             ss << std::hex << rand();
@@ -284,12 +286,21 @@ CATCH_TEST_CASE("hexadecimal_string_invalid_input", "[hexadecimal_string][error]
             // character even though the hex_to_bin() function really
             // only expects ASCII
             //
+            char32_t invalid(U'\0');
             for(;;)
             {
-                char32_t const invalid(rand() % (0x110000 - 1) + 1);
+                invalid = rand() % (0x110000 - 1) + 1;
+                if(!small_char && left > 10 && right > 10)
+                {
+                    invalid = (invalid - 1) % 0x7F + 1;
+                }
                 if((invalid < 0xD800 || invalid >= 0xE000)  // don't try with UTF-16 surrogates
                 && !snapdev::is_hexdigit(invalid))
                 {
+                    if(invalid < 0x80)
+                    {
+                        small_char = true;
+                    }
                     char buf[16];
                     wctombs(buf, invalid, sizeof(buf));
                     ss << buf;
@@ -304,11 +315,27 @@ CATCH_TEST_CASE("hexadecimal_string_invalid_input", "[hexadecimal_string][error]
                 ss << std::hex << rand() % 16;
             }
 
-            CATCH_REQUIRE_THROWS_MATCHES(
-                      snapdev::hex_to_bin(ss.str())
-                    , snapdev::hexadecimal_string_invalid_parameter
-                    , Catch::Matchers::ExceptionMessage(
-                              "hexadecimal_string_exception: the input character is not an hexadecimal digit."));
+            if(invalid >= 0x80)
+            {
+                // in this case the character is not available so we cannot
+                // just add it cleanly to the exception message
+                //
+                CATCH_REQUIRE_THROWS_MATCHES(
+                          snapdev::hex_to_bin(ss.str())
+                        , snapdev::hexadecimal_string_invalid_parameter
+                        , Catch::Matchers::ExceptionMessage(
+                                    "hexadecimal_string_exception: input character is not an hexadecimal digit."));
+            }
+            else
+            {
+                CATCH_REQUIRE_THROWS_MATCHES(
+                          snapdev::hex_to_bin(ss.str())
+                        , snapdev::hexadecimal_string_invalid_parameter
+                        , Catch::Matchers::ExceptionMessage(
+                                    std::string("hexadecimal_string_exception: input character '")
+                                  + static_cast<char>(invalid)
+                                  + "' is not an hexadecimal digit."));
+            }
         }
     }
     CATCH_END_SECTION()
