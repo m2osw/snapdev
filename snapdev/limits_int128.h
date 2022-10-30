@@ -42,7 +42,12 @@
 // I know that 22.04 has it, it's g++ 11.x
 // so for now I use version 10 here
 //
-#if (__GNUC__ < 10)
+// note that if you use `-std=gnu++17` then it is available since about
+// version 5.x (Jul 2016). That extension has `__GLIBCXX_TYPE_INT_N_0` and
+// `__GLIBCXX_BITSIZE_INT_N_0` defined with the type (__int128) and the size
+// in bits (128) respectively.
+//
+#if (__GNUC__ < 10) && defined(__STRICT_ANSI__) && !defined(__GLIBCXX_TYPE_INT_N_0)
 
 
 namespace std _GLIBCXX_VISIBILITY(default)

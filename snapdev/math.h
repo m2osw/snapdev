@@ -34,6 +34,7 @@
 
 // C
 //
+#include    <byteswap.h>
 #include    <signal.h>
 
 
@@ -277,6 +278,68 @@ std::enable_if_t<(std::is_integral_v<T> && std::is_unsigned_v<T>)
     return lhs < rhs ? 0 : lhs - rhs;
 }
 #pragma GCC diagnostic pop
+
+
+/** \brief Rotate an integer to the left.
+ *
+ * This function rotates the specified integer (\p x) to the left by
+ * \p r bits.
+ *
+ * In most cases, if the processor you are using has a `rotl` instruction
+ * (i.e. x86, amd64 do) then that instration will be used by your compiler.
+ *
+ * \note
+ * If r is negative, rotate to the right.
+ *
+ * \param[in] x  The value to be rotated.
+ * \param[in] r  The number of bits to rotate the value by toward the left.
+ *
+ * \return The value \p x rotated by \p r bits.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+template<typename T>
+constexpr T rotl(T x, int r)
+{
+    std::size_t const s(sizeof(T) * 8);
+    r = r % s;
+    if(r < 0)
+    {
+        return (x >> r) | (x << (s - r));
+    }
+    else
+    {
+        return (x << r) | (x >> (s - r));
+    }
+}
+#pragma GCC diagnostic pop
+
+
+/** \brief Swap all the bytes of a 128 bit number.
+ *
+ * This function swaps the bytes of a 128 bit number. This is similar to
+ * flipping the bytes between big endian and little endian.
+ *
+ * \note
+ * See also bwap_64(), bswap_32(), bswap_16().
+ *
+ * \param[in] n  The 128 bit number to byte swap.
+ *
+ * \return The swapped __int128 value.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+inline unsigned __int128 bswap_128(unsigned __int128 n)
+{
+    unsigned __int128 m;
+    std::uint64_t const * src(reinterpret_cast<std::uint64_t const *>(&n));
+    std::uint64_t * dest(reinterpret_cast<std::uint64_t*>(&m));
+    dest[1] = bswap_64(src[0]);
+    dest[0] = bswap_64(src[1]);
+    return m;
+}
+#pragma GCC diagnostic pop
+
 
 
 } // namespace snapdev

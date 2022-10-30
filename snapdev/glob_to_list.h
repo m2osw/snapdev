@@ -57,8 +57,8 @@ namespace snapdev
  *
  * Note that the regular functions use `lstat()` to read the file
  * statistics. The `target_...()` functions read the target statistics.
- * In other words, if the file is a symbolic link, the both functions
- * will return different results.
+ * In other words, if the file is a symbolic link, the functions return
+ * different results.
  */
 class file
 {

@@ -94,7 +94,10 @@ int hexdigit_to_number(charT c)
     {
         return c - ('A' - 10);
     }
-    throw hexadecimal_string_invalid_parameter("the input character is not an hexadecimal digit.");
+    throw hexadecimal_string_invalid_parameter(
+              std::string("input character '")
+            + c
+            + "' is not an hexadecimal digit.");
 }
 
 
