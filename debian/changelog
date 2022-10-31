@@ -1,6 +1,20 @@
 snapdev (1.1.30.0~bionic) bionic; urgency=high
 
   * Added the static_to_dynamic_buffer.h header.
+  * Added the character in hex digit exception if ASCII.
+  * Added the bswap_128() function.
+  * Added the rotl() function.
+  * Added the static_to_dynamic_buffer.h class to obtimize memory allocation.
+  * Added the safe_dir class to auto-change directory back.
+  * Added first/last support in the join_strings() function.
+  * Added the remove_duplicates algorithm.
+  * Fixed the glob_to_list implementation of "...".
+  * Fixed the return value on a missing root directory.
+  * Fixed replace_extension() with rfind().
+  * Added support for the ".*" suffix to replace any suffix.
+  * Added to_usec() in the timespec_ex class. Renamed the file too.
+  * Made the timespec bool() operator a const.
+  * Do not redefine the int128.h limits when `-std=gnu++17` is used.
 
  -- Alexis Wilke <alexis@m2osw.com>  Wed, 12 Oct 2022 19:50:30 -0700
 
