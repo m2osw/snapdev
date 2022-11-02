@@ -35,6 +35,7 @@
 // C
 //
 #include    <stdlib.h>
+#include    <string.h>
 #include    <sys/time.h>
 #include    <time.h>
 
@@ -47,6 +48,7 @@ namespace snapdev
 DECLARE_MAIN_EXCEPTION(timespec_ex_exception);
 
 DECLARE_EXCEPTION(timespec_ex_exception, overflow);
+DECLARE_EXCEPTION(timespec_ex_exception, clock_error);
 
 
 class timespec_ex
@@ -791,6 +793,37 @@ public:
     }
 };
 
+
+
+/** \brief Create a timespec_ex object with "now".
+ *
+ * This function creates a timespec_ex object with the time set to "now".
+ *
+ * This is a wrapper of the clock_gettime(2) function.
+ *
+ * \exception clock_error
+ * This function raises the clock_error if the clock could not be read.
+ *
+ * \param[in] clk_id  The type of clock to read. By default this is
+ * CLOCK_REALTIME.
+ *
+ * \return A timespec_ex object with "now" as the time.
+ */
+inline timespec_ex now(clockid_t clk_id = CLOCK_REALTIME)
+{
+    timespec_ex n;
+    int const r(clock_gettime(clk_id, &n));
+    if(r != 0)
+    {
+        int const e(errno);
+        throw clock_error(
+              "clock_gettime() failed: "
+            + std::to_string(e)
+            + ", "
+            + strerror(e));
+    }
+    return n;
+}
 
 
 
