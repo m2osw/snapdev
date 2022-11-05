@@ -36,6 +36,7 @@ namespace snapdev
 {
 
 
+
 DECLARE_MAIN_EXCEPTION(hexadecimal_string_exception);
 
 DECLARE_OUT_OF_RANGE(hexadecimal_string_out_of_range);

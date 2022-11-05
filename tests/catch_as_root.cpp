@@ -45,11 +45,27 @@
 
 CATCH_TEST_CASE("as_root", "[basic]")
 {
-    CATCH_START_SECTION("as_root: failing switch as expected (suid not set on test)")
+    CATCH_START_SECTION("as_root: failing switch to root user")
     {
         snapdev::as_root test;
-        CATCH_REQUIRE_FALSE(test.valid());
+        CATCH_REQUIRE_FALSE(test.is_switched());
         CATCH_REQUIRE(test.error_number() == EPERM);
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("as_root: working to (not) switch to ourself")
+    {
+        snapdev::as_root test(getuid()); // pretty useless, but it works
+        CATCH_REQUIRE(test.is_switched());
+        CATCH_REQUIRE(test.error_number() == 0);
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("drop root privileges")
+    {
+        // we do not expect tests to be run by the root user
+        //
+        snapdev::drop_root_privileges();
     }
     CATCH_END_SECTION()
 }

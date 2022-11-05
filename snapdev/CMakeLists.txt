@@ -31,6 +31,7 @@ configure_file(
 
 install(
     FILES
+        as_root.h
         brs.h
         callback_manager.h
         case_insensitive_string.h
