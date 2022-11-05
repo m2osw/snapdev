@@ -502,12 +502,14 @@ inline void drop_root_privileges(
                 throw e;
             }
 
-            setuid(user->pw_uid);
-            if(getuid() == user->pw_uid)
+            if(setuid(user->pw_uid) == 0)
             {
-                // we are a nobody process now, we're safe
-                //
-                return;
+                if(getuid() == user->pw_uid)
+                {
+                    // we are a nobody process now, we're safe
+                    //
+                    return;
+                }
             }
         }
         [[fallthrough]];
