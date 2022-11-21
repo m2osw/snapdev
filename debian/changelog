@@ -1,3 +1,11 @@
+snapdev (1.1.33.0~bionic) bionic; urgency=high
+
+  * Added a constructor to timespec_ex to support snapcatch2 3.2.0.
+    - this is only necessary for g++ version under 9.1
+    - we should remove that once away from Ubuntu 18.04
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 20 Nov 2022 21:39:28 -0800
+
 snapdev (1.1.32.0~bionic) bionic; urgency=high
 
   * Check result of setuid().
