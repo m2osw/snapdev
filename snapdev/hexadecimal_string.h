@@ -3,9 +3,9 @@
 // https://snapwebsites.org/project/snapdev
 // contact@m2osw.com
 //
-// This program is free software; you can redistribute it and/or modify
+// This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
+// the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
@@ -13,18 +13,27 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License along
-// with this program; if not, write to the Free Software Foundation, Inc.,
-// 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+/** \file
+ * \brief Convert binary to a string in hexadecimal.
+ *
+ * C++ offers the std::to_string() function which converts numbers to
+ * decimal. However, we often want to convert strings to hexadecimal and
+ * using std::stringstream is not as efficient as using these functions.
+ *
+ * Here we can convert a buffer of any length to hexadecimal and vice
+ * versa. You can also use this implementation to covert just one byte.
+ */
 
-// libexcept lib
+// libexcept
 //
 #include    "libexcept/exception.h"
 
 
-// C++ lib
+// C++
 //
 #include    <algorithm>
 #include    <climits>

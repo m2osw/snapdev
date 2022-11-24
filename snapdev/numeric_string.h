@@ -3,9 +3,9 @@
 // https://snapwebsites.org/project/snapdev
 // contact@m2osw.com
 //
-// This program is free software; you can redistribute it and/or modify
+// This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
+// the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
@@ -13,13 +13,22 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License along
-// with this program; if not, write to the Free Software Foundation, Inc.,
-// 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 // Based on: https://stackoverflow.com/questions/6713420/c-convert-integer-to-string-at-compile-time
-//
 #pragma once
+
+/** \file
+ * \brief Transform an integer in a string at compile time.
+ *
+ * At times, it can be useful to convert an integer into a string at compile
+ * time. These templates allow you to do so.
+ *
+ * Newer versions of the C++ compiler will also allow use to convert floating
+ * points. Right now, that does not work because floating points are not viewed
+ * as constexpr template parameters.
+ */
 
 
 namespace snapdev

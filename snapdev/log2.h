@@ -37,7 +37,7 @@
  * to find v against assuming v was an exact power of 2 to start with.
  */
 
-// C lib
+// C
 //
 #include <stdio.h>
 

@@ -3,9 +3,9 @@
 // https://snapwebsites.org/project/snapdev
 // contact@m2osw.com
 //
-// This program is free software; you can redistribute it and/or modify
+// This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
+// the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
@@ -13,10 +13,24 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License along
-// with this program; if not, write to the Free Software Foundation, Inc.,
-// 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
+
+/** \file
+ * \brief Class & Function dealing with changing user ownership.
+ *
+ * The class is used to gain a different user and group ownership for a
+ * short period of time. It is expected to be used on the stack for when
+ * you need to execute some code as a different user. It is called as_root
+ * because in most cases you want to become root.
+ *
+ * The function drop_root_privileges() is used to completely drop root
+ * privileges. This is often done just after a fork() and just before
+ * the following exec() so child processes do not gain root privileges.
+ * It is also used by servers that spawn child processes and do not want
+ * those children to have root access.
+ */
 
 // self
 //
@@ -24,7 +38,7 @@
 #include    <snapdev/not_used.h>
 
 
-// libexcept lib
+// libexcept
 //
 #include    "libexcept/exception.h"
 

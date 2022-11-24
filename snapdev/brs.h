@@ -15,9 +15,19 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// Snap Websites Server -- snap watchdog library
-// Snap Websites Servers -- create a feed where you can write an email
 #pragma once
+
+/** \file
+ * \brief Classes to serialize and deserialize data.
+ *
+ * This file implements a couple of classes used to serialize binary data to
+ * a stream. In most cases, this is much more efficient than any other method
+ * such as using XML, JSON, or even a simple .ini file.
+ *
+ * It is also very useful if you have data such as floating point numbers
+ * which when saved in a text format can lose precision (unless you save
+ * them as an integer).
+ */
 
 // libexcept
 //

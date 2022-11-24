@@ -405,8 +405,7 @@ a space.
 
 # License
 
-The source is covered by the MIT license. The debian folder is covered
-by the GPL 2.0.
+This project is covered by the GPL 3.0.
 
 # Bugs
 

@@ -3,9 +3,9 @@
 // https://snapwebsites.org/project/snapdev
 // contact@m2osw.com
 //
-// This program is free software; you can redistribute it and/or modify
+// This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
+// the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
@@ -13,12 +13,21 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License along
-// with this program; if not, write to the Free Software Foundation, Inc.,
-// 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-// C++ lib
+/** \file
+ * \brief Check whether a class has a named member function.
+ *
+ * This template allows you to determine whether a given object has a
+ * given member function. This allows you to compile a template only
+ * if that is true and use said function as required. Otherwise, you
+ * can have another template to handle the case when the function is
+ * not available.
+ */
+
+// C++
 //
 #include    <algorithm>
 #include    <functional>

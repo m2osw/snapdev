@@ -3,9 +3,9 @@
 // https://snapwebsites.org/project/snapdev
 // contact@m2osw.com
 //
-// This program is free software; you can redistribute it and/or modify
+// This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
+// the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
@@ -13,18 +13,29 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License along
-// with this program; if not, write to the Free Software Foundation, Inc.,
-// 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-// C++ lib
+/** \file
+ * \brief Change the user and group ownership of a file.
+ *
+ * This implementation allows for changing the ownership of a file by name.
+ * The default C system function requires the user identifier and the group
+ * identifier. Our function accepts strings with the names and automatically
+ * converts the names in a string.
+ *
+ * The chownnm() is defined four times to allow for the user and/or the
+ * group to be passed either as a string or as an identifier.
+ */
+
+// C++
 //
 #include    <string>
 #include    <stdexcept>
 
 
-// C lib
+// C
 //
 #include    <grp.h>
 #include    <pwd.h>
@@ -34,6 +45,80 @@
 
 namespace snapdev
 {
+
+
+constexpr uid_t     NO_UID = static_cast<uid_t>(-1);
+constexpr uid_t     NO_GID = static_cast<gid_t>(-1);
+
+
+/** \brief Convert a user name in its Unix uid_t.
+ *
+ * This function searches for a user identifier in /etc/passwd and return
+ * the corresponding uid_t value.
+ *
+ * \param[in] user_name  The name of the user to search.
+ *
+ * \return The uid_t of the named user or NO_UID.
+ */
+inline uid_t getuid(std::string const & user_name)
+{
+    if(!user_name.empty())
+    {
+        struct passwd const * pwd(getpwnam(user_name.c_str()));
+        if(pwd != nullptr)
+        {
+            return pwd->pw_uid;
+        }
+    }
+
+    return NO_UID;
+}
+
+
+/** \brief Convert a group name in a gid_t.
+ *
+ * This function searches for the named group in /etc/group and return the
+ * corresponding gid_t value.
+ *
+ * \param[in] group_name  The name of a group to convert to a gid_t.
+ *
+ * \return The gid_t of the named group or NO_GID.
+ */
+inline gid_t getgid(std::string const & group_name)
+{
+    if(!group_name.empty())
+    {
+        struct group const * grp(getgrnam(group_name.c_str()));
+        if(grp != nullptr)
+        {
+            return grp->gr_gid;
+        }
+    }
+
+    return NO_GID;
+}
+
+
+inline int chownnm(
+      std::string const & path
+    , uid_t uid
+    , gid_t gid)
+{
+    if(path.empty())
+    {
+        throw std::invalid_argument("the path cannot be empty in snap::chownnm()");
+    }
+
+    if(uid != NO_UID
+    || gid != NO_GID)
+    {
+        return chown(path.c_str(), uid, gid);
+    }
+
+    // in case both are undefined (it happens in the mkdir_p() function)
+    //
+    return 0;
+}
 
 
 /** \brief Set the owner and group of a file or directory.
@@ -60,47 +145,25 @@ inline int chownnm(
     , std::string const & user_name
     , std::string const & group_name)
 {
-    if(path.empty())
-    {
-        throw std::invalid_argument("the path cannot be empty in snap::chownnm()");
-    }
+    return chownnm(path, getuid(user_name), getgid(group_name));
+}
 
-    uid_t uid(-1);
-    gid_t gid(-1);
 
-    // user name specified?
-    //
-    if(!user_name.empty())
-    {
-        struct passwd const * pwd(getpwnam(user_name.c_str()));
-        if(pwd == nullptr)
-        {
-            return -1;
-        }
-        uid = pwd->pw_uid;
-    }
+inline int chownnm(
+      std::string const & path
+    , uid_t uid
+    , std::string const & group_name)
+{
+    return chownnm(path, uid, getgid(group_name));
+}
 
-    // group name specified?
-    //
-    if(!group_name.empty())
-    {
-        struct group const * grp(getgrnam(group_name.c_str()));
-        if(grp == nullptr)
-        {
-            return -1;
-        }
-        gid = grp->gr_gid;
-    }
 
-    if(uid != static_cast<uid_t>(-1)
-    || gid != static_cast<gid_t>(-1))
-    {
-        return chown(path.c_str(), uid, gid);
-    }
-
-    // in case both are undefined (it happens in the mkdir_p() function)
-    //
-    return 0;
+inline int chownnm(
+      std::string const & path
+    , std::string const & user_name
+    , gid_t gid)
+{
+    return chownnm(path, getuid(user_name), gid);
 }
 
 

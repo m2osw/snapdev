@@ -3,9 +3,9 @@
 // https://snapwebsites.org/project/snapdev
 // contact@m2osw.com
 //
-// This program is free software; you can redistribute it and/or modify
+// This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
+// the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
@@ -13,10 +13,24 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License along
-// with this program; if not, write to the Free Software Foundation, Inc.,
-// 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
+
+/** \file
+ * \brief Join strings together.
+ *
+ * This template expects a container of strings and a string separator.
+ * It accumulates the strings by concatenating them one after the
+ * other and adding the separator between each string. The separator is
+ * not added at the start or the end of the resulting string.
+ *
+ * You can also specified a start and end from your container if you
+ * do not want to join all the strings defined in your container.
+ *
+ * If you want to do concatenation at compile time, use the string_view
+ * templates instead of an std::string container.
+ */
 
 // C++
 //

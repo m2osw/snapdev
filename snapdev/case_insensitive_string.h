@@ -3,9 +3,9 @@
 // https://snapwebsites.org/project/snapdev
 // contact@m2osw.com
 //
-// This program is free software; you can redistribute it and/or modify
+// This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
+// the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
@@ -13,10 +13,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License along
-// with this program; if not, write to the Free Software Foundation, Inc.,
-// 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
 /** \file
@@ -24,6 +22,12 @@
  *
  * This is an extension of the std::basic_string that allows one to use
  * case insensitive strings containers such as maps and sets.
+ *
+ * It does so by using the toupper() function when comparing strings against
+ * each other. Note that the toupper() function is run on one character at
+ * a time, which means it is not compatible with certain languages where
+ * multiple characters may be affected when computer uppercase or lowercase
+ * characters.
  */
 
 // C++

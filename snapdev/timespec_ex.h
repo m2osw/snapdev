@@ -17,6 +17,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+/** \file
+ * \brief Class extending the timespec structure.
+ *
+ * The C library includes a timespec structure and various functions used
+ * to retrieve the system time. We also offer ways to compute durations
+ * and add/remove a duration from a timespec.
+ *
+ * The class also supports convertions to string, negation, and a few
+ * other features.
+ */
+
 // libexcept
 //
 #include    <libexcept/exception.h>
