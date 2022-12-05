@@ -176,6 +176,15 @@ inline std::ostream & operator << (std::ostream & os, __int128 x)
         }
         return os << snapdev::to_string(static_cast<unsigned __int128>(x), 16, (os.flags() & std::ios_base::uppercase) != 0);
     }
+
+    // the '-' is added by the to_string(), but not the '+'
+    //
+    if(x >= 0
+    && os.flags() & std::ios_base::showpos)
+    {
+        os << '+';
+    }
+
     return os << snapdev::to_string(x);
 }
 #pragma GCC diagnostic pop
@@ -228,6 +237,10 @@ inline std::ostream & operator << (std::ostream & os, unsigned __int128 x)
                 os << "0x";
             }
         }
+    }
+    else if(os.flags() & std::ios_base::showpos)
+    {
+        os << '+';
     }
     return os << snapdev::to_string(x, base, uppercase);
 }
