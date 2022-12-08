@@ -55,39 +55,70 @@ CATCH_TEST_CASE("ostream_int128", "[ostream][int128]")
         for(int i(-10); i <= 10; ++i)
         {
             __int128 l(i);
-            std::stringstream vd;  // decimal
-            vd << l;
-            CATCH_REQUIRE(vd.str() == std::to_string(i));
 
-            std::stringstream vh, evh;  // hexadecimal
-            vh << std::hex << l;
-            evh << (i < 0 ? "ffffffffffffffffffffffff" : "") << std::hex << i;
-            CATCH_REQUIRE(vh.str() == evh.str());
+            // decimal
+            {
+                std::stringstream v;
+                v << l;
+                CATCH_REQUIRE(v.str() == std::to_string(i));
+            }
+            {
+                std::stringstream v;
+                v << std::showpos << l;
+                CATCH_REQUIRE(v.str() == (i >= 0 ? "+" : "") + std::to_string(i));
+            }
 
-            std::stringstream vu, evu;  // hexadecimal in uppercase
-            vu << std::hex << std::uppercase << l;
-            evu << (i < 0 ? "FFFFFFFFFFFFFFFFFFFFFFFF" : "") << std::hex << std::uppercase << i;
-            CATCH_REQUIRE(vu.str() == evu.str());
+            // hexadecimal
+            {
+                std::stringstream v, e;
+                v << std::hex << l;
+                e << (i < 0 ? "ffffffffffffffffffffffff" : "") << std::hex << i;
+                CATCH_REQUIRE(v.str() == e.str());
+            }
+            {
+                std::stringstream v, e;
+                v << std::showpos << std::hex << l;
+                e << (i < 0 ? "ffffffffffffffffffffffff" : "") << std::hex << i;
+                CATCH_REQUIRE(v.str() == e.str());
+            }
+            {
+                std::stringstream v, e;
+                v << std::hex << std::uppercase << l;
+                e << (i < 0 ? "FFFFFFFFFFFFFFFFFFFFFFFF" : "") << std::hex << std::uppercase << i;
+                CATCH_REQUIRE(v.str() == e.str());
+            }
+            {
+                std::stringstream v, e;
+                v << std::hex << std::showbase << l;
+                e << (i < 0 ? "0xffffffffffffffffffffffff" : "0x") << std::hex << i;
+                CATCH_REQUIRE(v.str() == (i == 0 ? "0" : e.str()));
+            }
+            {
+                std::stringstream v, e;
+                v << std::hex << std::showbase << std::uppercase << std::showpos << l;
+                e << (i < 0 ? "0XFFFFFFFFFFFFFFFFFFFFFFFF" : "0X") << std::hex << std::uppercase << i;
+                CATCH_REQUIRE(v.str() == (i == 0 ? "0" : e.str()));
+            }
 
-            std::stringstream vi, evi;  // hexadecimal with base
-            vi << std::hex << std::showbase << l;
-            evi << (i < 0 ? "0xffffffffffffffffffffffff" : "0x") << std::hex << i;
-            CATCH_REQUIRE(vi.str() == evi.str());
-
-            std::stringstream va, eva;  // hexadecimal all
-            va << std::hex << std::showbase << std::uppercase << l;
-            eva << (i < 0 ? "0XFFFFFFFFFFFFFFFFFFFFFFFF" : "0X") << std::hex << std::uppercase << i;
-            CATCH_REQUIRE(va.str() == eva.str());
-
-            std::stringstream vo, evo;  // octal
-            vo << std::oct << l;
-            evo << (i < 0 ? "37777777777777777777777777777777" : "") << std::oct << (i & 0x1FFFFFFFF);
-            CATCH_REQUIRE(vo.str() == evo.str());
-
-            std::stringstream vb, evb;  // octal with base
-            vb << std::oct << std::showbase << l;
-            evb << (i < 0 ? "037777777777777777777777777777777" : "0") << std::oct << (i & 0x1FFFFFFFF);
-            CATCH_REQUIRE(vb.str() == evb.str());
+            // octal
+            {
+                std::stringstream v, e;
+                v << std::oct << l;
+                e << (i < 0 ? "37777777777777777777777777777777" : "") << std::oct << (i & 0x1FFFFFFFF);
+                CATCH_REQUIRE(v.str() == e.str());
+            }
+            {
+                std::stringstream v, e;
+                v << std::oct << std::showbase << l;
+                e << (i < 0 ? "037777777777777777777777777777777" : "0") << std::oct << (i & 0x1FFFFFFFF);
+                CATCH_REQUIRE(v.str() == (i == 0 ? "0" : e.str()));
+            }
+            {
+                std::stringstream v, e;
+                v << std::oct << std::showpos << std::showbase << l;
+                e << (i < 0 ? "037777777777777777777777777777777" : "0") << std::oct << (i & 0x1FFFFFFFF);
+                CATCH_REQUIRE(v.str() == (i == 0 ? "0" : e.str()));
+            }
         }
     }
     CATCH_END_SECTION()

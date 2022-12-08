@@ -155,7 +155,8 @@ inline std::ostream & operator << (std::ostream & os, __int128 x)
     std::ios_base::fmtflags const fmt(os.flags() & std::ios_base::basefield);
     if(fmt == std::ios_base::oct)
     {
-        if(os.flags() & std::ios_base::showbase)
+        if(x != 0
+        && os.flags() & std::ios_base::showbase)
         {
             os << '0';
         }
@@ -163,7 +164,8 @@ inline std::ostream & operator << (std::ostream & os, __int128 x)
     }
     else if(fmt == std::ios_base::hex)
     {
-        if(os.flags() & std::ios_base::showbase)
+        if(x != 0
+        && os.flags() & std::ios_base::showbase)
         {
             if(os.flags() & std::ios_base::uppercase)
             {
