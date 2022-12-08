@@ -1,6 +1,7 @@
 snapdev (1.1.34.0~bionic) bionic; urgency=high
 
   * Added support for 'showpos' in ostream<< of __int128.
+  * Fixed printing of 'showbase' when printing 0.
 
  -- Alexis Wilke <alexis@m2osw.com>  Sun, 04 Dec 2022 21:10:41 -0800
 
