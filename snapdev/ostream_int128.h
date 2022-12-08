@@ -153,21 +153,24 @@ inline std::string to_string(unsigned __int128 x, unsigned __int128 base = 10, b
 inline std::ostream & operator << (std::ostream & os, __int128 x)
 {
     std::ios_base::fmtflags const fmt(os.flags() & std::ios_base::basefield);
+
     if(fmt == std::ios_base::oct)
     {
         if(x != 0
-        && os.flags() & std::ios_base::showbase)
+        && (os.flags() & std::ios_base::showbase) != 0)
         {
             os << '0';
         }
         return os << snapdev::to_string(static_cast<unsigned __int128>(x), 8);
     }
-    else if(fmt == std::ios_base::hex)
+
+    if(fmt == std::ios_base::hex)
     {
+        bool const uppercase(os.flags() & std::ios_base::uppercase);
         if(x != 0
-        && os.flags() & std::ios_base::showbase)
+        && (os.flags() & std::ios_base::showbase) != 0)
         {
-            if(os.flags() & std::ios_base::uppercase)
+            if(uppercase)
             {
                 os << "0X";
             }
@@ -176,13 +179,13 @@ inline std::ostream & operator << (std::ostream & os, __int128 x)
                 os << "0x";
             }
         }
-        return os << snapdev::to_string(static_cast<unsigned __int128>(x), 16, (os.flags() & std::ios_base::uppercase) != 0);
+        return os << snapdev::to_string(static_cast<unsigned __int128>(x), 16, uppercase);
     }
 
     // the '-' is added by the to_string(), but not the '+'
     //
     if(x >= 0
-    && os.flags() & std::ios_base::showpos)
+    && (os.flags() & std::ios_base::showpos) != 0)
     {
         os << '+';
     }
@@ -214,21 +217,22 @@ inline std::ostream & operator << (std::ostream & os, __int128 x)
 inline std::ostream & operator << (std::ostream & os, unsigned __int128 x)
 {
     std::ios_base::fmtflags const fmt(os.flags() & std::ios_base::basefield);
-    int base(10);
-    bool uppercase(false);
+
     if(fmt == std::ios_base::oct)
     {
-        base = 8;
-        if(os.flags() & std::ios_base::showbase)
+        if(x != 0
+        && (os.flags() & std::ios_base::showbase) != 0)
         {
             os << '0';
         }
+        return os << snapdev::to_string(x, 8);
     }
-    else if(fmt == std::ios_base::hex)
+
+    if(fmt == std::ios_base::hex)
     {
-        uppercase = (os.flags() & std::ios_base::uppercase) != 0;
-        base = 16;
-        if(os.flags() & std::ios_base::showbase)
+        bool const uppercase((os.flags() & std::ios_base::uppercase) != 0);
+        if(x != 0
+        && (os.flags() & std::ios_base::showbase) != 0)
         {
             if(uppercase)
             {
@@ -239,12 +243,12 @@ inline std::ostream & operator << (std::ostream & os, unsigned __int128 x)
                 os << "0x";
             }
         }
+        return os << snapdev::to_string(x, 16, uppercase);
     }
-    else if(os.flags() & std::ios_base::showpos)
-    {
-        os << '+';
-    }
-    return os << snapdev::to_string(x, base, uppercase);
+
+    // unsigned do not show the '+' sign at all
+    //
+    return os << snapdev::to_string(x, 10);
 }
 #pragma GCC diagnostic pop
 
