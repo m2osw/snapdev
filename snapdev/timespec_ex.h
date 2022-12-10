@@ -119,6 +119,10 @@ public:
     }
 
 
+#if 0
+// keeping this just in case, for older versions of g++ or other C++ compiler
+// which may fail
+//
     /** \brief Initialize a timespec_ex from an int in seconds.
      *
      * This constructors allows us to compile our tests.
@@ -134,6 +138,7 @@ public:
     {
         set(sec * static_cast<std::int64_t>(1'000'000'000));
     }
+#endif
 
 
     /** \brief Initialize a timespec_ex from an int64_t in nanoseconds.

@@ -1,5 +1,11 @@
 snapdev (1.1.34.0~bionic) bionic; urgency=high
 
+  * Removed the timespec_ex constructor as snapcatch2 was fixed.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Fri, 09 Dec 2022 18:53:04 -0800
+
+snapdev (1.1.34.0~bionic) bionic; urgency=high
+
   * Added support for 'showpos' in ostream<< of __int128.
   * Fixed printing of 'showbase' when printing 0.
 
