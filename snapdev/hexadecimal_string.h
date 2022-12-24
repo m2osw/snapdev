@@ -76,6 +76,31 @@ bool is_hexdigit(charT c)
 }
 
 
+/** \brief Convert one hexadecimal digit to a character.
+ *
+ * This function converts an hexadecimal number from 0 to 15 into
+ * an hexadecimal character: '0' to '9' or 'a' to 'f'.
+ *
+ * To get uppercase, simple set the \p uppercase parameter to true.
+ *
+ * \param[in] d  The hexadecimal digit convert.
+ *
+ * \return An hexadecimal character.
+ */
+template<class intT>
+char to_hex(intT d, bool uppercase = false)
+{
+    if(static_cast<typename std::make_unsigned<intT>::type>(d) >= 16)
+    {
+        throw hexadecimal_string_out_of_range(
+                  "input number ("
+                + std::to_string(d)
+                + ") is negative or too large to represent one hexadecimal digit.");
+    }
+    return d < 10 ? d + '0' : d + ((uppercase ? 'A' : 'a') - 10);
+}
+
+
 /** \brief Convert an hexadecimal character in a number.
  *
  * This function converts an hexadecimal character that represents a valid
@@ -127,11 +152,15 @@ int hexdigit_to_number(charT c)
  *
  * The output string will be exactly 2x the size of the input string.
  *
+ * You can request uppercase instead of lowercase for the letters a to f.
+ * The default is to use lowercase characters.
+ *
  * \param[in] binary  The input binary string to convert.
+ * \param[in] uppercase  If true, use uppercase letters for a-f.
  *
  * \return The hexademical representation of the input string.
  */
-inline std::string bin_to_hex(std::string const & binary)
+inline std::string bin_to_hex(std::string const & binary, bool uppercase = false)
 {
     if(binary.empty())
     {
@@ -145,15 +174,10 @@ inline std::string bin_to_hex(std::string const & binary)
     std::for_each(
               binary.begin()
             , binary.end()
-            , [&result](char const & c)
+            , [&result,uppercase](char const & c)
             {
-                auto to_hex([](char d)
-                {
-                    return d < 10 ? d + '0' : d + ('a' - 10);
-                });
-
-                result.push_back(to_hex((c >> 4) & 15));
-                result.push_back(to_hex(c & 15));
+                result.push_back(to_hex((c >> 4) & 15, uppercase));
+                result.push_back(to_hex(c & 15, uppercase));
             });
 
     return result;
@@ -177,18 +201,18 @@ inline std::string bin_to_hex(std::string const & binary)
  * raised. To be valid every single character must be an hexadecimal
  * digit (0-9, a-f, A-F) and the length of the string must be even.
  *
- * \param[in] hex  The salt as an hexadecimal string of characters.
+ * \param[in] hex  The hexadecimal string of characters.
  *
  * \return The converted value in a binary string.
  */
 inline std::string hex_to_bin(std::string const & hex)
 {
-    std::string result;
-
     if((hex.length() & 1) != 0)
     {
         throw hexadecimal_string_invalid_parameter("the hex parameter must have an even size.");
     }
+
+    std::string result;
 
     for(char const * s(hex.c_str()); *s != '\0'; s += 2)
     {
