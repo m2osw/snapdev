@@ -72,6 +72,7 @@ install(
         safe_assert.h
         safe_chdir.h
         safe_setenv.h
+        safe_stream.h
         safe_variable.h
         sizeof_bitfield.h
         static_to_dynamic_buffer.h
