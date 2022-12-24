@@ -1,21 +1,12 @@
-snapdev (1.1.34.0~bionic) bionic; urgency=high
-
-  * Removed the timespec_ex constructor as snapcatch2 was fixed.
-
- -- Alexis Wilke <alexis@m2osw.com>  Fri, 09 Dec 2022 18:53:04 -0800
-
-snapdev (1.1.34.0~bionic) bionic; urgency=high
-
-  * Added support for 'showpos' in ostream<< of __int128.
-  * Fixed printing of 'showbase' when printing 0.
-
- -- Alexis Wilke <alexis@m2osw.com>  Sun, 04 Dec 2022 21:10:41 -0800
-
 snapdev (1.1.33.0~bionic) bionic; urgency=high
 
   * Added a constructor to timespec_ex to support snapcatch2 3.2.0.
     - this is only necessary for g++ version under 9.1
     - we should remove that once away from Ubuntu 18.04
+  * Added support for 'showpos' in ostream<< of __int128.
+  * Fixed printing of 'showbase' when printing 0.
+  * Removed the timespec_ex constructor as snapcatch2 was fixed.
+  * Added the 'safe_stream' class.
 
  -- Alexis Wilke <alexis@m2osw.com>  Sun, 20 Nov 2022 21:39:28 -0800
 
