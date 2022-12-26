@@ -213,7 +213,7 @@ StringT replace_suffix(
  *
  * \return The directory name of \p path.
  */
-template < class StringT >
+template<class StringT>
 StringT dirname(StringT const & path)
 {
     typename StringT::size_type pos(path.rfind('/'));
@@ -234,6 +234,70 @@ StringT dirname(StringT const & path)
         return path.substr(0, pos);
     }
 }
+
+
+/** \brief Check whether filename represents "." or ".."
+ *
+ * The two special files named "." and ".." are in general not useful in
+ * our applications. You can check whether a filename represents one
+ * of those files and if so ignore the file altogether.
+ *
+ * Note that those two filenames do represent valid files. In most cases,
+ * you want to ignore them when reading a directory recursively including
+ * filenames starting with a period (hidden files).
+ *
+ * \param[in] filename  The filename to be checked.
+ *
+ * \return true if filename ends with "." or "..".
+ */
+inline bool is_dot_or_dot_dot(char const * filename)
+{
+    char const * end(filename);
+
+    // go to the end of filename
+    //
+    while(*end != '\0')
+    {
+        ++end;
+    }
+
+    // just "."
+    //
+    if(end - filename == 1 && filename[0] == '.')
+    {
+        return true;
+    }
+
+    // just ".."
+    //
+    if(end - filename == 2 && filename[0] == '.' && filename[1] == '.')
+    {
+        return true;
+    }
+
+    // ends with "/."
+    //
+    if(end - filename >= 2 && end[-2] == '/' && end[-1] == '.')
+    {
+        return true;
+    }
+
+    // ends with "/.."
+    //
+    if(end - filename >= 3 && end[-3] == '/' && end[-2] == '.' && end[-1] == '.')
+    {
+        return true;
+    }
+
+    return false;
+}
+
+
+inline bool is_dot_or_dot_dot(std::string const & filename)
+{
+    return is_dot_or_dot_dot(filename.c_str());
+}
+
 
 } // namespace pathinfo
 } // namespace snapdev

@@ -69,6 +69,7 @@ install(
         raii_generic_deleter.h
         remove_duplicates.h
         reverse_cstring.h
+        rm_r.h
         safe_assert.h
         safe_chdir.h
         safe_setenv.h

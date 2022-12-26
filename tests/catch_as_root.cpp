@@ -66,6 +66,10 @@ CATCH_TEST_CASE("as_root", "[basic]")
         // we do not expect tests to be run by the root user
         //
         snapdev::drop_root_privileges();
+
+        // if reach here, it worked
+        //
+        CATCH_REQUIRE(true);
     }
     CATCH_END_SECTION()
 }

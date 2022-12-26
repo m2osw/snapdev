@@ -7,6 +7,8 @@ snapdev (1.1.33.0~bionic) bionic; urgency=high
   * Fixed printing of 'showbase' when printing 0.
   * Removed the timespec_ex constructor as snapcatch2 was fixed.
   * Added the 'safe_stream' class.
+  * Added the 'rm_r()' function.
+  * Added the is_dot_or_dot_dot() function to pathinfo.
 
  -- Alexis Wilke <alexis@m2osw.com>  Sun, 20 Nov 2022 21:39:28 -0800
 

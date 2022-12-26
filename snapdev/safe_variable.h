@@ -43,7 +43,7 @@
  *     {
  *         safe_variable<decltype(my_var)> safe(my_var, 123);
  *
- *         ...your statements while my_`var = 123`...
+ *         ...your statements while `my_var = 123`...
  *
  *     } // here my_var gets restored to the value it had on entry of this block
  * \endcode

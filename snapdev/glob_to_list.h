@@ -26,6 +26,7 @@
 
 // snapdev
 //
+#include    "snapdev/pathinfo.h"
 #include    "snapdev/raii_generic_deleter.h"
 
 
@@ -142,7 +143,7 @@ public:
         return false;
     }
 
-    int is_uid() const
+    int is_suid() const
     {
         if(exists())
         {
@@ -151,7 +152,7 @@ public:
         return 0;
     }
 
-    int is_gid() const
+    int is_sgid() const
     {
         if(exists())
         {
@@ -444,6 +445,7 @@ enum class glob_to_list_flag_t
     GLOB_FLAG_NO_ESCAPE,          // ignore '\'
     GLOB_FLAG_ONLY_DIRECTORIES,   // only return directories
     GLOB_FLAG_PERIOD,             // allow period at the start (i.e. pattern ".*")
+    GLOB_FLAG_DOT_AND_DOT_DOT,    // allow "." and ".." to be included
     GLOB_FLAG_TILDE,              // transform "~/..." with "$HOME/..."
     GLOB_FLAG_RECURSIVE,          // when a directory is found, read it too
     GLOB_FLAG_FOLLOW_SYMLINK,     // in recursive mode, do or do not follow symlinks
@@ -491,6 +493,10 @@ enum class glob_to_list_flag_t
  * global variable to report errors so there is no way at this point to
  * make it safe (without a \em service like implementation).
  *
+ * \todo
+ * Consider using wordexp() instead of glob() to get additional substitution
+ * support (environment variables, ~user, arithmetic, splitting, unquoting).
+ *
  * \tparam C  The type of the container where to add the filenames.
  * \tparam T  The type used for the filenames (C<T>).
  */
@@ -531,6 +537,7 @@ public:
     template<glob_to_list_flag_t ...args>
     bool read_path(std::string const & path)
     {
+        f_dot_and_dot_dot = false;
         f_recursive = false;
         f_follow_symlinks = false;
         int const flags = GLOB_NOSORT | flags_merge<args...>();
@@ -732,6 +739,10 @@ private:
         case glob_to_list_flag_t::GLOB_FLAG_PERIOD:
             return GLOB_PERIOD | flags_merge<args...>();
 
+        case glob_to_list_flag_t::GLOB_FLAG_DOT_AND_DOT_DOT:
+            f_dot_and_dot_dot = true;
+            return flags_merge<args...>();
+
         case glob_to_list_flag_t::GLOB_FLAG_TILDE:
             return GLOB_TILDE_CHECK | flags_merge<args...>();
 
@@ -772,6 +783,11 @@ private:
             glob_pointer_t auto_release_dir(&dir);
             for(size_t idx(0); idx < dir.gl_pathc; ++idx)
             {
+                if(!f_dot_and_dot_dot
+                && pathinfo::is_dot_or_dot_dot(dir.gl_pathv[idx]))
+                {
+                    continue;
+                }
                 C::insert(C::end(), typename glob_to_list::value_type(std::string(dir.gl_pathv[idx])));
             }
         }
@@ -914,6 +930,7 @@ private:
     std::string                 f_last_error_message = std::string();
     std::string                 f_last_error_path = std::string();
     int                         f_last_error_errno = 0;
+    bool                        f_dot_and_dot_dot = false;
     bool                        f_recursive = false;
     bool                        f_follow_symlinks = false;
     bool                        f_empty = false;
