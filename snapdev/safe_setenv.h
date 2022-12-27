@@ -177,7 +177,16 @@ public:
             f_old_value = old_value;
         }
 
-        if(setenv(name.c_str(), value.c_str(), overwrite ? 1 : 0) != 0)
+        int r(0);
+        if(value.empty())
+        {
+            r = unsetenv(name.c_str());
+        }
+        else
+        {
+            r = setenv(name.c_str(), value.c_str(), overwrite ? 1 : 0);
+        }
+        if(r != 0)
         {
             if(errno == EINVAL)
             {

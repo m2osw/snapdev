@@ -9,6 +9,7 @@ snapdev (1.1.33.0~bionic) bionic; urgency=high
   * Added the 'safe_stream' class.
   * Added the 'rm_r()' function.
   * Added the is_dot_or_dot_dot() function to pathinfo.
+  * Made 'transparent_setenv' usable to unset while it exists.
 
  -- Alexis Wilke <alexis@m2osw.com>  Sun, 20 Nov 2022 21:39:28 -0800
 
