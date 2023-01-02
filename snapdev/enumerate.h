@@ -48,11 +48,14 @@ namespace snapdev
  * \endcode
  *
  * The index starts at 0 and increases by 1 for each item.
+ *
+ * \tparam T  The type of container to enumerate.
+ * \param[in] func  The function to call with each item.
  */
 template<class T>
 void enumerate(T const & c, std::function<void (int, typename T::value_type)> func)
 {
-    std::uint32_t index(0);
+    int index(0);
     std::for_each(
           c.cbegin()
         , c.cend()
