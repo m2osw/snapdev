@@ -288,7 +288,7 @@ inline std::string int_to_hex(
         *d = '0';
     }
 
-    return std::string(d);
+    return std::string(d, e - d);
 }
 
 
