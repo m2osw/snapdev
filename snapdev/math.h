@@ -41,7 +41,7 @@ namespace snapdev
 {
 
 
-/** \brief Computer a power of an integer number.
+/** \brief Compute a power of an integer number.
  *
  * This function multiplies the specified \p value by itself \p power times.
  *
