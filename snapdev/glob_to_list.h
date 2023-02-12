@@ -589,7 +589,7 @@ public:
                     , visited);
     }
 
-    /** \brief Convert the input \p path in a canonicalized path.
+    /** \brief Convert the input \p path to a canonicalized path.
      *
      * This function goes through the specified \p path and canonicalize
      * it. This means:
@@ -600,63 +600,21 @@ public:
      *
      * The resulting path is likely going to be a full path.
      *
-     * \note
-     * If the input path is an empty string (equivalent to ".") then the
-     * result may also be the empty string even though no errors would have
-     * happened.
-     *
      * \param[in] path  The path to canonicalize.
      *
      * \return The canonicalized version of \p path or an empty string on error.
+     *
+     * \sa snapdev::pathinfo::realpath()
      */
     std::string get_real_path(std::string const & path)
     {
-        char buf[PATH_MAX + 1];
-        buf[PATH_MAX] = '\0';
-        if(realpath(path.c_str(), buf) != buf)
+        std::string const result(pathinfo::realpath(path, f_last_error_message));
+        if(!f_last_error_message.empty())
         {
-            // it failed
-            //
             f_last_error_errno = errno;
             f_last_error_path = path;
-            switch(f_last_error_errno)
-            {
-            case EACCES:
-                f_last_error_message = "realpath() is missing permission to read or search a component of the path.";
-                break;
-
-            case EIO:
-                f_last_error_message = "realpath() had I/O issues while searching.";
-                break;
-
-            case ELOOP:
-                f_last_error_message = "realpath() found too many symbolic links.";
-                break;
-
-            case ENAMETOOLONG:
-                f_last_error_message = "realpath() output buffer too small for path.";
-                break;
-
-            case ENOENT:
-                f_last_error_message = "realpath() could not find the specified file.";
-                break;
-
-            case ENOMEM:
-                f_last_error_message = "realpath() could not allocate necessary memory.";
-                break;
-
-            case ENOTDIR:
-                f_last_error_message = "realpath() found a file instead of a directory within the path.";
-                break;
-
-            default:
-                f_last_error_message = "realpath() failed.";
-                break;
-
-            }
-            return std::string();
         }
-        return buf;
+        return result;
     }
 
     /** \brief The last error message.

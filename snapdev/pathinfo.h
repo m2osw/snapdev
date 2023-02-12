@@ -32,7 +32,15 @@
 
 // C++
 //
+#include    <sstream>
 #include    <string>
+
+
+// C
+//
+#include    <limits.h>
+#include    <stdlib.h>
+#include    <string.h>
 
 
 
@@ -40,6 +48,7 @@ namespace snapdev
 {
 namespace pathinfo
 {
+
 
 
 /** \brief Retrieve the basename of a path.
@@ -297,6 +306,103 @@ inline bool is_dot_or_dot_dot(std::string const & filename)
 {
     return is_dot_or_dot_dot(filename.c_str());
 }
+
+
+/** \brief Convert the input \p path in a canonicalized path.
+ *
+ * This function goes through the specified \p path and canonicalize
+ * it. This means:
+ *
+ * * removing any "/./"
+ * * removing any "/../"
+ * * replacing softlinks with the target path
+ *
+ * The resulting path is likely going to be a full path.
+ *
+ * \note
+ * If the input path is an empty string (equivalent to ".") then the
+ * result may also be the empty string even though no errors happened.
+ * You can distinghuish both cases by checking `error_msg.empty()` first.
+ * If true, then the function did not generate an error.
+ *
+ * \todo
+ * Create a version which does not generate a full path. Instead, we could
+ * do the work on realpath(3) and look at only returning a path which is
+ * equivalent to what we had on input (i.e. keeping it relative if it
+ * were relative on input). Similarly, we could then allow for softlink
+ * to be taken or not and completely replace the input or not.
+ *
+ * \param[in] path  The path to canonicalize.
+ * \param[out] error_msg  A variable where we save the error message.
+ *
+ * \return The canonicalized version of \p path or an error and errno set
+ * to whatever error realpath(3) returned.
+ */
+inline std::string realpath(std::string const & path, std::string & error_msg)
+{
+    char buf[PATH_MAX + 1];
+    buf[PATH_MAX] = '\0';
+    if(::realpath(path.c_str(), buf) == buf)
+    {
+        error_msg.clear();
+        return buf;
+    }
+
+    // it failed
+    //
+    int const e(errno);
+
+    std::stringstream ss;
+    ss << "realpath(\""
+       << path
+       << "\") ";
+    switch(e)
+    {
+    case EACCES:
+        ss << "is missing permission to read or search a component of the path.";
+        break;
+
+    case EIO:
+        ss << "had I/O issues while searching.";
+        break;
+
+    case ELOOP:
+        ss << "found too many symbolic links.";
+        break;
+
+    case ENAMETOOLONG:
+        ss << "output buffer too small for path.";
+        break;
+
+    case ENOENT:
+        ss << "could not find the specified file.";
+        break;
+
+    case ENOMEM:
+        ss << "could not allocate necessary memory.";
+        break;
+
+    case ENOTDIR:
+        ss << "found a file instead of a directory within the path.";
+        break;
+
+    default:
+        ss << "failed: "
+           << strerror(e);
+        break;
+
+    }
+    error_msg = ss.str();
+
+    // trying to get errno returned as expected, assuming std::string does
+    // not modify it we should be good
+    //
+    std::string result;
+    errno = e;
+    return result;
+}
+
+
 
 
 } // namespace pathinfo
