@@ -50,7 +50,7 @@
  * \return The input enumeration plus offset as that enumeration.
  */
 template<typename T>
-std::enable_if_t<std::is_enum<T>::value, T> operator + (T e, int offset)
+constexpr std::enable_if_t<std::is_enum<T>::value, T> operator + (T e, int offset)
 {
     return static_cast<T>(static_cast<int>(e) + offset);
 }
@@ -59,7 +59,7 @@ std::enable_if_t<std::is_enum<T>::value, T> operator + (T e, int offset)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
 template<typename T>
-std::enable_if_t<std::is_enum<T>::value, T> & operator ++ (T & e)
+constexpr std::enable_if_t<std::is_enum<T>::value, T> & operator ++ (T & e)
 {
     e = e + 1;
     return e;
@@ -67,7 +67,7 @@ std::enable_if_t<std::is_enum<T>::value, T> & operator ++ (T & e)
 
 
 template<typename T>
-std::enable_if_t<std::is_enum<T>::value, T> operator ++ (T & e, int)
+constexpr std::enable_if_t<std::is_enum<T>::value, T> operator ++ (T & e, int)
 {
     T old(e);
     e = e + 1;
@@ -101,7 +101,7 @@ constexpr std::enable_if_t<std::is_enum<T>::value, T> operator - (T e, int offse
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
 template<typename T>
-std::enable_if_t<std::is_enum<T>::value, T> & operator -- (T & e)
+constexpr std::enable_if_t<std::is_enum<T>::value, T> & operator -- (T & e)
 {
     e = e - 1;
     return e;
@@ -109,7 +109,7 @@ std::enable_if_t<std::is_enum<T>::value, T> & operator -- (T & e)
 
 
 template<typename T>
-std::enable_if_t<std::is_enum<T>::value, T> operator -- (T & e, int)
+constexpr std::enable_if_t<std::is_enum<T>::value, T> operator -- (T & e, int)
 {
     T old(e);
     e = e - 1;
