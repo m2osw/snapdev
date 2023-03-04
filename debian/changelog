@@ -8,6 +8,7 @@ snapdev (1.1.33.0~bionic) bionic; urgency=high
   * Added the is_dot_or_dot_dot() function to pathinfo.
   * Made 'transparent_setenv' usable to unset while it exists.
   * Added the unsorted_remove_duplicates() for vectors and lists.
+  * Added the stringize.h to avoid boost in most our conribs.
 
  -- Alexis Wilke <alexis@m2osw.com>  Sun, 20 Nov 2022 21:39:28 -0800
 
