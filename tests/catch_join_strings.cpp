@@ -37,16 +37,6 @@
 #include    "catch_main.h"
 
 
-// boost
-//
-#include    <boost/preprocessor/stringize.hpp>
-
-
-// C++
-//
-//#include    <fstream>
-
-
 
 namespace
 {

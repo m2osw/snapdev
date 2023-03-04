@@ -17,21 +17,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+// snapcatch2
+//
+#include    <catch2/snapcatch2.hpp>
+
+
+// C++
+//
 #include    <string>
 #include    <cstring>
 #include    <cstdlib>
 #include    <iostream>
 
-#include    <boost/preprocessor/stringize.hpp>
-
-#include    <catch2/snapcatch2.hpp>
-
 
 // The message() can be used to verify that version
 //
-//#pragma message("Building unit tests with Catch2 version " BOOST_PP_STRINGIZE(CATCH_VERSION_MAJOR) "." BOOST_PP_STRINGIZE(CATCH_VERSION_MINOR) "." BOOST_PP_STRINGIZE(CATCH_VERSION_PATCH))
+//#include <snapdev/stringize.h>
+//#pragma message("Building unit tests with Catch2 version " SNAPDEV_STRINGIZE(CATCH_VERSION_MAJOR) "." SNAPDEV_STRINGIZE(CATCH_VERSION_MINOR) "." SNAPDEV_STRINGIZE(CATCH_VERSION_PATCH))
 
-#pragma GCC diagnostic pop
+//#pragma GCC diagnostic pop
 
 
 namespace SNAP_CATCH2_NAMESPACE
