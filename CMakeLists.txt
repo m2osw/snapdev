@@ -20,7 +20,6 @@ cmake_minimum_required(VERSION 3.10.2)
 
 project(snapdev_library)
 
-find_package(Boost            REQUIRED)
 find_package(SnapCMakeModules REQUIRED)
 find_package(LibExcept        REQUIRED)
 
