@@ -154,12 +154,13 @@ typename ContainerT::value_type::size_type string_predicate(
  * \return the number of items in the resulting container.
  */
 template<class ContainerT, typename PredicateT = decltype(character_predicate<ContainerT>)>
-size_t tokenize_string(ContainerT & tokens
-                     , typename ContainerT::value_type const & str
-                     , typename ContainerT::value_type const & delimiters
-                     , bool const trim_empty = false
-                     , typename ContainerT::value_type const & trim_string = typename ContainerT::value_type()
-                     , PredicateT compare_function = &character_predicate<ContainerT>)
+std::size_t tokenize_string(
+      ContainerT & tokens
+    , typename ContainerT::value_type const & str
+    , typename ContainerT::value_type const & delimiters
+    , bool const trim_empty = false
+    , typename ContainerT::value_type const & trim_string = typename ContainerT::value_type()
+    , PredicateT compare_function = &character_predicate<ContainerT>)
 {
     for(typename ContainerT::value_type::size_type pos(0),
                                                    last_pos(0);

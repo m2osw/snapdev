@@ -78,10 +78,10 @@ public:
          * can and then return that contents. There is no real way to
          * know whether the entire file was read in this mode.
          *
-         * Although it is possible ot use this mode to read a regular
+         * Although it is possible to use this mode to read a regular
          * file, it is not a good idea since (1) it will be slower and
          * (2) it may re-allocate the contents buffer multiple times
-         * so the data fits in there.
+         * so the data fits.
          */
         SIZE_MODE_READ,
     };

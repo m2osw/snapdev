@@ -9,6 +9,7 @@ snapdev (1.1.33.0~bionic) bionic; urgency=high
   * Made 'transparent_setenv' usable to unset while it exists.
   * Added the unsorted_remove_duplicates() for vectors and lists.
   * Added the stringize.h to avoid boost in most our conribs.
+  * Added pathinfo::canonicalize().
   * Removed boost as a dependency.
 
  -- Alexis Wilke <alexis@m2osw.com>  Sun, 20 Nov 2022 21:39:28 -0800

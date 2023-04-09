@@ -27,13 +27,16 @@
 
 // self
 //
+#include    "snapdev/join_strings.h"
 #include    "snapdev/reverse_cstring.h"
+#include    "snapdev/tokenize_string.h"
 
 
 // C++
 //
 #include    <sstream>
 #include    <string>
+#include    <vector>
 
 
 // C
@@ -402,6 +405,87 @@ inline std::string realpath(std::string const & path, std::string & error_msg)
     return result;
 }
 
+
+/** \brief Canonicalize a path and filename.
+ *
+ * This function concatenate path and filename with a "/" in between and
+ * then it canonicalize the result.
+ *
+ * The canonicalization means that the resulting path will:
+ *
+ * \li not include more than one "/" between two names,
+ * \li not include any "." unless the result would otherwise be the empty
+ *     string then "." is returned instead,
+ * \li not include a ".." preceeded by a name other than ".."
+ *
+ * The \p filename parameter can be the empty string.
+ *
+ * \note
+ * The removal of the ".." is not verifying whether the path is valid on
+ * the current file system. If you want to do, use the realpath() function
+ * instead.
+ *
+ * \param[in] path  The introducer path.
+ * \param[in] filename  A filename to happen to the path.
+ *
+ * \return The path and filename canonicalized.
+ */
+inline std::string canonicalize(
+      std::string const & path
+    , std::string const & filename)
+{
+    bool const is_root(
+        path.empty()
+            ? (filename.empty()
+                ? false
+                : filename[0] == '/')
+            : path[0] == '/');
+
+    // break up the path & filename as segments
+    //
+    std::vector<std::string> segments;
+    snapdev::tokenize_string(segments, path, "/", true);
+    snapdev::tokenize_string(segments, filename, "/", true);
+
+    // remove ".", they are not useful
+    //
+    auto no_dot_end(std::remove(segments.begin(), segments.end(), "."));
+    segments.erase(no_dot_end, segments.end());
+
+    // remove "<path>" and ".." when "<path>" is not ".."
+    //
+    for(auto it(segments.begin()); it != segments.end(); )
+    {
+        if(*it == ".."
+        && it == segments.begin()
+        && is_root)
+        {
+            it = segments.erase(it);
+        }
+        else if(*it == ".." && it != segments.begin() && *(it - 1) != "..")
+        {
+            it = segments.erase(it - 1, it + 1);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+
+    // transform back to a path
+    //
+    std::string const new_path(join_strings(segments, "/"));
+    if(is_root)
+    {
+        // the path is a root path
+        //
+        return "/" + new_path;
+    }
+
+    // this is a relative path
+    //
+    return new_path.empty() ? "." : new_path;
+}
 
 
 

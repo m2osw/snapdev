@@ -206,5 +206,36 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[pathinfo]")
 }
 
 
+CATCH_TEST_CASE("pathinfo_canonicalize", "[pathinfo]")
+{
+    CATCH_START_SECTION("pathinfo: canonicalize paths")
+    {
+        char const * to_canonicalize[] =
+        {
+            "", "", ".",
+
+            "/", "/", "/",
+
+            "/full/path", "", "/full/path",
+            "///full//path/", "", "/full/path",
+
+            "relative///path", "and.this", "relative/path/and.this",
+            "relative///path/", "and.this", "relative/path/and.this",
+            "relative///path", "/and.this", "relative/path/and.this",
+
+            "relative///with///", "///more-path///", "relative/with/more-path",
+        };
+
+        for(std::size_t idx(0); idx < std::size(to_canonicalize) / 3; idx += 3)
+        {
+            CATCH_REQUIRE(snapdev::pathinfo::canonicalize(
+                      to_canonicalize[idx + 0]
+                    , to_canonicalize[idx + 1]) == to_canonicalize[idx + 2]);
+        }
+    }
+    CATCH_END_SECTION()
+}
+
+
 
 // vim: ts=4 sw=4 et
