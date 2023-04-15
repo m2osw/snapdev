@@ -472,7 +472,7 @@ enum class glob_to_list_flag_t
  *         ...handle error...
  *         return;
  *     }
- *     for(auto f : dir)
+ *     for(auto const & f : dir)
  *     {
  *         ...f is std::string with filename...
  *     }
