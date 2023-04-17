@@ -83,11 +83,14 @@ typename ContainerT::value_type join_strings(
         // calculate the final size, which is way faster than reallocating
         // over and over again in the 'result += string' below
         //
-        size_t const total_size(std::accumulate(tokens.begin(), tokens.end(), separator.length() * (tokens.size() - 1),
-                                [](size_t & sum, typename ContainerT::value_type const & str)
-                                {
-                                    return sum + str.length();
-                                }));
+        std::size_t const total_size(std::accumulate(
+                  tokens.begin()
+                , tokens.end()
+                , separator.length() * (tokens.size() - 1)
+                , [](size_t const & sum, typename ContainerT::value_type const & str)
+                    {
+                        return sum + str.length();
+                    }));
 
         result.reserve(total_size);
 
