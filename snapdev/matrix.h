@@ -209,11 +209,11 @@ public:
         size_type               f_j;        // row
     };
 
-    matrix<T, SIZE>()
+    matrix()
     {
     }
 
-    matrix<T, SIZE>(size_type rows, size_type columns)
+    matrix(size_type rows, size_type columns)
         : f_rows(rows)
         , f_columns(columns)
         , f_vector(rows * columns)
@@ -222,7 +222,7 @@ public:
     }
 
     template<typename V, typename SZ>
-    matrix<T, SIZE>(matrix<V, SZ> const & rhs)
+    matrix(matrix<V, SZ> const & rhs)
         : f_rows(rhs.f_rows)
         , f_columns(rhs.f_columns)
         , f_vector(rhs.f_vector.size())
