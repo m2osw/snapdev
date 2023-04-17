@@ -86,13 +86,13 @@ public:
     typedef std::basic_streambuf<char_type, traits_type>                    streambuf_type;
     typedef std::basic_string<char_type, traits_type, allocator_type>       string_type;
 
-    ostream_to_buf<char_type, traits_type, allocator_type>(stream_type & out)
+    ostream_to_buf(stream_type & out)
         : f_stream(out)
         , f_original(f_stream.rdbuf(this))
     {
     }
 
-    ostream_to_buf<char_type, traits_type, allocator_type>(ostream_to_buf<char_type, traits_type, allocator_type> const & rhs) = delete;
+    ostream_to_buf(ostream_to_buf<char_type, traits_type, allocator_type> const & rhs) = delete;
     ostream_to_buf<char_type, traits_type, allocator_type> & operator = (ostream_to_buf<char_type, traits_type, allocator_type> const & rhs) = delete;
 
     ~ostream_to_buf()
