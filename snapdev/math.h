@@ -73,7 +73,7 @@ namespace snapdev
 #pragma GCC diagnostic ignored "-Wpedantic"
 template<typename T>
 constexpr std::enable_if_t<(std::is_integral_v<T> && std::is_signed_v<T>)
-              || std::is_same_v<T, __int128>, T> pow(T value, int power)
+              || std::is_same_v<T, __int128>, T> pow(T value, int power) noexcept
 {
     using namespace snapdev::literals;
 

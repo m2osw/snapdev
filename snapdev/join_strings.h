@@ -87,7 +87,7 @@ typename ContainerT::value_type join_strings(
                   tokens.begin()
                 , tokens.end()
                 , separator.length() * (tokens.size() - 1)
-                , [](size_t const & sum, typename ContainerT::value_type const & str)
+                , [](std::size_t const & sum, typename ContainerT::value_type const & str)
                     {
                         return sum + str.length();
                     }));
@@ -128,8 +128,11 @@ typename std::iterator_traits<InputIt>::value_type join_strings(
         // calculate the final size, which is way faster than reallocating
         // over and over again in the 'result += string' below
         //
-        size_t const total_size(std::accumulate(first, last, separator.length() * (std::distance(first, last) - 1),
-                                [](size_t & sum, typename std::iterator_traits<InputIt>::value_type const & str)
+        std::size_t const total_size(std::accumulate(
+                              first
+                            , last
+                            , separator.length() * (std::distance(first, last) - 1)
+                            , [](std::size_t const & sum, typename std::iterator_traits<InputIt>::value_type const & str)
                                 {
                                     return sum + str.length();
                                 }));
