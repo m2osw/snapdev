@@ -237,5 +237,85 @@ CATCH_TEST_CASE("pathinfo_canonicalize", "[pathinfo]")
 }
 
 
+CATCH_TEST_CASE("pathinfo_has_pattern", "[pathinfo]")
+{
+    CATCH_START_SECTION("pathinfo: has pattern function")
+    {
+        struct test_data
+        {
+            char const *        f_path = nullptr;
+            int                 f_true = 0;
+        };
+        constexpr test_data const patterns[] =
+        {
+            // no pattern
+            { ".",                              0x00 },
+            { "without-pattern",                0x00 },
+            { "regular/path/without/pattern",   0x00 },
+            { "path/../without/../pattern",     0x00 },
+
+            // *
+            { "path/*/with/pattern",            0xFF },
+            { "path/\\*/with/pattern",          0x55 },
+
+            // ?
+            { "path/?/with/pattern",            0xFF },
+            { "path/\\?/with/pattern",          0x55 },
+
+            // [...]
+            { "path/[a-z]/with/pattern",        0xFF },
+            { "path/[a-\\]/with/pattern",       0xFF },
+            { "path/\\[a-z]/with/pattern",      0x55 },
+            { "path/\\[a-z*]/with/pattern",     0xFF },
+            { "path/\\[a-z?]/with/pattern",     0xFF },
+
+            // {...}
+            { "path/{abc,def}/with/pattern",    0xCC },
+            { "path/\\{abc,dev}/with/pattern",  0x44 },
+            { "path/\\{abc,*dev}/with/pattern", 0xFF },
+            { "path/\\{abc?,dev}/with/pattern", 0xFF },
+
+            // [*?+@!](...)
+            { "path/*(abc,def)/with/pattern",   0xFF },
+            { "path/?(abc,dev)/with/pattern",   0xFF },
+            { "path/+(abc,dev)/with/pattern",   0xF0 },
+            { "path/@(abc,dev)/with/pattern",   0xF0 },
+            { "path/!(abc,dev)/with/pattern",   0xF0 },
+            { "path/+(a*bc,dev)/with/pattern",  0xFF },
+            { "path/@(ab*c,dev)/with/pattern",  0xFF },
+            { "path/!(abc*,dev)/with/pattern",  0xFF },
+            { "path/+(a?bc,dev)/with/pattern",  0xFF },
+            { "path/@(ab?c,dev)/with/pattern",  0xFF },
+            { "path/!(abc?,dev)/with/pattern",  0xFF },
+            { "path/\\*(abc,def)/with/pattern", 0x55 },
+            { "path/\\?(abc,dev)/with/pattern", 0x55 },
+            { "path/\\+(abc,dev)/with/pattern", 0x50 },
+            { "path/\\@(abc,dev)/with/pattern", 0x50 },
+            { "path/\\!(abc,dev)/with/pattern", 0x50 },
+            { "path/*\\(abc,def)/with/pattern", 0xFF },
+            { "path/?\\(abc,dev)/with/pattern", 0xFF },
+            { "path/+\\(abc,dev)/with/pattern", 0x00 },
+            { "path/@\\(abc,dev)/with/pattern", 0x00 },
+            { "path/!\\(abc,dev)/with/pattern", 0x00 },
+        };
+
+        for(std::size_t idx(0); idx < std::size(patterns); ++idx)
+        {
+            for(int mask(0); mask < 8; ++mask)
+            {
+                bool const result((patterns[idx].f_true & (1 << mask)) != 0);
+//std::cerr << "--- idx: " << idx << " path: \"" << patterns[idx].f_path << "\" mask: " << mask << " result: " << std::boolalpha << result << "\n";
+                CATCH_REQUIRE(snapdev::pathinfo::has_pattern(
+                          patterns[idx].f_path
+                        , (mask & 1) != 0
+                        , (mask & 2) != 0
+                        , (mask & 4) != 0) == result);
+            }
+        }
+    }
+    CATCH_END_SECTION()
+}
+
+
 
 // vim: ts=4 sw=4 et

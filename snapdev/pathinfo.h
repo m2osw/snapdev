@@ -488,6 +488,140 @@ inline std::string canonicalize(
 }
 
 
+/** \brief Check a path to determine whether it includes a pattern or not.
+ *
+ * This function scans the specified \p path for a glob() like pattern.
+ * We detect the `*`, `?`, and the start of `[` or `{`. Note that the
+ * glob function generally views the `[` and `{` as regular characters
+ * if these characters are not closed with a match `]` or `}` respectively.
+ *
+ * The flags below correspond to flags supported by the glob(3) and
+ * fnmatch(3) functions.
+ *
+ * * `GLOB_NOESCAPE`, `FNM_NOESCAPE` -- \p escape
+ * * `GLOB_BRACE` -- \p braces
+ * * `FNM_EXTMATCH` -- \p extended
+ *
+ * \param[in] path  The path to check for a pattern.
+ * \param[in] escape  Whether to allow the `\\` character to escape
+ * metacharacters. The default is true since a path with a pattern is more
+ * powerful if the `\\` is properly supported.
+ * \param[in] braces  Whether the braces (`{`) are accepted. This is a
+ * GNU extension so by default we do not accept braces.
+ * \param[in] extended  Whether the extended patterns are supported. GNU
+ * supports `#(pattern-list)` where `#` is one of `?*+@!`.
+ *
+ * \return true if \p path includes one of the glob() metacharacters.
+ */
+inline bool has_pattern(
+      std::string const & path
+    , bool escape = true
+    , bool braces = false
+    , bool extended = false)
+{
+    for(char const * s(path.c_str()); *s != '\0'; ++s)
+    {
+        switch(*s)
+        {
+        case '\\':
+            if(escape)
+            {
+                // silently skip one character
+                //
+                ++s;
+                if(*s == '\0')
+                {
+                    return false;
+                }
+            }
+            break;
+
+        case '*':
+        case '?':
+            return true;
+
+        case '[': // a ']' must be present for '[' to represent a valid character class
+            {
+                // backslashes are viewed as themself within a class definition
+                // so there is not particular anything if we find such here;
+                //
+                // also POSIX says that if a '/' is included, then the pattern
+                // is invalid; we just ignore that at the moment
+                //
+                char const * c(s + 1);
+                if(*c == '!' || *c == '^') // POSIX does not support '^', bash does, though
+                {
+                    ++c;
+                }
+                if(*c == ']')
+                {
+                    ++c;
+                }
+                for(; *c != '\0'; ++c)
+                {
+                    if(*c == ']')
+                    {
+                        return true;
+                    }
+                }
+            }
+            break;
+
+        case '{': // a '}' must be present for '{' to represent a valid pattern
+            if(braces)
+            {
+                for(char const * c(s + 1); *c != '\0'; ++c)
+                {
+                    if(*c == '\\' && escape)
+                    {
+                        ++c;
+                        if(*c == '\0')
+                        {
+                            break;
+                        }
+                    }
+                    else if(*c == '}')
+                    {
+                        return true;
+                    }
+                }
+            }
+            break;
+
+        case '+': // an extended pattern must be between '(...)'
+        case '@':
+        case '!':
+            if(extended)
+            {
+                char const * c(s + 1);
+                if(*c == '(')
+                {
+                    for(++c; *c != '\0'; ++c)
+                    {
+                        if(*c == '\\' && escape)
+                        {
+                            ++c;
+                            if(*c == '\0')
+                            {
+                                break;
+                            }
+                        }
+                        else if(*c == ')')
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            break;
+
+        }
+    }
+
+    return false;
+}
+
+
 
 } // namespace pathinfo
 } // namespace snapdev
