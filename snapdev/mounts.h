@@ -147,12 +147,11 @@ private:
  */
 mount_entry const * find_mount(mounts const & m, std::string const & p)
 {
-    snapdev::mounts const & mounts(get_mounts());
-    for(auto const & m : mounts)
+    for(auto const & mp : m)
     {
-        if(pathinfo::is_child_path(m.get_dir(), p))
+        if(pathinfo::is_child_path(mp.get_dir(), p))
         {
-            return &m;
+            return &mp;
         }
     }
 
