@@ -23,6 +23,7 @@
 
 // self
 //
+#include    "snapdev/pathinfo.h"
 #include    "snapdev/raii_generic_deleter.h"
 
 
@@ -127,6 +128,36 @@ public:
 private:
     std::string             f_path;
 };
+
+
+/** \brief Search for a mount point including path \p p.
+ *
+ * This function searches the specified mount points in \p m for the one
+ * that includes the path in \p p.
+ *
+ * \warning
+ * The result is a bare pointer to one of the mount points found in
+ * the mounts vector. Make sure to keep the vector in place until you
+ * are done with it.
+ *
+ * \param[in] m  Mount points.
+ * \param[in] p  A path to search in the mount points.
+ *
+ * \return The matching mount point or nullptr if not found.
+ */
+mount_entry const * find_mount(mounts const & m, std::string const & p)
+{
+    snapdev::mounts const & mounts(get_mounts());
+    for(auto const & m : mounts)
+    {
+        if(pathinfo::is_child_path(m.get_dir(), p))
+        {
+            return &m;
+        }
+    }
+
+    return nullptr;
+}
 
 
 

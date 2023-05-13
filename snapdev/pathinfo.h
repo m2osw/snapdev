@@ -28,6 +28,7 @@
 // self
 //
 #include    "snapdev/join_strings.h"
+#include    "snapdev/not_reached.h"
 #include    "snapdev/reverse_cstring.h"
 #include    "snapdev/tokenize_string.h"
 
@@ -141,17 +142,17 @@ StringT basename(StringT const & path
  *
  * \code
  *     // the following expressions return true
- *     snap::string_pathinfo_replace_suffix(
+ *     snap::pathinfo::replace_suffix(
  *                "/usr/share/snapwebsites/replace.cpp"
  *              , ".cpp"
  *              , ".h") == "/usr/share/snapwebsites/replace.h"
  *
- *     snap::string_pathinfo_replace_suffix(
+ *     snap::pathinfo::replace_suffix(
  *                "/usr/share/snapwebsites/replace"
  *              , ".cpp"
  *              , ".h") == "/usr/share/snapwebsites/replace.h"
  *
- *     snap::string_pathinfo_replace_suffix(
+ *     snap::pathinfo::replace_suffix(
  *                "/usr/share/snapwebsites/replace.txt"
  *              , ".*"
  *              , ".h") == "/usr/share/snapwebsites/replace.h"
@@ -216,7 +217,7 @@ StringT replace_suffix(
  *
  * \code
  *     // the following returns true
- *     snap::string_pathinfo_dirname(
+ *     snap::pathinfo::dirname(
  *         "/usr/share/snapwebsites/in.filename.txt");
  *             == "/usr/share/snapwebsites";
  * \endcode
@@ -619,6 +620,96 @@ inline bool has_pattern(
     }
 
     return false;
+}
+
+
+/** \brief Check whether a path is a equal or a child of another path.
+ *
+ * This function compares \p child against \p parent to see whether
+ * \p child is indeed a child of \p parent.
+ *
+ * For example, the following returns true:
+ *
+ * \code
+ *     snapdev::is_child_path("/var", "/var/lib/");
+ * \endcode
+ *
+ * All paths are considered to be a child of the root path `/`.
+ *
+ * We considered two types of paths: relative and full. Both paths must
+ * be either relative or full, otherwise the function returns false.
+ *
+ * The function canonicalize the paths, so if multiple slashes separate
+ * some of the names, these are viewed as one slash (i.e. `"/" == "//"`).
+ *
+ * \param[in] parent  The parent path.
+ * \param[in] child  The child to match against \p parent.
+ * \param[in] equal  Return this boolean value if the \p parent equals
+ * \p child.
+ *
+ * \return true if \p child is a child of \p parent.
+ */
+inline bool is_child_path(
+      std::string const & parent
+    , std::string const & child
+    , bool equal = true)
+{
+    // paths should not be empty, but if so, handle specially
+    //
+    if(parent.empty()
+    || child.empty())
+    {
+        return parent.empty() && child.empty() ? equal : false;
+    }
+
+    // both paths must be full or relative
+    //
+    if((parent[0] == '/') ^ (child[0] == '/'))
+    {
+        return false;
+    }
+
+    char const * p(parent.c_str());
+    char const * c(child.c_str());
+    for(;;)
+    {
+        while(*p == '/')
+        {
+            ++p;
+        }
+        while(*c == '/')
+        {
+            ++c;
+        }
+        if(*p == '\0')
+        {
+            return *c == '\0' ? equal : true;
+        }
+        do
+        {
+            if(*p != *c)
+            {
+                if((*p == '/' || *p == '\0')
+                && (*c == '/' || *c == '\0'))
+                {
+                    while(*c == '/')
+                    {
+                        ++c;
+                    }
+                    return *c == '\0' ? equal : true;
+                }
+                return false;
+            }
+            if(*p == '\0')
+            {
+                return equal;
+            }
+            ++p;
+            ++c;
+        }
+        while(*p != '/' || *c != '/');
+    }
+    snapdev::NOT_REACHED();
 }
 
 

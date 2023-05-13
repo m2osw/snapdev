@@ -317,5 +317,191 @@ CATCH_TEST_CASE("pathinfo_has_pattern", "[pathinfo]")
 }
 
 
+CATCH_TEST_CASE("pathinfo_is_child_path", "[pathinfo]")
+{
+    CATCH_START_SECTION("pathinfo: is child path function")
+    {
+        struct test_data
+        {
+            char const *        f_parent = nullptr;
+            char const *        f_child = nullptr;
+            bool                f_equal = true;
+            bool                f_result = false;
+        };
+        constexpr test_data const parent_child[] =
+        {
+            // not a child / mismatch
+            {
+                ".",
+                "..",
+                true,
+                false,
+            },
+            {
+                ".",
+                "..",
+                false,
+                false,
+            },
+            {
+                "/var",
+                "/usr/share/snapdev",
+                true,
+                false,
+            },
+            {
+                "/var",
+                "/usr/share/snapdev",
+                false,
+                false,
+            },
+            {
+                "/var",
+                "Desktop",
+                true,
+                false,
+            },
+            {
+                "/var",
+                "Desktop",
+                false,
+                false,
+            },
+            {
+                "",
+                "/usr/share/snapdev",
+                true,
+                false,
+            },
+            {
+                "/usr/share",
+                "",
+                true,
+                false,
+            },
+
+            // child, not equal
+            {
+                "/var",
+                "/var/lib/snapdev",
+                true,
+                true,
+            },
+            {
+                "/var",
+                "/var//lib/snapdev",
+                true,
+                true,
+            },
+            {
+                "//var",
+                "/var/lib/snapdev/",
+                true,
+                true,
+            },
+            {
+                "//var//",
+                "/var/lib//snapdev/",
+                true,
+                true,
+            },
+            {
+                "/var",
+                "/var/lib/snapdev",
+                false,
+                true,
+            },
+            {
+                "/var",
+                "/var//lib/snapdev",
+                false,
+                true,
+            },
+            {
+                "//var",
+                "/var/lib/snapdev/",
+                false,
+                true,
+            },
+            {
+                "//var//",
+                "/var/lib//snapdev/",
+                false,
+                true,
+            },
+
+            // child, equal
+            {
+                "/var",
+                "/var",
+                true,
+                true,
+            },
+            {
+                "/var",
+                "/var",
+                false,
+                false,
+            },
+            {
+                "/var/",
+                "/var",
+                true,
+                true,
+            },
+            {
+                "/var/",
+                "/var",
+                false,
+                false,
+            },
+            {
+                "/var",
+                "/var/",
+                true,
+                true,
+            },
+            {
+                "/var",
+                "/var/",
+                false,
+                false,
+            },
+            {
+                "",
+                "",
+                true,
+                true,
+            },
+            {
+                "",
+                "",
+                false,
+                false,
+            },
+        };
+
+        for(std::size_t idx(0); idx < std::size(parent_child); ++idx)
+        {
+            bool const result(snapdev::pathinfo::is_child_path(
+                      parent_child[idx].f_parent
+                    , parent_child[idx].f_child
+                    , parent_child[idx].f_equal
+                ));
+
+//std::cout << "--- idx: " << idx
+//          << " path: \"" << parent_child[idx].f_parent
+//          << "\" child: " << parent_child[idx].f_child
+//          << " equal: " << std::boolalpha << parent_child[idx].f_equal
+//          << " expected result: " << std::boolalpha << parent_child[idx].f_result
+//          << " result: " << std::boolalpha << result
+//          << "\n";
+            CATCH_REQUIRE(result == parent_child[idx].f_result);
+        }
+    }
+    CATCH_END_SECTION()
+}
+
+
 
 // vim: ts=4 sw=4 et
