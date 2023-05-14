@@ -54,6 +54,7 @@ if(SnapCatch2_FOUND)
         catch_to_string_literal.cpp
         catch_trim_string.cpp
         catch_user_groups.cpp
+        catch_version.cpp
     )
 
     target_include_directories(${PROJECT_NAME}

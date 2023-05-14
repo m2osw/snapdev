@@ -30,6 +30,7 @@
 #include    <snapdev/raii_generic_deleter.h>
 #include    <snapdev/mkdir_p.h>
 #include    <snapdev/pathinfo.h>
+#include    <snapdev/version.h>
 
 #include    "catch_main.h"
 
@@ -56,7 +57,7 @@ namespace
 // https://github.com/eworm-de/mkinitcpio-ykfde/issues/25
 // the warning was removed in future versions of gcc, unfortunately, we'll
 // be on 22.04 for a while...
-#if defined(__GNUC__) && __GNUC__ >= 11 && __GNUC_MINOR__ >= 3 && __GNUC_PATCHLEVEL__ >= 0
+#if SNAPDEV_CHECK_GCC_VERSION(11, 3, 0)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-truncation"
 #endif
@@ -162,7 +163,7 @@ void create_files(std::string const & folder, int depth, int max_depth, bool spe
         create_files(sub_folder, depth + 1, max_depth, special_files, sockets);
     }
 }
-#if defined(__GNUC__) && __GNUC__ >= 11 && __GNUC_MINOR__ >= 3 && __GNUC_PATCHLEVEL__ >= 0
+#if SNAPDEV_CHECK_GCC_VERSION(11, 3, 0)
 #pragma GCC diagnostic pop
 #endif
 

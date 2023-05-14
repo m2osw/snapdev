@@ -25,9 +25,55 @@
  * macros.
  */
 
-#define    SNAPDEV_VERSION_MAJOR   @SNAPDEV_VERSION_MAJOR@
-#define    SNAPDEV_VERSION_MINOR   @SNAPDEV_VERSION_MINOR@
-#define    SNAPDEV_VERSION_PATCH   @SNAPDEV_VERSION_PATCH@
-#define    SNAPDEV_VERSION_STRING  "@SNAPDEV_VERSION_MAJOR@.@SNAPDEV_VERSION_MINOR@.@SNAPDEV_VERSION_PATCH@"
+#define     SNAPDEV_VERSION_MAJOR   @SNAPDEV_VERSION_MAJOR@
+#define     SNAPDEV_VERSION_MINOR   @SNAPDEV_VERSION_MINOR@
+#define     SNAPDEV_VERSION_PATCH   @SNAPDEV_VERSION_PATCH@
+#define     SNAPDEV_VERSION_STRING  "@SNAPDEV_VERSION_MAJOR@.@SNAPDEV_VERSION_MINOR@.@SNAPDEV_VERSION_PATCH@"
+
+/** \brief Compare two version against each other.
+ *
+ * This macro compares version "wanted" against version "current" and returns
+ * true if "current" is larger or equal to "wanted".
+ *
+ * The input is wanted major, minor, patch level as three separate numbers
+ * and current major, minor, patch as three numbers. In a version syntax,
+ * it could be noted as:
+ *
+ * \code
+ *     // wanted <= current
+ *        1.2.3  <= 4.5.6
+ * \endcode
+ *
+ * \param[in] wanted_major  The minimum major version necessary.
+ * \param[in] wanted_minor  The minimum minor version necessary.
+ * \param[in] wanted_patch  The minimum patch version necessary.
+ * \param[in] current_major  The current major version necessary.
+ * \param[in] current_minor  The current minor version necessary.
+ * \param[in] current_patch  The current patch version necessary.
+ *
+ * \return true if wanted is smaller or equal to current.
+ */
+#define     SNAPDEV_CHECK_VERSION(wanted_major, wanted_minor, wanted_patch, current_major, current_minor, current_patch) \
+                    (((current_major) > (wanted_major)) || \
+                        (((current_major) == (wanted_major)) \
+                            && (((current_minor) > (wanted_minor)) || \
+                                (((current_minor) == (wanted_minor)) \
+                                    && ((current_patch) >= (wanted_patch))))))
+
+/** \brief Macro used to check the GCC compiler version.
+ *
+ * This macro specifically check the GCC compiler version against
+ * the input. This uses the SNAPDEV_CHECK_VERSION() macro with
+ * the GCC version macros: __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__.
+ *
+ * \param[in] wanted_major  The minimum major version necessary.
+ * \param[in] wanted_minor  The minimum minor version necessary.
+ * \param[in] wanted_patch  The minimum patch version necessary.
+ *
+ * \return true if wanted is smaller or equal to current.
+ */
+#define     SNAPDEV_CHECK_GCC_VERSION(wanted_major, wanted_minor, wanted_patch) \
+                    SNAPDEV_CHECK_VERSION(wanted_major, wanted_minor, wanted_patch, __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__)
+
 
 // vim: ts=4 sw=4 et
