@@ -28,6 +28,12 @@
  * other features.
  */
 
+// self
+//
+#include    <snapdev/tokenize_format.h>
+
+
+
 // libexcept
 //
 #include    <libexcept/exception.h>
@@ -44,6 +50,7 @@
 
 // C
 //
+#include    <langinfo.h>
 #include    <stdlib.h>
 #include    <string.h>
 #include    <sys/time.h>
@@ -407,13 +414,28 @@ public:
      * The function uses the strftime(). See that manual page to define
      * the format properly.
      *
-     * Unless you use the `%N` extension, the output will not include the
-     * precision available in the timespec (i.e. without the %N, the output
-     * is to the second, the timespec has nanoseconds available).
+     * This function supports a format extension: `%N`, to output 9 digits
+     * with the nanoseconds available in the `timespec_ex` object. Without
+     * the `%N`, the precision is to the second.
+     *
+     * \warning
+     * Internally, the function uses a buffer of 256 bytes maximum.
+     * Make sure your format is limited to the date and time. Things
+     * you want to prepend or append should be managed outside of this
+     * call.
+     *
+     * \warning
+     * The `%N` should be preceeded by a period if included just after the
+     * seconds (`%s` or `%S`). Some format arguments do not end with seconds,
+     * such as the `%c`, `%r`, `%X`, `%EX`. If you want to use those, then
+     * the `%N` should be separated by a space and probably followed by `ns`.
+     * Note, however, that leading `0` are automatically added so `%N` is
+     * always 9 characters at the moment.
      *
      * \param[in] format  The format used to transform the date and time in
      * a string.
-     * \param[in] local  Whether to generate a local time or use UTC.
+     * \param[in] local  Whether to generate a local time (true) or use UTC
+     * (false, which is also the default).
      *
      * \return The formatted date and time.
      */
@@ -433,29 +455,164 @@ public:
         {
             throw overflow("the specified number of seconds could not be transformed in a 'struct tm'.");
         }
+        format_item<char>::list_t format_items;
         std::string f(format);
         if(f.empty())
         {
-            // TODO: actually retrieve the locale() format and
-            //       search for "%T" or "%S" and insert ".%N"
-            //       right after either
+            // compute the default using the lcoale
             //
-            f = "%c.%N";
-        }
-        std::string::size_type pos(f.find("%N"));
-        if(pos != std::string::npos)
-        {
-            std::string n(std::to_string(tv_nsec));
-            if(n.length() > 9)
+            // if there is a %r, we convert it to the T_FMT_AMPM
+            // if there is a %X, we convert it to the T_FMT
+            // if there is a %EX, we convert it to the ERA_T_FMT
+            // and then search for "%T" or "%S" or "%s" and insert ".%N"
+            // right after
+            //
+            // Note: our algorithm doesn't work very well if the format
+            //       includes multiple %r, %X, %EX, %T, %S
+            //
+            f = nl_langinfo(D_T_FMT);
+            if(f.empty())
             {
-                throw overflow("tv_nsec is 1 billion or more, which is invalid.");
+                f = "%c";
             }
-            std::string const indent(9 - n.length(), '0');
-            n = indent + n;
-            f = f.substr(0, pos) + n + f.substr(pos + 2);
+            format_items = tokenize_format<
+                                  char
+                                , snapdev::strftime_letter_traits<char>
+                                , snapdev::strftime_flag_traits<char>>(f);
+
+            // replace 'r', 'X', 'EX' with their content because those
+            // will include the actual 'T', 'S', or 's'
+            //
+            // count the number of times we loop, if more than 10, forget
+            // it; that means the locale is broken (creates an infinite loop)
+            //
+            int loop(0);
+            for(auto it(format_items.begin()); it != format_items.end() && loop < 10; )
+            {
+                int t(0);
+                switch(it->format())
+                {
+                case 'r':
+                    // "r"
+                    t = T_FMT_AMPM;
+                    break;
+
+                case 'X':
+                    if(it->has_flags(snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED))
+                    {
+                        // "EX"
+                        t = ERA_T_FMT;
+                    }
+                    else
+                    {
+                        // "X"
+                        t = T_FMT;
+                    }
+                    break;
+
+                default:
+                    ++it;
+                    continue;
+
+                }
+                std::string const sub_format(nl_langinfo(t));
+                if(!sub_format.empty())
+                {
+                    auto const & sub_format_items(tokenize_format<
+                                      char
+                                    , snapdev::strftime_letter_traits<char>
+                                    , snapdev::strftime_flag_traits<char>>(sub_format));
+                    format_items.insert(
+                                      it
+                                    , sub_format_items.begin()
+                                    , sub_format_items.end());
+                }
+                it = format_items.erase(it);
+                ++loop;
+            }
+
+            for(auto it(format_items.begin()); it != format_items.end(); ++it)
+            {
+                switch(it->format())
+                {
+                case 'T':
+                case 'S':
+                case 's':
+                    {
+                        snapdev::format_item<char> period;
+                        period.string(".");
+                        format_items.insert(it, period);
+                        ++it;
+
+                        snapdev::format_item<char> nanoseconds;
+                        nanoseconds.string("%N");
+                        nanoseconds.format('N');
+                        format_items.insert(it, nanoseconds);
+                    }
+                    break;
+
+                }
+            }
         }
+        else
+        {
+            // user format, do not temper with it, if no .%N, that's
+            // the user's choice
+            //
+            format_items = tokenize_format<
+                              char
+                            , snapdev::strftime_letter_traits<char>
+                            , snapdev::strftime_flag_traits<char>>(f);
+        }
+
+        // Add support for microseconds and milliseconds
+        //
+        for(auto it(format_items.begin()); it != format_items.end();)
+        {
+            if(it->format() == 'N')
+            {
+                std::string n(std::to_string(tv_nsec));
+                if(n.length() > 9)
+                {
+                    throw overflow("tv_nsec is 1 billion or more, which is invalid.");
+                }
+                if(!it->has_flags(snapdev::strftime_flag_traits<char>::FORMAT_FLAG_NO_PAD))
+                {
+                    // prepend padding zeroes or spaces
+                    //
+                    char const pad(it->has_flags(snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_SPACES)
+                                ? ' '
+                                : '0');
+                    std::string const indent(9 - n.length(), pad);
+                    n = indent + n;
+                }
+                if(it->has_flags(snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED))
+                {
+                    // remove leading zeroes
+                    //
+                    std::string::size_type const last_non_zero(n.find_last_not_of('0'));
+                    if(last_non_zero != std::string::npos)
+                    {
+                        n = n.substr(0, last_non_zero + 1);
+                    }
+                }
+
+                // replace the %N with the final nanoseconds string
+                //
+                snapdev::format_item<char> nanoseconds;
+                nanoseconds.string(n);
+                format_items.insert(it, nanoseconds);
+
+                it = format_items.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+
         char buf[256];
-        size_t const sz(strftime(buf, sizeof(buf), f.c_str(), &date_and_time));
+        std::size_t const sz(strftime(buf, sizeof(buf), f.c_str(), &date_and_time));
         if(sz == 0)
         {
             // this happens with just a "%p" and "wrong locale"

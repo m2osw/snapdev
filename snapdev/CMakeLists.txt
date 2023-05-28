@@ -82,6 +82,7 @@ install(
         string_replace_many.h
         timespec_ex.h
         timestamp.h
+        tokenize_format.h
         tokenize_string.h
         to_lower.h
         to_string_literal.h

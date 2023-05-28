@@ -47,7 +47,6 @@
 //
 #include    <algorithm>
 #include    <string>
-#include    <type_traits>
 
 
 // C
@@ -465,15 +464,28 @@ enum class drop_privilege_mode_t
  * this function when your main() function starts. This is useful for
  * services which are not expected to run as root.
  *
+ * By default, the function attempts to switch to the user that started
+ * the process (`getuid(2)`). If that is still root, then it uses the
+ * \p mode parameter to know how to react next.
+ *
+ * \li drop_privilege_mode_t::DROP_PRIVILEGE_MODE_ALLOW_ROOT
+ *
+ * If it is acceptable to run your software as root anyway, then use this
+ * mode instead of the default.
+ *
+ * \li drop_privilege_mode_t::DROP_PRIVILEGE_MODE_TRY_NOBODY
+ *
+ * Try dropping privileges to the specified \p user_name user. By default,
+ * \p user_name is set to "nobody", hence the name of the mode.
+ *
  * \li drop_privilege_mode_t::DROP_PRIVILEGE_MODE_FAIL
  *
- *
- * the mode is set to
- * then the function throws on failure. This is the default.
+ * When \p mode is set to this value, failure to drop privileges result
+ * in the `still_root` exception.
  *
  * \exception still_root
  * It is important to note that, by default, if the user is still root after
- * the attempt to drop privileges, the function throws this exception.
+ * the attempt to drop privileges, the function raises this exception.
  * You can let your users continue to run as root by changing the mode
  * parameter.
  *
