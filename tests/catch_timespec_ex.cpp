@@ -17,9 +17,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /** \file
- * \brief Verify that the timespec operators function.
+ * \brief Verify that the timespec_ex operators function as expected.
  *
- * This file implements test for the timespec operator functions.
+ * This file implements tests for the timespec_ex operator and other
+ * functions.
  */
 
 // self
@@ -44,9 +45,9 @@
 
 
 
-CATCH_TEST_CASE("timespec-operations", "[math]")
+CATCH_TEST_CASE("timespec_ex_math", "[math]")
 {
-    CATCH_START_SECTION("timespec-operations: simple add")
+    CATCH_START_SECTION("timespec_ex_math: simple add")
     {
         snapdev::timespec_ex a(timespec{  5L, 345L });
 
@@ -93,7 +94,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("timespec-operations: simple subtract")
+    CATCH_START_SECTION("timespec_ex_math: simple subtract")
     {
         snapdev::timespec_ex a(timespec{ 25L, 1'345L });
         snapdev::timespec_ex b(timespec{ 13L,   701L });
@@ -126,7 +127,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("timespec-operations: add \"minus one day\"")
+    CATCH_START_SECTION("timespec_ex_math: add \"minus one day\"")
     {
         snapdev::timespec_ex now(timespec{ 1629652541L, 345L });
         snapdev::timespec_ex backward(timespec{ -86400L, 0L }); // -1 day
@@ -145,7 +146,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("timespec-operations: add with nano overflow")
+    CATCH_START_SECTION("timespec_ex_math: add with nano overflow")
     {
         snapdev::timespec_ex now(timespec{ 1629652541L, 913'788'345L });
         snapdev::timespec_ex backward(timespec{ 86400L, 500'000'000L }); // +1 day and 0.5 seconds
@@ -163,7 +164,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("timespec-operations: subtract with nano underflow")
+    CATCH_START_SECTION("timespec_ex_math: subtract with nano underflow")
     {
         snapdev::timespec_ex a(13L,   701L);
         snapdev::timespec_ex b(25L, 1'345L);
@@ -181,7 +182,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("timespec-operations: -1, 0, +1")
+    CATCH_START_SECTION("timespec_ex_math: -1, 0, +1")
     {
         snapdev::timespec_ex a = {};
 
@@ -216,7 +217,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("timespec-operations: add nanos")
+    CATCH_START_SECTION("timespec_ex_math: add nanos")
     {
         snapdev::timespec_ex now(1629652541L, 913'788'345L);
         std::int64_t nsec(500'000'000L);
@@ -331,7 +332,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("timespec-operations: load/save")
+    CATCH_START_SECTION("timespec_ex_math: load/save")
     {
         snapdev::timespec_ex now(1629652549L, 913'788'345L);
 
@@ -415,7 +416,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("timespec-operations: negative + negative")
+    CATCH_START_SECTION("timespec_ex_math: negative + negative")
     {
         snapdev::timespec_ex pa(4511L, 913'788'345L);
         snapdev::timespec_ex pb( 311L, 301'225'198L);
@@ -461,7 +462,7 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("timespec-operations: system time")
+    CATCH_START_SECTION("timespec_ex_math: system time")
     {
         snapdev::timespec_ex now;
         timespec verify = {};
@@ -475,8 +476,12 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
         CATCH_REQUIRE(diff < max_diff);
     }
     CATCH_END_SECTION()
+}
 
-    CATCH_START_SECTION("timespec-operations: ostream")
+
+CATCH_TEST_CASE("timespec_ex_string", "[string]")
+{
+    CATCH_START_SECTION("timespec_ex_string: ostream")
     {
         snapdev::timespec_ex a(timespec{ 4511L, 913'788'345L });
 
@@ -500,7 +505,27 @@ CATCH_TEST_CASE("timespec-operations", "[math]")
         CATCH_REQUIRE(ss.str() == "0.000000101");
     }
     CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_string: convert to string")
+    {
+        snapdev::timespec_ex a(timespec{ 4511L, 913'788'345L });
+
+//        struct tm date_and_time = {};
+//        struct tm * ptr(nullptr);
+//        ptr = localtime_r(&a.tv_sec, &date_and_time);
+//std::cerr << "a.tv_sec = " << a.tv_sec << " but " << date_and_time.tm_sec << "\n";
+
+        std::string out(a.to_string("%s.%N"));
+        CATCH_REQUIRE(out == "4511.913788345");
+
+        out = a.to_string();
+//std::cerr << "seconds misplaced in: " << out << "?\n";
+        CATCH_REQUIRE(out.find("11.913788345") != std::string::npos);
+
+    }
+    CATCH_END_SECTION()
 }
+
 
 
 

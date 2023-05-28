@@ -411,6 +411,12 @@ public:
 
     /** \brief Format the date to the specified format.
      *
+     * \warning
+     * This function uses strftime() which interprets the input time as
+     * localtime, no matter what. You may want to consider using the
+     * ostream<<() function if you want to save the time as a UTC string
+     * as seconds & nanoseconds.
+     *
      * This function transforms the time in a string and returns that string.
      * The function uses the strftime(). See that manual page to define
      * the format properly.
@@ -433,25 +439,19 @@ public:
      * Note, however, that leading `0` are automatically added so `%N` is
      * always 9 characters at the moment.
      *
+     * \exception overflow
+     * In case the conversion of the `tv_sec` fails, this exception is raised.
+     *
      * \param[in] format  The format used to transform the date and time in
      * a string.
-     * \param[in] local  Whether to generate a local time (true) or use UTC
-     * (false, which is also the default).
      *
      * \return The formatted date and time.
      */
-    std::string to_string(std::string const & format = std::string(), bool local = false) const
+    std::string to_string(std::string const & format = std::string()) const
     {
         struct tm date_and_time = {};
         struct tm * ptr(nullptr);
-        if(local)
-        {
-            ptr = localtime_r(&tv_sec, &date_and_time);
-        }
-        else
-        {
-            ptr = gmtime_r(&tv_sec, &date_and_time);
-        }
+        ptr = localtime_r(&tv_sec, &date_and_time);
         if(ptr == nullptr)
         {
             throw overflow("the specified number of seconds could not be transformed in a 'struct tm'.");
@@ -540,15 +540,21 @@ public:
                 case 'S':
                 case 's':
                     {
+                        ++it;
+
                         snapdev::format_item<char> period;
                         period.string(".");
                         format_items.insert(it, period);
-                        ++it;
 
                         snapdev::format_item<char> nanoseconds;
                         nanoseconds.string("%N");
                         nanoseconds.format('N');
                         format_items.insert(it, nanoseconds);
+
+                        // we can as well skip the '.' too since the format
+                        // is not one of T, S, s
+                        //
+                        ++it;
                     }
                     break;
 
@@ -562,8 +568,9 @@ public:
             //
             format_items = tokenize_format<
                               char
-                            , snapdev::strftime_letter_traits<char>
-                            , snapdev::strftime_flag_traits<char>>(f);
+                            , snapdev::strftime_letter_traits<char, true>
+                            , snapdev::strftime_flag_traits<char>
+                            , snapdev::strftime_number_traits<char>>(f);
         }
 
         // Add support for microseconds and milliseconds

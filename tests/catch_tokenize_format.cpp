@@ -1863,14 +1863,14 @@ CATCH_TEST_CASE("tokenize_format_printf", "[string]")
             auto r(g_printf_formats[idx].f_results.begin());
             for(auto it(items.begin()); it != items.end(); ++it, ++r)
             {
-std::cerr << "   +++ parsed [" << g_printf_formats[idx].f_format_string << "] compare item [" << it->string() << "]\n";
-if(it->has_errors())
-{
-for(auto const & e : it->errors())
-{
-std::cerr << "     >>> error: " << static_cast<int>(e) << "\n";
-}
-}
+//std::cerr << "   +++ parsed [" << g_printf_formats[idx].f_format_string << "] compare item [" << it->string() << "]\n";
+//if(it->has_errors())
+//{
+//for(auto const & e : it->errors())
+//{
+//std::cerr << "     >>> error: " << static_cast<int>(e) << "\n";
+//}
+//}
                 // verify that test data match in size (we already verified
                 // the size, but this is better than a SEGV)
                 //
