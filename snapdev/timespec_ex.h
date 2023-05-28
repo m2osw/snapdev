@@ -425,6 +425,14 @@ public:
      * with the nanoseconds available in the `timespec_ex` object. Without
      * the `%N`, the precision is to the second.
      *
+     * It is possible to retrieve the timezone using the `"%z"` or `"%Z"`
+     * format. If you want the full name, since we are beyond C++20,
+     * you can use `std::chrono` like so:
+     *
+     * \code
+     *     std::chrono::current_zone()->name()
+     * \endcode
+     *
      * \warning
      * Internally, the function uses a buffer of 256 bytes maximum.
      * Make sure your format is limited to the date and time. Things

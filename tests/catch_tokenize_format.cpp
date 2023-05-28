@@ -1552,6 +1552,489 @@ printf_formats_t const g_strftime_formats[] =
             },
         },
     },
+    {
+        .f_format_string = "extended %Ec format",
+        .f_results = {
+            {
+                .f_string = "extended ",
+            },
+            {
+                .f_string = "%Ec",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED,
+                .f_format = 'c',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "extended %EC format",
+        .f_results = {
+            {
+                .f_string = "extended ",
+            },
+            {
+                .f_string = "%EC",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED,
+                .f_format = 'C',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "extended %Ex format",
+        .f_results = {
+            {
+                .f_string = "extended ",
+            },
+            {
+                .f_string = "%Ex",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED,
+                .f_format = 'x',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "extended %EX format",
+        .f_results = {
+            {
+                .f_string = "extended ",
+            },
+            {
+                .f_string = "%EX",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED,
+                .f_format = 'X',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "extended %Ey format",
+        .f_results = {
+            {
+                .f_string = "extended ",
+            },
+            {
+                .f_string = "%Ey",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED,
+                .f_format = 'y',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "extended %EY format",
+        .f_results = {
+            {
+                .f_string = "extended ",
+            },
+            {
+                .f_string = "%EY",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED,
+                .f_format = 'Y',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %Od format",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_string = "%Od",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'd',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %Oe format",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_string = "%Oe",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'e',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %OH format",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_string = "%OH",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'H',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %OI format",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_string = "%OI",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'I',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %Om format",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_string = "%Om",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'm',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %OM format",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_string = "%OM",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'M',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %OS format",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_string = "%OS",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'S',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %Ou format",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_string = "%Ou",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'u',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %OU format",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_string = "%OU",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'U',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %OV format",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_string = "%OV",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'V',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %Ow format",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_string = "%Ow",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'w',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %OW format",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_string = "%OW",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'W',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %Oy format",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_string = "%Oy",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'y',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+    {
+        .f_format_string = "extended %Ef unknown",
+        .f_results = {
+            {
+                .f_string = "extended ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_UNKNOWN,
+                },
+                .f_string = "%",
+            },
+            {
+                .f_string = "Ef unknown",
+            },
+        },
+    },
+    {
+        .f_format_string = "modified %Of unknown",
+        .f_results = {
+            {
+                .f_string = "modified ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_UNKNOWN,
+                },
+                .f_string = "%",
+            },
+            {
+                .f_string = "Of unknown",
+            },
+        },
+    },
+    {
+        .f_format_string = "Overflow at end %10001Ey",
+        .f_results = {
+            {
+                .f_string = "Overflow at end ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_OVERFLOW,
+                },
+                .f_string = "%10001Ey",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED,
+                .f_width = 10000,
+                .f_format = 'y',
+            },
+        },
+    },
+    {
+        .f_format_string = "Overflow at end %99999Ey",
+        .f_results = {
+            {
+                .f_string = "Overflow at end ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_OVERFLOW,
+                },
+                .f_string = "%99999Ey",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED,
+                .f_width = 10000,
+                .f_format = 'y',
+            },
+        },
+    },
+    {
+        .f_format_string = "Overflow at end %3472830Ey",
+        .f_results = {
+            {
+                .f_string = "Overflow at end ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_OVERFLOW,
+                },
+                .f_string = "%3472830Ey",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED,
+                .f_width = 10000,
+                .f_format = 'y',
+            },
+        },
+    },
+};
+
+
+
+// the full implementation is found in the advgetopt library
+//
+template<typename _CharT>
+class usage_flag_traits
+{
+public:
+    typedef _CharT  char_t;
+
+    static constexpr snapdev::format_flag_t const       FORMAT_FLAG_EXTENDED = 0x0001; // '*'
+
+    static bool is_flag(char_t c, snapdev::format_item<_CharT> & f)
+    {
+        if(c == '*')
+        {
+            if(f.has_flags(FORMAT_FLAG_EXTENDED))
+            {
+                f.add_error(snapdev::format_error_t::FORMAT_ERROR_DUPLICATE);
+            }
+            f.add_flags(FORMAT_FLAG_EXTENDED);
+            return true;
+        }
+        return false;
+    }
+};
+
+template<typename _CharT>
+class usage_letter_traits
+{
+public:
+    static std::basic_string<_CharT>::size_type is_format(char const * s, snapdev::format_item<_CharT> & f)
+    {
+        if(s[0] == 'a'
+        || s[0] == 'd')
+        {
+            f.format(s[0]);
+            return 1UL;
+        }
+        f.add_error(snapdev::format_error_t::FORMAT_ERROR_UNKNOWN);
+        return 0;
+    }
+};
+
+
+printf_formats_t const g_usage_formats[] =
+{
+    {
+        .f_format_string = "Data Driven %% Tests",
+        .f_results = {
+            {
+                .f_string = "Data Driven ",
+            },
+            {
+                .f_string = "%%",
+            },
+            {
+                .f_string = " Tests",
+            },
+        },
+    },
+    {
+        .f_format_string = "Simple %a Code",
+        .f_results = {
+            {
+                .f_string = "Simple ",
+            },
+            {
+                .f_string = "%a",
+                .f_format = 'a',
+            },
+            {
+                .f_string = " Code",
+            },
+        },
+    },
+    {
+        .f_format_string = "Extended %*d Format",
+        .f_results = {
+            {
+                .f_string = "Extended ",
+            },
+            {
+                .f_string = "%*d",
+                .f_flags = usage_flag_traits<char>::FORMAT_FLAG_EXTENDED,
+                .f_format = 'd',
+            },
+            {
+                .f_string = " Format",
+            },
+        },
+    },
 };
 
 
@@ -1892,6 +2375,62 @@ CATCH_TEST_CASE("tokenize_format_printf", "[string]")
 
 CATCH_TEST_CASE("tokenize_format_strftime", "[string]")
 {
+    CATCH_START_SECTION("tokenize_format_strftime: no nanoseconds support")
+    {
+        snapdev::format_item<char>::list_t items(snapdev::tokenize_format<
+                  char
+                , snapdev::strftime_letter_traits<char>
+                , snapdev::strftime_flag_traits<char>
+                , snapdev::strftime_number_traits<char>>("%s.%N"));
+
+        CATCH_REQUIRE(items.size() == 4);
+
+        auto it(items.begin());
+
+        CATCH_REQUIRE(it->string() == "%s");
+
+        ++it;
+        CATCH_REQUIRE(it->string() == ".");
+
+        ++it;
+        CATCH_REQUIRE(it->string() == "%");
+        CATCH_REQUIRE(it->has_errors());
+        CATCH_REQUIRE(it->errors() == snapdev::format_error_set_t{ snapdev::format_error_t::FORMAT_ERROR_UNKNOWN });
+        CATCH_REQUIRE(it->format() == '\0');
+
+        ++it;
+        CATCH_REQUIRE(it->string() == "N");
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("tokenize_format_strftime: no nanoseconds support (extended)")
+    {
+        snapdev::format_item<char>::list_t items(snapdev::tokenize_format<
+                  char
+                , snapdev::strftime_letter_traits<char>
+                , snapdev::strftime_flag_traits<char>
+                , snapdev::strftime_number_traits<char>>("%s.%EN"));
+
+        CATCH_REQUIRE(items.size() == 4);
+
+        auto it(items.begin());
+
+        CATCH_REQUIRE(it->string() == "%s");
+
+        ++it;
+        CATCH_REQUIRE(it->string() == ".");
+
+        ++it;
+        CATCH_REQUIRE(it->string() == "%");
+        CATCH_REQUIRE(it->has_errors());
+        CATCH_REQUIRE(it->errors() == snapdev::format_error_set_t{ snapdev::format_error_t::FORMAT_ERROR_UNKNOWN });
+        CATCH_REQUIRE(it->format() == '\0');
+
+        ++it;
+        CATCH_REQUIRE(it->string() == "EN");
+    }
+    CATCH_END_SECTION()
+
     CATCH_START_SECTION("tokenize_format_strftime: data driven tests")
     {
         for(std::size_t idx(0); idx < std::size(g_strftime_formats); ++idx)
@@ -1919,6 +2458,52 @@ CATCH_TEST_CASE("tokenize_format_strftime", "[string]")
                 // the size, but this is better than a SEGV)
                 //
                 CATCH_REQUIRE(r != g_strftime_formats[idx].f_results.end());
+
+                CATCH_REQUIRE(it->errors() == r->f_errors);
+                CATCH_REQUIRE(it->string() == r->f_string);
+                CATCH_REQUIRE(it->flags() == r->f_flags);
+                CATCH_REQUIRE(it->width() == r->f_width);
+                CATCH_REQUIRE(it->precision() == r->f_precision);
+                CATCH_REQUIRE(it->position() == r->f_position);
+                CATCH_REQUIRE(it->format() == r->f_format);
+            }
+        }
+    }
+    CATCH_END_SECTION()
+}
+
+
+// the following tests a small subset of the advgetopt Usage: ... format
+// support to verify the "no number" implementation
+//
+CATCH_TEST_CASE("tokenize_format_advgetopt", "[string]")
+{
+    CATCH_START_SECTION("tokenize_format_advgetopt: data driven tests")
+    {
+        for(std::size_t idx(0); idx < std::size(g_usage_formats); ++idx)
+        {
+            snapdev::format_item<char>::list_t items(snapdev::tokenize_format<
+                      char
+                    , usage_letter_traits<char>
+                    , usage_flag_traits<char>>(g_usage_formats[idx].f_format_string));
+
+            CATCH_REQUIRE(items.size() == g_usage_formats[idx].f_results.size());
+
+            auto r(g_usage_formats[idx].f_results.begin());
+            for(auto it(items.begin()); it != items.end(); ++it, ++r)
+            {
+//std::cerr << "   +++ parsed [" << g_usage_formats[idx].f_format_string << "] compare item [" << it->string() << "]\n";
+//if(it->has_errors())
+//{
+//for(auto const & e : it->errors())
+//{
+//std::cerr << "     >>> error: " << static_cast<int>(e) << "\n";
+//}
+//}
+                // verify that test data match in size (we already verified
+                // the size, but this is better than a SEGV)
+                //
+                CATCH_REQUIRE(r != g_usage_formats[idx].f_results.end());
 
                 CATCH_REQUIRE(it->errors() == r->f_errors);
                 CATCH_REQUIRE(it->string() == r->f_string);
