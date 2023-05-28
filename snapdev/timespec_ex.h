@@ -30,6 +30,7 @@
 
 // self
 //
+#include    <snapdev/join_strings.h>
 #include    <snapdev/tokenize_format.h>
 
 
@@ -610,6 +611,11 @@ public:
                 ++it;
             }
         }
+
+        // convert the format items back in a format string
+        //
+        snapdev::format_item<char> empty_item;
+        f = snapdev::join_strings(format_items, empty_item);
 
         char buf[256];
         std::size_t const sz(strftime(buf, sizeof(buf), f.c_str(), &date_and_time));

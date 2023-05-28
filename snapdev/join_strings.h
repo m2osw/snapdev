@@ -86,25 +86,26 @@ typename ContainerT::value_type join_strings(
         std::size_t const total_size(std::accumulate(
                   tokens.begin()
                 , tokens.end()
-                , separator.length() * (tokens.size() - 1)
+                , static_cast<std::string>(separator).length() * (tokens.size() - 1)
                 , [](std::size_t const & sum, typename ContainerT::value_type const & str)
                     {
-                        return sum + str.length();
+                        return sum + static_cast<std::string>(str).length();
                     }));
 
-        result.reserve(total_size);
+        static_cast<std::string &>(result).reserve(total_size);
 
         // avoid special case in the loop
         // (i.e. no separator before the first token)
         //
-        result += *tokens.begin();
+        static_cast<std::string &>(result) += *tokens.begin();
 
         std::for_each(
                   std::next(tokens.begin())
                 , tokens.end()
                 , [separator, &result](auto const & s)
                         {
-                            result += separator + s;
+                            static_cast<std::string &>(result) += static_cast<std::string const &>(separator)
+                                                                + static_cast<std::string const &>(s);
                         });
     }
 

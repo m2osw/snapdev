@@ -145,7 +145,12 @@ public:
         f_string = s;
     }
 
-    operator std::string () const
+    operator std::string & ()
+    {
+        return f_string;
+    }
+
+    operator std::string const & () const
     {
         return f_string;
     }
