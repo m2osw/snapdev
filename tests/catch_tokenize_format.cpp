@@ -785,15 +785,785 @@ printf_formats_t const g_printf_formats[] =
 };
 
 
+printf_formats_t const g_strftime_formats[] =
+{
+    {
+        .f_format_string = "Data Driven %% Tests",
+        .f_results = {
+            {
+                .f_string = "Data Driven ",
+            },
+            {
+                .f_string = "%%",
+            },
+            {
+                .f_string = " Tests",
+            },
+        },
+    },
+    {
+        .f_format_string = "Simple %a Code",
+        .f_results = {
+            {
+                .f_string = "Simple ",
+            },
+            {
+                .f_string = "%a",
+                .f_format = 'a',
+            },
+            {
+                .f_string = " Code",
+            },
+        },
+    },
+    {
+        .f_format_string = "Week Day %_A and Space Pad",
+        .f_results = {
+            {
+                .f_string = "Week Day ",
+            },
+            {
+                .f_string = "%_A",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_SPACES,
+                .f_format = 'A',
+            },
+            {
+                .f_string = " and Space Pad",
+            },
+        },
+    },
+    {
+        .f_format_string = "Abbr Month %-b without pad",
+        .f_results = {
+            {
+                .f_string = "Abbr Month ",
+            },
+            {
+                .f_string = "%-b",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_NO_PAD,
+                .f_format = 'b',
+            },
+            {
+                .f_string = " without pad",
+            },
+        },
+    },
+    {
+        .f_format_string = "Month %0B Zero Pad",
+        .f_results = {
+            {
+                .f_string = "Month ",
+            },
+            {
+                .f_string = "%0B",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_ZEROES,
+                .f_format = 'B',
+            },
+            {
+                .f_string = " Zero Pad",
+            },
+        },
+    },
+    {
+        .f_format_string = "Default Date %^c Uppercase",
+        .f_results = {
+            {
+                .f_string = "Default Date ",
+            },
+            {
+                .f_string = "%^c",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_UPPERCASE,
+                .f_format = 'c',
+            },
+            {
+                .f_string = " Uppercase",
+            },
+        },
+    },
+    {
+        .f_format_string = "Century %#C Swap Case",
+        .f_results = {
+            {
+                .f_string = "Century ",
+            },
+            {
+                .f_string = "%#C",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_SWAP_CASE,
+                .f_format = 'C',
+            },
+            {
+                .f_string = " Swap Case",
+            },
+        },
+    },
+    {
+        .f_format_string = "Day %Od Alternate",
+        .f_results = {
+            {
+                .f_string = "Day ",
+            },
+            {
+                .f_string = "%Od",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'd',
+            },
+            {
+                .f_string = " Alternate",
+            },
+        },
+    },
+    {
+        .f_format_string = "Date %_^D Pad/Upper",
+        .f_results = {
+            {
+                .f_string = "Date ",
+            },
+            {
+                .f_string = "%_^D",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_SPACES
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_UPPERCASE,
+                .f_format = 'D',
+            },
+            {
+                .f_string = " Pad/Upper",
+            },
+        },
+    },
+    {
+        .f_format_string = "Alternate Form %-#Oe Flag",
+        .f_results = {
+            {
+                .f_string = "Alternate Form ",
+            },
+            {
+                .f_string = "%-#Oe",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_NO_PAD
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_SWAP_CASE
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_MODIFIER,
+                .f_format = 'e',
+            },
+            {
+                .f_string = " Flag",
+            },
+        },
+    },
+    {
+        .f_format_string = "ISO 8601 %^0F Date",
+        .f_results = {
+            {
+                .f_string = "ISO 8601 ",
+            },
+            {
+                .f_string = "%^0F",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_ZEROES
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_UPPERCASE,
+                .f_format = 'F',
+            },
+            {
+                .f_string = " Date",
+            },
+        },
+    },
+    {
+        .f_format_string = "Year %G Based on Week",
+        .f_results = {
+            {
+                .f_string = "Year ",
+            },
+            {
+                .f_string = "%G",
+                .f_format = 'G',
+            },
+            {
+                .f_string = " Based on Week",
+            },
+        },
+    },
+    {
+        .f_format_string = "Small %g Year",
+        .f_results = {
+            {
+                .f_string = "Small ",
+            },
+            {
+                .f_string = "%g",
+                .f_format = 'g',
+            },
+            {
+                .f_string = " Year",
+            },
+        },
+    },
+    {
+        .f_format_string = "Switch to b %--h and Duplicate",
+        .f_results = {
+            {
+                .f_string = "Switch to b ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_DUPLICATE,
+                },
+                .f_string = "%--h",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_NO_PAD,
+                .f_format = 'b',
+            },
+            {
+                .f_string = " and Duplicate",
+            },
+        },
+    },
+    {
+        .f_format_string = "Hour %__H and Duplicate",
+        .f_results = {
+            {
+                .f_string = "Hour ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_DUPLICATE,
+                },
+                .f_string = "%__H",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_SPACES,
+                .f_format = 'H',
+            },
+            {
+                .f_string = " and Duplicate",
+            },
+        },
+    },
+    {
+        .f_format_string = "12h %##I and Duplicate",
+        .f_results = {
+            {
+                .f_string = "12h ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_DUPLICATE,
+                },
+                .f_string = "%##I",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_SWAP_CASE,
+                .f_format = 'I',
+            },
+            {
+                .f_string = " and Duplicate",
+            },
+        },
+    },
+    {
+        .f_format_string = "Year Day %00j and Duplicate",
+        .f_results = {
+            {
+                .f_string = "Year Day ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_DUPLICATE,
+                },
+                .f_string = "%00j",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_ZEROES,
+                .f_format = 'j',
+            },
+            {
+                .f_string = " and Duplicate",
+            },
+        },
+    },
+    {
+        .f_format_string = "24h %^^k and Duplicate",
+        .f_results = {
+            {
+                .f_string = "24h ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_DUPLICATE,
+                },
+                .f_string = "%^^k",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_UPPERCASE,
+                .f_format = 'k',
+            },
+            {
+                .f_string = " and Duplicate",
+            },
+        },
+    },
+    {
+        .f_format_string = "12h %_0l and Mismatch",
+        .f_results = {
+            {
+                .f_string = "12h ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_MISMATCH,
+                },
+                .f_string = "%_0l",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_SPACES
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_ZEROES,
+                .f_format = 'l',
+            },
+            {
+                .f_string = " and Mismatch",
+            },
+        },
+    },
+    {
+        .f_format_string = "Month %0_m Mismatch",
+        .f_results = {
+            {
+                .f_string = "Month ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_MISMATCH,
+                },
+                .f_string = "%0_m",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_SPACES
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_ZEROES,
+                .f_format = 'm',
+            },
+            {
+                .f_string = " Mismatch",
+            },
+        },
+    },
+    {
+        .f_format_string = "Minutes %_-M and Mismatch",
+        .f_results = {
+            {
+                .f_string = "Minutes ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_MISMATCH,
+                },
+                .f_string = "%_-M",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_NO_PAD
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_SPACES,
+                .f_format = 'M',
+            },
+            {
+                .f_string = " and Mismatch",
+            },
+        },
+    },
+    {
+        .f_format_string = "Newline %-_n and Mismatch",
+        .f_results = {
+            {
+                .f_string = "Newline ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_MISMATCH,
+                },
+                .f_string = "%-_n",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_NO_PAD
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_SPACES,
+                .f_format = 'n',
+            },
+            {
+                .f_string = " and Mismatch",
+            },
+        },
+    },
+    {
+        .f_format_string = "Nanoseconds %-N (for us)",
+        .f_results = {
+            {
+                .f_string = "Nanoseconds ",
+            },
+            {
+                .f_string = "%-N",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_NO_PAD,
+                .f_format = 'N',
+            },
+            {
+                .f_string = " (for us)",
+            },
+        },
+    },
+    {
+        .f_format_string = "AM/PM %-0p Mismatch",
+        .f_results = {
+            {
+                .f_string = "AM/PM ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_MISMATCH,
+                },
+                .f_string = "%-0p",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_NO_PAD
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_ZEROES,
+                .f_format = 'p',
+            },
+            {
+                .f_string = " Mismatch",
+            },
+        },
+    },
+    {
+        .f_format_string = "am/pm %0-P and Mismatch",
+        .f_results = {
+            {
+                .f_string = "am/pm ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_MISMATCH,
+                },
+                .f_string = "%0-P",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_NO_PAD
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_ZEROES,
+                .f_format = 'P',
+            },
+            {
+                .f_string = " and Mismatch",
+            },
+        },
+    },
+    {
+        .f_format_string = "Time %^#r Upper/Flip",
+        .f_results = {
+            {
+                .f_string = "Time ",
+            },
+            {
+                .f_string = "%^#r",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_UPPERCASE
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_SWAP_CASE,
+                .f_format = 'r',
+            },
+            {
+                .f_string = " Upper/Flip",
+            },
+        },
+    },
+    {
+        .f_format_string = "Time %#^r Flip/Upper",
+        .f_results = {
+            {
+                .f_string = "Time ",
+            },
+            {
+                .f_string = "%#^r",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_UPPERCASE
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_SWAP_CASE,
+                .f_format = 'r',
+            },
+            {
+                .f_string = " Flip/Upper",
+            },
+        },
+    },
+    {
+        .f_format_string = "Basic Time %R",
+        .f_results = {
+            {
+                .f_string = "Basic Time ",
+            },
+            {
+                .f_string = "%R",
+                .f_format = 'R',
+            },
+        },
+    },
+    {
+        .f_format_string = "Seconds %s.%EN Nanoseconds",
+        .f_results = {
+            {
+                .f_string = "Seconds ",
+            },
+            {
+                .f_string = "%s",
+                .f_format = 's',
+            },
+            {
+                .f_string = ".",
+            },
+            {
+                .f_string = "%EN",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED,
+                .f_format = 'N',
+            },
+            {
+                .f_string = " Nanoseconds",
+            },
+        },
+    },
+    {
+        .f_format_string = "2-digit seconds %02S no error",
+        .f_results = {
+            {
+                .f_string = "2-digit seconds ",
+            },
+            {
+                .f_string = "%02S",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_ZEROES,
+                .f_width = 2,
+                .f_format = 'S',
+            },
+            {
+                .f_string = " no error",
+            },
+        },
+    },
+    {
+        .f_format_string = "Tab %t Char",
+        .f_results = {
+            {
+                .f_string = "Tab ",
+            },
+            {
+                .f_string = "%t",
+                .f_format = 't',
+            },
+            {
+                .f_string = " Char",
+            },
+        },
+    },
+    {
+        .f_format_string = "End Of String %_#^",
+        .f_results = {
+            {
+                .f_string = "End Of String ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_EOS,
+                },
+                .f_string = "%_#^",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_SPACES
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_UPPERCASE
+                         | snapdev::strftime_flag_traits<char>::FORMAT_FLAG_SWAP_CASE,
+            },
+        },
+    },
+    {
+        .f_format_string = "Time %^5T and EOS %",
+        .f_results = {
+            {
+                .f_string = "Time ",
+            },
+            {
+                .f_string = "%^5T",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_UPPERCASE,
+                .f_width = 5,
+                .f_format = 'T',
+            },
+            {
+                .f_string = " and EOS ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_EOS,
+                },
+                .f_string = "%",
+            },
+        },
+    },
+    {
+        .f_format_string = "%0u Start Of String",
+        .f_results = {
+            {
+                .f_string = "%0u",
+                .f_flags = snapdev::strftime_flag_traits<char>::FORMAT_FLAG_PAD_WITH_ZEROES,
+                .f_format = 'u',
+            },
+            {
+                .f_string = " Start Of String",
+            },
+        },
+    },
+    {
+        .f_format_string = "%U%10V%w",
+        .f_results = {
+            {
+                .f_string = "%U",
+                .f_format = 'U',
+            },
+            {
+                .f_string = "%10V",
+                .f_width = 10,
+                .f_format = 'V',
+            },
+            {
+                .f_string = "%w",
+                .f_format = 'w',
+            },
+        },
+    },
+    {
+        .f_format_string = "without%Wspaces",
+        .f_results = {
+            {
+                .f_string = "without",
+            },
+            {
+                .f_string = "%W",
+                .f_format = 'W',
+            },
+            {
+                .f_string = "spaces",
+            },
+        },
+    },
+    {
+        .f_format_string = "Unknown %q Error",
+        .f_results = {
+            {
+                .f_string = "Unknown ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_UNKNOWN,
+                },
+                .f_string = "%",
+            },
+            {
+                .f_string = "q Error",
+            },
+        },
+    },
+    {
+        .f_format_string = "No %3.4z Separator",
+        .f_results = {
+            {
+                .f_string = "No ",
+            },
+            {
+                .f_errors = {
+                    snapdev::format_error_t::FORMAT_ERROR_UNKNOWN,
+                },
+                .f_string = "%",
+                .f_width = 3,
+            },
+            {
+                .f_string = "3.4z Separator",
+            },
+        },
+    },
+    {
+        .f_format_string = "Date %x Only",
+        .f_results = {
+            {
+                .f_string = "Date ",
+            },
+            {
+                .f_string = "%x",
+                .f_format = 'x',
+            },
+            {
+                .f_string = " Only",
+            },
+        },
+    },
+    {
+        .f_format_string = "Time %X Only",
+        .f_results = {
+            {
+                .f_string = "Time ",
+            },
+            {
+                .f_string = "%X",
+                .f_format = 'X',
+            },
+            {
+                .f_string = " Only",
+            },
+        },
+    },
+    {
+        .f_format_string = "Year %y without century",
+        .f_results = {
+            {
+                .f_string = "Year ",
+            },
+            {
+                .f_string = "%y",
+                .f_format = 'y',
+            },
+            {
+                .f_string = " without century",
+            },
+        },
+    },
+    {
+        .f_format_string = "Full %Y year",
+        .f_results = {
+            {
+                .f_string = "Full ",
+            },
+            {
+                .f_string = "%Y",
+                .f_format = 'Y',
+            },
+            {
+                .f_string = " year",
+            },
+        },
+    },
+    {
+        .f_format_string = "Zone %z (numeric)",
+        .f_results = {
+            {
+                .f_string = "Zone ",
+            },
+            {
+                .f_string = "%z",
+                .f_format = 'z',
+            },
+            {
+                .f_string = " (numeric)",
+            },
+        },
+    },
+    {
+        .f_format_string = "Zone %Z (abbr)",
+        .f_results = {
+            {
+                .f_string = "Zone ",
+            },
+            {
+                .f_string = "%Z",
+                .f_format = 'Z',
+            },
+            {
+                .f_string = " (abbr)",
+            },
+        },
+    },
+    {
+        .f_format_string = "date(1) %+ format",
+        .f_results = {
+            {
+                .f_string = "date(1) ",
+            },
+            {
+                .f_string = "%+",
+                .f_format = '+',
+            },
+            {
+                .f_string = " format",
+            },
+        },
+    },
+};
+
+
 
 }
 // no name namespace
 
 
 
-CATCH_TEST_CASE("tokenize_format", "[string]")
+CATCH_TEST_CASE("tokenize_format_printf", "[string]")
 {
-    CATCH_START_SECTION("tokenize_format: printf escape %")
+    CATCH_START_SECTION("tokenize_format_printf: escape %")
     {
         snapdev::format_item<char>::list_t items(snapdev::tokenize_format<
                   char
@@ -844,7 +1614,7 @@ CATCH_TEST_CASE("tokenize_format", "[string]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("tokenize_format: printf letters only")
+    CATCH_START_SECTION("tokenize_format_printf: letters only")
     {
         for(char const * s(g_printf_letters); *s != '\0'; ++s)
         {
@@ -916,7 +1686,7 @@ CATCH_TEST_CASE("tokenize_format", "[string]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("tokenize_format: printf size + format")
+    CATCH_START_SECTION("tokenize_format_printf: size + format")
     {
         for(std::size_t idx(0); idx < std::size(g_printf_sizes); ++idx)
         {
@@ -961,7 +1731,7 @@ CATCH_TEST_CASE("tokenize_format", "[string]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("tokenize_format: printf size defined twice")
+    CATCH_START_SECTION("tokenize_format_printf: size defined twice")
     {
         snapdev::format_error_set_t duplicate{ snapdev::format_error_t::FORMAT_ERROR_DUPLICATE };
         int format(rand() % (sizeof(g_printf_letters) - 1));
@@ -1078,7 +1848,7 @@ CATCH_TEST_CASE("tokenize_format", "[string]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("tokenize_format: printf data driven tests")
+    CATCH_START_SECTION("tokenize_format_printf: data driven tests")
     {
         for(std::size_t idx(0); idx < std::size(g_printf_formats); ++idx)
         {
@@ -1105,6 +1875,50 @@ std::cerr << "     >>> error: " << static_cast<int>(e) << "\n";
                 // the size, but this is better than a SEGV)
                 //
                 CATCH_REQUIRE(r != g_printf_formats[idx].f_results.end());
+
+                CATCH_REQUIRE(it->errors() == r->f_errors);
+                CATCH_REQUIRE(it->string() == r->f_string);
+                CATCH_REQUIRE(it->flags() == r->f_flags);
+                CATCH_REQUIRE(it->width() == r->f_width);
+                CATCH_REQUIRE(it->precision() == r->f_precision);
+                CATCH_REQUIRE(it->position() == r->f_position);
+                CATCH_REQUIRE(it->format() == r->f_format);
+            }
+        }
+    }
+    CATCH_END_SECTION()
+}
+
+
+CATCH_TEST_CASE("tokenize_format_strftime", "[string]")
+{
+    CATCH_START_SECTION("tokenize_format_strftime: data driven tests")
+    {
+        for(std::size_t idx(0); idx < std::size(g_strftime_formats); ++idx)
+        {
+            snapdev::format_item<char>::list_t items(snapdev::tokenize_format<
+                      char
+                    , snapdev::strftime_letter_traits<char, true>
+                    , snapdev::strftime_flag_traits<char>
+                    , snapdev::strftime_number_traits<char>>(g_strftime_formats[idx].f_format_string));
+
+            CATCH_REQUIRE(items.size() == g_strftime_formats[idx].f_results.size());
+
+            auto r(g_strftime_formats[idx].f_results.begin());
+            for(auto it(items.begin()); it != items.end(); ++it, ++r)
+            {
+//std::cerr << "   +++ parsed [" << g_strftime_formats[idx].f_format_string << "] compare item [" << it->string() << "]\n";
+//if(it->has_errors())
+//{
+//for(auto const & e : it->errors())
+//{
+//std::cerr << "     >>> error: " << static_cast<int>(e) << "\n";
+//}
+//}
+                // verify that test data match in size (we already verified
+                // the size, but this is better than a SEGV)
+                //
+                CATCH_REQUIRE(r != g_strftime_formats[idx].f_results.end());
 
                 CATCH_REQUIRE(it->errors() == r->f_errors);
                 CATCH_REQUIRE(it->string() == r->f_string);

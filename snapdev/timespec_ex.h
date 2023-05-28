@@ -588,7 +588,7 @@ public:
                 }
                 if(it->has_flags(snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED))
                 {
-                    // remove leading zeroes
+                    // remove ending zeroes
                     //
                     std::string::size_type const last_non_zero(n.find_last_not_of('0'));
                     if(last_non_zero != std::string::npos)

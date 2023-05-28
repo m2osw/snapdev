@@ -38,7 +38,28 @@
  * similar format strings.
  *
  * \note
- * At the moment, format letters and flag characters are limited to ASCII.
+ * The classes are templates allowing you to change the type of character
+ * to any available type (i.e. char, wchar_t, char32_t...). However, multibyte
+ * characters are not support.
+ *
+ * \todo
+ * Generate errors if order is incorrect (i.e. strftime() expects optional
+ * flags, optional width, format letter -- any other order will fail in the
+ * strftime() -- when our format parser allows any order except for the
+ * format letter which has to be last).
+ *
+ * \todo
+ * Write a generator so we can create a format string by creating a list
+ * of format_item which we can then transform in '%...<letter>' entries.
+ *
+ * \todo
+ * Add enums for the list of supported formats so we can use that enum
+ * instead of a plain letter (i.e. 'd' would be PRINTF_FORMAT_DECIMAL,
+ * for example).
+ *
+ * \todo
+ * Add error messages (at this time, what really happened is weak to say
+ * the least--although we do not one set of error per format segment).
  */
 
 // self
@@ -47,41 +68,20 @@
 
 
 
-// libexcept
-//
-//#include    <libexcept/exception.h>
-
-
 // C++
 //
-//#include    <cmath>
 #include    <cstdint>
 #include    <limits>
 #include    <list>
-//#include    <iomanip>
 #include    <iostream>
 #include    <string>
 #include    <set>
-
-
-// C
-//
-//#include    <langinfo.h>
-//#include    <stdlib.h>
-//#include    <string.h>
-//#include    <sys/time.h>
-//#include    <time.h>
-
 
 
 
 namespace snapdev
 {
 
-//DECLARE_MAIN_EXCEPTION(timespec_ex_exception);
-
-//DECLARE_EXCEPTION(timespec_ex_exception, overflow);
-//DECLARE_EXCEPTION(timespec_ex_exception, clock_error);
 
 
 enum class format_error_t : std::uint8_t
@@ -493,10 +493,10 @@ public:
     static constexpr format_flag_t const       FORMAT_FLAG_PAD_WITH_SPACES = 0x01; // '_'
     static constexpr format_flag_t const       FORMAT_FLAG_NO_PAD          = 0x02; // '-'
     static constexpr format_flag_t const       FORMAT_FLAG_PAD_WITH_ZEROES = 0x04; // '0'
-    static constexpr format_flag_t const       FORMAT_FLAG_UPPERCASE       = 0x08; // '#'
-    static constexpr format_flag_t const       FORMAT_FLAG_SWAP_CASE       = 0x10; // '^'
-    static constexpr format_flag_t const       FORMAT_FLAG_EXTENDED        = 0x20; // 'E'
-    static constexpr format_flag_t const       FORMAT_FLAG_MODIFIER        = 0x10; // 'O'
+    static constexpr format_flag_t const       FORMAT_FLAG_UPPERCASE       = 0x08; // '^'
+    static constexpr format_flag_t const       FORMAT_FLAG_SWAP_CASE       = 0x10; // '#'
+    static constexpr format_flag_t const       FORMAT_FLAG_EXTENDED        = 0x20; // 'E' -- %Ec, %EC, %EN, %Ex, %EX, %Ey, %EY
+    static constexpr format_flag_t const       FORMAT_FLAG_MODIFIER        = 0x10; // 'O' -- %Od, %Oe, %OH, %OI, %Om, %OM, %OS, %Ou, %OU, %OV, %Ow, %OW, %Oy
 
     static bool is_flag(char_t c, format_item<_CharT> & f)
     {
@@ -648,6 +648,55 @@ public:
 
 
 template<typename _CharT>
+class strftime_number_traits
+{
+public:
+    typedef _CharT  char_t;
+
+    static bool support_numbers()
+    {
+        return true;
+    }
+
+    static bool is_number_separator(char_t c)
+    {
+        NOT_USED(c);
+        return false;
+    }
+
+    static bool is_number_position(char_t c)
+    {
+        NOT_USED(c);
+        return false;
+    }
+
+    static bool is_dynamic_position(char_t c)
+    {
+        NOT_USED(c);
+        return false;
+    }
+
+    static bool parse_number(char_t c, int & number, format_item<_CharT> & f)
+    {
+        if(c >= '0' && c <= '9')
+        {
+            number *= 10;
+            number += c - '0';
+            if(number > 10'000)
+            {
+                number = 10'000;    // prevent further growth
+                f.add_error(format_error_t::FORMAT_ERROR_OVERFLOW);
+            }
+            return true;
+        }
+
+        return false;
+    }
+};
+
+
+
+template<typename _CharT>
 class printf_letter_traits
 {
 public:
@@ -697,7 +746,6 @@ public:
             break;
 
         default:
-std::cerr << "got character [" << s[0] << "]\n";
             f.add_error(format_error_t::FORMAT_ERROR_UNKNOWN);
             break;
 
@@ -709,7 +757,7 @@ std::cerr << "got character [" << s[0] << "]\n";
 
 
 
-template<typename _CharT>
+template<typename _CharT, bool support_nanoseconds = false>
 class strftime_letter_traits
 {
 public:
@@ -717,9 +765,19 @@ public:
     {
         switch(s[0])
         {
+        case 'h': // equivalent to 'b' so use that instead
+        case 'b':
+            f.format('b');
+            return 1UL;
+
+        case 'N': // Nanoseconds (9 digits, with '0' left padding by default)
+            if(!support_nanoseconds)
+            {
+                break;
+            }
+            [[fallthrough]];
         case 'a':
         case 'A':
-        case 'b':
         case 'B':
         case 'c':
         case 'C':
@@ -729,7 +787,6 @@ public:
         case 'F':
         case 'g':
         case 'G':
-        case 'h':
         case 'H':
         case 'I':
         case 'j':
@@ -764,6 +821,12 @@ public:
         case 'E':
             switch(s[1])
             {
+            case 'N': // Nanoseconds without ending zeroes
+                if(!support_nanoseconds)
+                {
+                    break;
+                }
+                [[fallthrough]];
             case 'c':
             case 'C':
             case 'x':
@@ -847,8 +910,16 @@ format_item<_CharT>::list_t tokenize_format(std::basic_string<_CharT> const & fo
                 bool found_number_separator(false);
                 bool found_precision(false);
                 bool found_position(false);
-                for(; pos < end; ++pos)
+                for(;; ++pos)
                 {
+                    if(pos >= end)
+                    {
+                        item.add_error(format_error_t::FORMAT_ERROR_EOS);
+                        item.string(format_string.substr(begin, end - begin));
+                        result.push_back(item);
+                        break;
+                    }
+
                     // handle flags
                     //
                     if(FlagTraits::is_flag(format_string[pos], item))
@@ -865,7 +936,6 @@ format_item<_CharT>::list_t tokenize_format(std::basic_string<_CharT> const & fo
                             if(NumberTraits::is_number_separator(format_string[pos]))
                             {
                                 found_number_separator = true;
-std::cerr << "   <<< got separator!\n";
                                 continue;
                             }
                         }
@@ -884,8 +954,6 @@ std::cerr << "   <<< got separator!\n";
                         {
                             if(pos + 1 >= end)
                             {
-                                item.add_error(format_error_t::FORMAT_ERROR_EOS);
-                                item.string(format_string.substr(begin, end - begin));
                                 if(found_number_separator)
                                 {
                                     item.precision(0);
@@ -894,7 +962,6 @@ std::cerr << "   <<< got separator!\n";
                                 {
                                     item.width(0);
                                 }
-                                result.push_back(item);
                                 continue;
                             }
                             ++pos;
@@ -974,7 +1041,6 @@ std::cerr << "   <<< got separator!\n";
                                     item.width(number);
                                 }
                             }
-std::cerr << "--- got number " << number << " followed by " << format_string[pos] << "?\n";
                             --pos;
                             continue;
                         }
