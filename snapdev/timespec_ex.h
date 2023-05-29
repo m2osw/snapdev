@@ -531,7 +531,18 @@ public:
     static timespec_ex gettime(clockid_t clk_id = CLOCK_REALTIME)
     {
         timespec_ex result;
-        clock_gettime(clk_id, &result);
+        int const r(clock_gettime(clk_id, &result));
+        if(r != 0)
+        {
+            // LCOV_EXCL_START
+            int const e(errno);
+            throw clock_error(
+                  "clock_gettime() failed: "
+                + std::to_string(e)
+                + ", "
+                + strerror(e));
+            // LCOV_EXCL_STOP
+        }
         return result;
     }
 
