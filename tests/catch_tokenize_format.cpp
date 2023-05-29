@@ -124,7 +124,7 @@ printf_formats_t const g_printf_formats[] =
                 .f_string = "Data Driven ",
             },
             {
-                .f_string = "%%",
+                .f_string = "%",
             },
             {
                 .f_string = " Tests",
@@ -794,7 +794,7 @@ printf_formats_t const g_strftime_formats[] =
                 .f_string = "Data Driven ",
             },
             {
-                .f_string = "%%",
+                .f_string = "%",
             },
             {
                 .f_string = " Tests",
@@ -1997,7 +1997,7 @@ printf_formats_t const g_usage_formats[] =
                 .f_string = "Data Driven ",
             },
             {
-                .f_string = "%%",
+                .f_string = "%",
             },
             {
                 .f_string = " Tests",
@@ -2079,7 +2079,7 @@ CATCH_TEST_CASE("tokenize_format_printf", "[string]")
 
         ++it;
         CATCH_REQUIRE_FALSE(it->has_errors());
-        CATCH_REQUIRE(it->string() == "%%");
+        CATCH_REQUIRE(it->string() == "%");
         CATCH_REQUIRE(it->flags() == snapdev::FORMAT_FLAG_NONE);
         CATCH_REQUIRE_FALSE(it->has_width());
         CATCH_REQUIRE_FALSE(it->has_precision());

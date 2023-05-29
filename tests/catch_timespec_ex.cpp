@@ -30,6 +30,11 @@
 #include    "catch_main.h"
 
 
+// snapdev
+//
+#include    <snapdev/not_reached.h>
+
+
 // C++
 //
 #include    <iomanip>
@@ -41,7 +46,72 @@
 
 
 
+namespace
+{
 
+
+
+int g_state(-1);
+int g_error(0);
+
+char * wrap_nl_langinfo(nl_item item)
+{
+    switch(g_state++)
+    {
+    case 0:
+        if(item != D_T_FMT)
+        {
+            g_error = 1;
+        }
+        return const_cast<char *>(""); // exercise the empty string
+
+    case 10:
+        if(item != D_T_FMT)
+        {
+            g_error = 1;
+        }
+        return const_cast<char *>("%T");
+
+    case 20:
+        if(item != D_T_FMT)
+        {
+            g_error = 1;
+        }
+        return const_cast<char *>("%r %X %EX");
+
+    case 21:
+        if(item != T_FMT_AMPM)
+        {
+            g_error = 1;
+        }
+        return const_cast<char *>("%I:%M:%S %p");
+
+    case 22:
+        if(item != T_FMT)
+        {
+            g_error = 1;
+        }
+        return const_cast<char *>("%H:%M:%S");
+
+    case 23:
+        if(item != ERA_T_FMT)
+        {
+            g_error = 1;
+        }
+        return const_cast<char *>("%H.%M.%S");
+
+    default:
+        throw std::logic_error("invalid state encountered.");
+
+    }
+
+    snapdev::NOT_REACHED();
+}
+
+
+
+}
+// no name namespace
 
 
 
@@ -337,8 +407,10 @@ CATCH_TEST_CASE("timespec_ex_math", "[math]")
         snapdev::timespec_ex now(1629652549L, 913'788'345L);
 
         std::int64_t nsec(now.to_nsec());
-
         CATCH_REQUIRE(nsec == 1629652549L * 1'000'000'000L + 913'788'345L);
+
+        std::int64_t usec(now.to_usec());
+        CATCH_REQUIRE(usec == 1629652549L * 1'000'000 + 913'788L);
 
         snapdev::timespec_ex save;
         CATCH_REQUIRE(!save);
@@ -470,8 +542,22 @@ CATCH_TEST_CASE("timespec_ex_math", "[math]")
         now = snapdev::timespec_ex::gettime();
         clock_gettime(CLOCK_REALTIME, &verify);
 
-        snapdev::timespec_ex diff(now - verify);
-        snapdev::timespec_ex max_diff(100L);
+        snapdev::timespec_ex const diff(now - verify);
+        snapdev::timespec_ex const max_diff(100L);
+
+        CATCH_REQUIRE(diff < max_diff);
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_math: system time")
+    {
+        timespec verify = {};
+
+        snapdev::timespec_ex const now(snapdev::now());
+        clock_gettime(CLOCK_REALTIME, &verify);
+
+        snapdev::timespec_ex const diff(now - verify);
+        snapdev::timespec_ex const max_diff(0, 100L);
 
         CATCH_REQUIRE(diff < max_diff);
     }
@@ -483,26 +569,93 @@ CATCH_TEST_CASE("timespec_ex_string", "[string]")
 {
     CATCH_START_SECTION("timespec_ex_string: ostream")
     {
+        // 4511.913788345
         snapdev::timespec_ex a(timespec{ 4511L, 913'788'345L });
+        snapdev::timespec_ex b;
 
         std::stringstream ss;
         ss << a;
 
         CATCH_REQUIRE(ss.str() == "4511.913788345");
+        CATCH_REQUIRE(a.to_timestamp() == "4511.913788345");
+        CATCH_REQUIRE(a.to_timestamp(true) == "4511.913788345");
 
+        b.set(ss.str());
+        CATCH_REQUIRE(a == b);
+
+        b = "4511.913788345144763"; // ignore digits after 9 decimals
+        CATCH_REQUIRE(a == b);
+
+        // 83207.000000000
         ss.str(std::string());
         a.tv_sec = 83207L;
         a.tv_nsec = 0;
         ss << a;
 
         CATCH_REQUIRE(ss.str() == "83207.000000000");
+        CATCH_REQUIRE(a.to_timestamp() == "83207.000000000");
+        CATCH_REQUIRE(a.to_timestamp(true) == "83207");
 
+        b.set(ss.str());
+        CATCH_REQUIRE(a == b);
+        b.set("   83207.000000000  ");
+        CATCH_REQUIRE(a == b);
+        b.set("   83207.0  ");
+        CATCH_REQUIRE(a == b);
+        b.set("   83207.  ");
+        CATCH_REQUIRE(a == b);
+        b.set("   83207  ");
+        CATCH_REQUIRE(a == b);
+        b.set("   +83207s  ");
+        CATCH_REQUIRE(a == b);
+        b.set("   83207.s  ");
+        CATCH_REQUIRE(a == b);
+        b.set("   83207.0s  ");
+        CATCH_REQUIRE(a == b);
+
+        snapdev::timespec_ex c("+83207.0s");
+        CATCH_REQUIRE(a == c);
+
+        // 0.000000101
         ss.str(std::string());
         a.tv_sec = 0L;
         a.tv_nsec = 101;
         ss << a;
 
         CATCH_REQUIRE(ss.str() == "0.000000101");
+        CATCH_REQUIRE(a.to_timestamp() == "0.000000101");
+        CATCH_REQUIRE(a.to_timestamp(true) == "0.000000101");
+
+        b.set(ss.str());
+        CATCH_REQUIRE(a == b);
+
+        // 1000000000.781200000
+        ss.str(std::string());
+        a.tv_sec = 1000000000L;
+        a.tv_nsec = 781200000;
+        ss << a;
+
+        CATCH_REQUIRE(ss.str() == "1000000000.781200000");
+        CATCH_REQUIRE(a.to_timestamp() == "1000000000.781200000");
+        CATCH_REQUIRE(a.to_timestamp(true) == "1000000000.7812");
+
+        b.set(ss.str());
+        CATCH_REQUIRE(a == b);
+
+        // -259.900000000
+        ss.str(std::string());
+        a.tv_sec = -259L;
+        a.tv_nsec = 900000000;
+        ss << a;
+
+        CATCH_REQUIRE(ss.str() == "-259.900000000");
+        CATCH_REQUIRE(a.to_timestamp() == "-259.900000000");
+        CATCH_REQUIRE(a.to_timestamp(true) == "-259.9");
+
+        b.set(ss.str());
+        CATCH_REQUIRE(a == b);
+        b.set("    -259.900000000   ");
+        CATCH_REQUIRE(a == b);
     }
     CATCH_END_SECTION()
 
@@ -522,10 +675,183 @@ CATCH_TEST_CASE("timespec_ex_string", "[string]")
 //std::cerr << "seconds misplaced in: " << out << "?\n";
         CATCH_REQUIRE(out.find("11.913788345") != std::string::npos);
 
+        a.tv_nsec = 913'000'000;
+        out = a.to_string("%s.%N");
+        CATCH_REQUIRE(out == "4511.913000000");
+        out = a.to_string("%s.%EN");
+        CATCH_REQUIRE(out == "4511.913");
+
+        a.tv_nsec = 0;
+        out = a.to_string("%s.%N");
+        CATCH_REQUIRE(out == "4511.000000000");
+        out = a.to_string("%s.%EN");
+        CATCH_REQUIRE(out == "4511.0");
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_string: convert to string when nl_langinfo(\"D_T_FMT\") returns \"\".")
+    {
+        snapdev::timespec_ex a(timespec{ 4511L, 913'788'345L });
+
+        time_t date(4511L);
+        struct tm t = *localtime(&date);
+        char expected[256];
+        strftime(expected, sizeof(expected), "%a %b %e %H:%M:%S.913788345 %Y", &t);
+
+        g_state = 0;
+        g_error = 0;
+        std::string out(a.to_string<wrap_nl_langinfo>());
+        CATCH_REQUIRE(g_error == 0);
+        CATCH_REQUIRE(out == expected);
+
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_string: convert to string when nl_langinfo(\"D_T_FMT\") returns \"%T\".")
+    {
+        snapdev::timespec_ex a(timespec{ 4511L, 913'788'345L });
+
+        time_t date(4511L);
+        struct tm t = *localtime(&date);
+        char expected[256];
+        strftime(expected, sizeof(expected), "%T.913788345", &t);
+
+        g_state = 10;
+        g_error = 0;
+        std::string out(a.to_string<wrap_nl_langinfo>());
+        CATCH_REQUIRE(g_error == 0);
+        CATCH_REQUIRE(out == expected);
+
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_string: convert to string when nl_langinfo(\"D_T_FMT\") returns \"%r %X %EX\".")
+    {
+        snapdev::timespec_ex a(timespec{ 4511L, 913'788'345L });
+
+        time_t date(4511L);
+        struct tm t = *localtime(&date);
+        char expected[256];
+        strftime(
+              expected
+            , sizeof(expected)
+            , "%I:%M:%S.913788345 %p"       // %r
+              " %H:%M:%S.913788345"         // %X
+              " %H.%M.%S.913788345"         // %EX
+            , &t);
+
+        g_state = 20;
+        g_error = 0;
+        std::string out(a.to_string<wrap_nl_langinfo>());
+        CATCH_REQUIRE(g_error == 0);
+        CATCH_REQUIRE(out == expected);
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_string: to and from string.")
+    {
+        snapdev::timespec_ex a(timespec{ rand(), rand() % 1'000'000'000 });
+        snapdev::timespec_ex b;
+
+        std::string format("%D %T");
+        std::string s(a.to_string(format));
+        b.from_string(s, format);
+
+        // we do not have support for %N just yet in the "from_string()"
+        // so here we instead just test the seconds
+        //
+        CATCH_REQUIRE(a.tv_sec == b.tv_sec);
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_string: to and from string with %N.")
+    {
+        snapdev::timespec_ex a(timespec{ rand(), rand() % 1'000'000'000 });
+        snapdev::timespec_ex b;
+
+        std::string format("%D %T.%N");
+        std::string s(a.to_string(format));
+        //b.from_string(s, format);
+        CATCH_REQUIRE_THROWS_MATCHES(
+                  b.from_string(s, format)
+                , libexcept::fixme
+                , Catch::Matchers::ExceptionMessage(
+                          "fixme: the from_string() %N extension is not yet implemented."));
+
+        // once it works:
+        //
+        //CATCH_REQUIRE(a == b);
     }
     CATCH_END_SECTION()
 }
 
+
+CATCH_TEST_CASE("timespec_ex_from_string_error", "[string][error]")
+{
+    CATCH_START_SECTION("timespec_ex_from_string_error: string does not start with a sign or digit")
+    {
+        CATCH_REQUIRE_THROWS_MATCHES(
+                  snapdev::timespec_ex("@34.506")
+                , snapdev::syntax_error
+                , Catch::Matchers::ExceptionMessage(
+                          "timespec_ex_exception: number of seconds must include at least one digit, even if '0'."));
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_from_string_error: seconds overflow")
+    {
+        CATCH_REQUIRE_THROWS_MATCHES(
+                  snapdev::timespec_ex("-9223372036854775808.506")
+                , snapdev::overflow
+                , Catch::Matchers::ExceptionMessage(
+                          "timespec_ex_exception: number of seconds is too large."));
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_from_string_error: bad unit")
+    {
+        CATCH_REQUIRE_THROWS_MATCHES(
+                  snapdev::timespec_ex("-2036854775808.506sec")
+                , snapdev::syntax_error
+                , Catch::Matchers::ExceptionMessage(
+                          "timespec_ex_exception: number include unexpected characters (ec)."));
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_from_string_error: bad unit")
+    {
+        snapdev::timespec_ex t;
+        t.tv_sec = 34471;
+        t.tv_nsec = 1000000000;
+        CATCH_REQUIRE_THROWS_MATCHES(
+                  t.to_string("%s.%N")
+                , snapdev::overflow
+                , Catch::Matchers::ExceptionMessage(
+                          "timespec_ex_exception: tv_nsec is 1 billion or more, which is invalid."));
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_from_string_error: output too long")
+    {
+        snapdev::timespec_ex t;
+        t.tv_sec = rand();
+        t.tv_nsec = rand() % 1000000000;
+        std::string const format(
+                "If we use the format string as a string too, then we can end up with a string that's just way way way too long."
+                " Our current limit is 256 characters so that limits our message. The truth is that you limit yourself"
+                " to just a date and time string rather than a whole message in this format string."
+                " It's probably easier to handle too... The date is: %D. The time is: %T."
+                " And we also have %F, %c, %r, %X, %EX for the alternative format, etc.");
+        CATCH_REQUIRE_THROWS_MATCHES(
+                  t.to_string(format)
+                , snapdev::overflow
+                , Catch::Matchers::ExceptionMessage(
+                          "timespec_ex_exception: the specified strftime() format \""
+                        + format
+                        + "\" failed."));
+    }
+    CATCH_END_SECTION()
+}
 
 
 
