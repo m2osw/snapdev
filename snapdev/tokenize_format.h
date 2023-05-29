@@ -140,7 +140,7 @@ public:
         return f_string;
     }
 
-    void string(std::basic_string<_CharT> const & s)
+    void string(std::basic_string<char_t> const & s)
     {
         f_string = s;
     }
@@ -901,11 +901,11 @@ format_item<_CharT>::list_t tokenize_format(std::basic_string<_CharT> const & fo
             if(IntroducerTraits::double_to_escape()
             && IntroducerTraits::is_introducer(format_string[pos]))
             {
-                // "%%" case
+                // "%%" case, only save "%" in item string
                 //
-                ++pos;
                 item.string(format_string.substr(begin, pos - begin));
                 result.push_back(item);
+                ++pos;
             }
             else
             {
