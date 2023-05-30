@@ -85,15 +85,15 @@ public:
      * used to trim the end of strings.
      */
     class iterator
-        : public std::iterator<std::random_access_iterator_tag, T>
     {
     public:
         // Iterator traits
         //
-        typedef std::ptrdiff_t      difference_type;
-        typedef T                   value_type;
-        typedef T *                 pointer;
-        typedef T &                 reference;
+        typedef std::forward_iterator_tag   iterator_category;
+        typedef std::ptrdiff_t              difference_type;
+        typedef T                           value_type;
+        typedef T *                         pointer;
+        typedef T &                         reference;
 
         // ForwardIterator
         //
