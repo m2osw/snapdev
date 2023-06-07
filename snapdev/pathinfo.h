@@ -636,16 +636,24 @@ inline bool has_pattern(
  *
  * All paths are considered to be a child of the root path `/`.
  *
- * We considered two types of paths: relative and full. Both paths must
+ * We consider two types of paths: relative and full. Both paths must
  * be either relative or full, otherwise the function returns false.
  *
  * The function canonicalize the paths, so if multiple slashes separate
  * some of the names, these are viewed as one slash (i.e. `"/" == "//"`).
+ * Also an empty string (`""`) is viewed as the current directory
+ * which can also be expressed as `"."` and thus `"" == "."` is considered
+ * true.
+ *
+ * \todo
+ * Fully support the `"" == "."` case. We support that properly only at
+ * the top at the moment (i.e. `"/var" != "/var/."` is currently viewed
+ * as false).
  *
  * \param[in] parent  The parent path.
  * \param[in] child  The child to match against \p parent.
  * \param[in] equal  Return this boolean value if the \p parent equals
- * \p child.
+ * the \p child.
  *
  * \return true if \p child is a child of \p parent.
  */
@@ -659,7 +667,9 @@ inline bool is_child_path(
     if(parent.empty()
     || child.empty())
     {
-        return parent.empty() && child.empty() ? equal : false;
+        std::string const p(parent.empty() ? "." : parent);
+        std::string const c(child.empty() ? "." : parent);
+        return p == c ? equal : false;
     }
 
     // both paths must be full or relative

@@ -418,6 +418,8 @@ public:
      *     "1685372468.564231883s"
      *     "  1685372468.564231883s  "
      *     "1685372468.564"
+     *     "-1685372468.56423"
+     *     "+1685372468.56423"
      * \endcode
      *
      * Note that the precision does not need to be to the nanosecond. The
