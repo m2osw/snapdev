@@ -5,9 +5,9 @@ Build-Depends: cmake,
     debhelper,
     doxygen,
     graphviz,
-    libexcept-dev (>= 1.1.0.0~bionic),
-    snapcatch2 (>= 2.7.2.10~bionic),
-    snapcmakemodules (>= 1.0.35.3~bionic)
+    libexcept-dev (>= 1.1.0.0~jammy),
+    snapcatch2 (>= 2.7.2.10~jammy),
+    snapcmakemodules (>= 1.0.35.3~jammy)
 Standards-Version: 3.9.4
 Section: devel
 Homepage: https://snapwebsites.org/

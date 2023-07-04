@@ -1,4 +1,4 @@
-snapdev (1.1.33.0~bionic) bionic; urgency=high
+snapdev (1.1.33.0~jammy) jammy; urgency=high
 
   * Added support for 'showpos' in ostream<< of __int128.
   * Fixed printing of 'showbase' when printing 0.
