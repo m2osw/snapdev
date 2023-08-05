@@ -43,7 +43,7 @@
 
 
 
-CATCH_TEST_CASE("as_root", "[basic]")
+CATCH_TEST_CASE("as_root", "[raii][os]")
 {
     CATCH_START_SECTION("as_root: failing switch to root user")
     {

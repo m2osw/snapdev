@@ -48,7 +48,7 @@
 #pragma GCC diagnostic ignored "-Wpedantic"
 
 
-CATCH_TEST_CASE("ostream_int128", "[ostream][int128]")
+CATCH_TEST_CASE("ostream_int128", "[stream][int128]")
 {
     CATCH_START_SECTION("ostream_int128: small numbers (-10 to +10)")
     {

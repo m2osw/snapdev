@@ -73,6 +73,7 @@ install(
         rm_r.h
         safe_assert.h
         safe_chdir.h
+        safe_object.h
         safe_setenv.h
         safe_stream.h
         safe_variable.h

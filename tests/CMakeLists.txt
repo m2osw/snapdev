@@ -45,6 +45,7 @@ if(SnapCatch2_FOUND)
         catch_pathinfo.cpp
         catch_remove_duplicates.cpp
         catch_rm_r.cpp
+        catch_safe_object.cpp
         catch_safe_stream.cpp
         catch_saturated_add.cpp
         catch_saturated_subtract.cpp

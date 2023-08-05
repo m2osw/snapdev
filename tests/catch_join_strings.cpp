@@ -55,7 +55,7 @@ constexpr std::string_view  g_communicatord_default_ip_port_v2 = snapdev::join_s
 }
 
 
-CATCH_TEST_CASE("join_string_view", "[basic][strings]")
+CATCH_TEST_CASE("join_string_view", "[string]")
 {
     CATCH_START_SECTION("join_string_view: join strings at compile time")
     {
@@ -74,7 +74,7 @@ CATCH_TEST_CASE("join_string_view", "[basic][strings]")
 }
 
 
-CATCH_TEST_CASE("join_strings", "[basic][strings]")
+CATCH_TEST_CASE("join_strings", "[string]")
 {
     CATCH_START_SECTION("join_strings: join strings at runtime with empty string in between")
     {

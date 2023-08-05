@@ -52,7 +52,7 @@ namespace
 
 
 
-CATCH_TEST_CASE("sort_and_remove_duplicates", "[remove_duplicates]")
+CATCH_TEST_CASE("sort_and_remove_duplicates", "[remove_duplicates][container]")
 {
     CATCH_START_SECTION("sort_and_remove_duplicates: empty container")
     {
@@ -127,7 +127,7 @@ CATCH_TEST_CASE("sort_and_remove_duplicates", "[remove_duplicates]")
 }
 
 
-CATCH_TEST_CASE("sorted_remove_duplicates", "[remove_duplicates]")
+CATCH_TEST_CASE("sorted_remove_duplicates", "[remove_duplicates][container]")
 {
     CATCH_START_SECTION("sorted_remove_duplicates: empty container")
     {
@@ -226,7 +226,7 @@ CATCH_TEST_CASE("sorted_remove_duplicates", "[remove_duplicates]")
 }
 
 
-CATCH_TEST_CASE("unsorted_remove_duplicates", "[remove_duplicates]")
+CATCH_TEST_CASE("unsorted_remove_duplicates", "[remove_duplicates][container]")
 {
     CATCH_START_SECTION("unsorted_remove_duplicates: empty container")
     {

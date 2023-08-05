@@ -62,7 +62,7 @@ constexpr std::string_view  g_port_binary = snapdev::integer_to_string_literal<L
 }
 
 
-CATCH_TEST_CASE("to_string_literal", "[basic][strings]")
+CATCH_TEST_CASE("to_string_literal", "[string]")
 {
     CATCH_START_SECTION("integer_to_string_literal: verify integral literals")
     {

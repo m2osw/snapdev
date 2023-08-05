@@ -27,11 +27,6 @@
 //
 #include    <snapdev/safe_stream.h>
 
-//#include    <snapdev/file_contents.h>
-//#include    <snapdev/join_strings.h>
-//#include    <snapdev/ostream_to_buf.h>
-//#include    <snapdev/tokenize_string.h>
-
 #include    "catch_main.h"
 
 
@@ -47,7 +42,7 @@
 
 
 
-CATCH_TEST_CASE("safe_stream", "[os]")
+CATCH_TEST_CASE("safe_stream", "[stream][raii][os]")
 {
     CATCH_START_SECTION("safe_stream: hex/oct")
     {

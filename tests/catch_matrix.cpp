@@ -59,7 +59,7 @@ namespace
 
 
 
-CATCH_TEST_CASE("matrix_init", "[matrix]")
+CATCH_TEST_CASE("matrix_init", "[matrix][math]")
 {
     // constructor/copy
     // and
@@ -473,7 +473,7 @@ CATCH_TEST_CASE("matrix_init", "[matrix]")
 }
 
 
-CATCH_TEST_CASE("matrix_additive", "[matrix]")
+CATCH_TEST_CASE("matrix_additive", "[matrix][math]")
 {
     // create two random 4x4 matrices and make sure the add works
     //
@@ -1933,7 +1933,7 @@ CATCH_TEST_CASE("matrix_additive", "[matrix]")
 }
 
 
-CATCH_TEST_CASE("matrix_util", "[matrix]")
+CATCH_TEST_CASE("matrix_util", "[matrix][math]")
 {
     // various ways to change the data order, minor, enlarge
     //
@@ -2511,7 +2511,7 @@ CATCH_TEST_CASE("matrix_util", "[matrix]")
 }
 
 
-CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
+CATCH_TEST_CASE("matrix_multiplicative", "[matrix][math]")
 {
     // create two random 4x4 matrices and make sure the add works
     //
@@ -4083,7 +4083,7 @@ CATCH_TEST_CASE("matrix_multiplicative", "[matrix]")
 }
 
 
-CATCH_TEST_CASE("matrix_color", "[matrix]")
+CATCH_TEST_CASE("matrix_color", "[matrix][math]")
 {
     // generate a few brightness matrices
     //

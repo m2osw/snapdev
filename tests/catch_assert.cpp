@@ -36,7 +36,7 @@
 
 
 
-CATCH_TEST_CASE("safe_assert", "[foo]")
+CATCH_TEST_CASE("safe_assert", "[raii]")
 {
     CATCH_START_SECTION("safe_assert: make sure assert can pass")
     {

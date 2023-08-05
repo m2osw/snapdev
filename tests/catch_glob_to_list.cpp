@@ -42,7 +42,7 @@
 
 
 
-CATCH_TEST_CASE("glob_to_list", "[glob_to_list]")
+CATCH_TEST_CASE("glob_to_list", "[filename][glob][os]")
 {
     CATCH_START_SECTION("pathinfo: replace existing suffix")
     {

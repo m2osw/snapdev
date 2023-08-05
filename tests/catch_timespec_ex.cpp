@@ -115,7 +115,7 @@ char * wrap_nl_langinfo(nl_item item)
 
 
 
-CATCH_TEST_CASE("timespec_ex_math", "[math]")
+CATCH_TEST_CASE("timespec_ex_math", "[time][math]")
 {
     CATCH_START_SECTION("timespec_ex_math: simple add")
     {
@@ -565,7 +565,7 @@ CATCH_TEST_CASE("timespec_ex_math", "[math]")
 }
 
 
-CATCH_TEST_CASE("timespec_ex_string", "[string]")
+CATCH_TEST_CASE("timespec_ex_string", "[time][string]")
 {
     CATCH_START_SECTION("timespec_ex_string: ostream")
     {
@@ -786,7 +786,7 @@ CATCH_TEST_CASE("timespec_ex_string", "[string]")
 }
 
 
-CATCH_TEST_CASE("timespec_ex_from_string_error", "[string][error]")
+CATCH_TEST_CASE("timespec_ex_from_string_error", "[time][string][error]")
 {
     CATCH_START_SECTION("timespec_ex_from_string_error: string does not start with a sign or digit")
     {

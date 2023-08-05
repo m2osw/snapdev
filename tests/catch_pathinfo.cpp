@@ -41,7 +41,7 @@
 
 
 
-CATCH_TEST_CASE("pathinfo_replace_suffix", "[pathinfo]")
+CATCH_TEST_CASE("pathinfo_replace_suffix", "[filename][pathinfo]")
 {
     CATCH_START_SECTION("pathinfo: replace existing suffix")
     {
@@ -206,7 +206,7 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[pathinfo]")
 }
 
 
-CATCH_TEST_CASE("pathinfo_canonicalize", "[pathinfo]")
+CATCH_TEST_CASE("pathinfo_canonicalize", "[filename][pathinfo]")
 {
     CATCH_START_SECTION("pathinfo: canonicalize paths")
     {
@@ -237,7 +237,7 @@ CATCH_TEST_CASE("pathinfo_canonicalize", "[pathinfo]")
 }
 
 
-CATCH_TEST_CASE("pathinfo_has_pattern", "[pathinfo]")
+CATCH_TEST_CASE("pathinfo_has_pattern", "[filename][pathinfo]")
 {
     CATCH_START_SECTION("pathinfo: has pattern function")
     {
@@ -317,7 +317,7 @@ CATCH_TEST_CASE("pathinfo_has_pattern", "[pathinfo]")
 }
 
 
-CATCH_TEST_CASE("pathinfo_is_child_path", "[pathinfo]")
+CATCH_TEST_CASE("pathinfo_is_child_path", "[filename][pathinfo]")
 {
     CATCH_START_SECTION("pathinfo: is child path function")
     {

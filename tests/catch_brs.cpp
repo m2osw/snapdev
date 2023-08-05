@@ -40,7 +40,7 @@
 
 
 
-CATCH_TEST_CASE("bitfield_size", "[bitfield]")
+CATCH_TEST_CASE("bitfield_size", "[serialization][math]")
 {
     CATCH_START_SECTION("brs: push/restore char")
     {
@@ -57,7 +57,7 @@ CATCH_TEST_CASE("bitfield_size", "[bitfield]")
 }
 
 
-CATCH_TEST_CASE("basic_types", "[basic]")
+CATCH_TEST_CASE("basic_types", "[serialization]")
 {
     CATCH_START_SECTION("brs: push/restore char")
     {
@@ -1507,7 +1507,7 @@ CATCH_TEST_CASE("basic_types", "[basic]")
 }
 
 
-CATCH_TEST_CASE("brs_invalid", "[basic]")
+CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
 {
     CATCH_START_SECTION("brs: name missing")
     {

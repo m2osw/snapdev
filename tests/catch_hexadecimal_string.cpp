@@ -119,7 +119,7 @@ int wctombs(char * mb, char32_t wc, size_t len)
 
 
 
-CATCH_TEST_CASE("hexadecimal_string_hex_digits", "[hexadecimal_string]")
+CATCH_TEST_CASE("hexadecimal_string_hex_digits", "[hexadecimal][string]")
 {
     CATCH_START_SECTION("hexadecimal_string: verify hexadecimal digit detection")
     {
@@ -141,7 +141,7 @@ CATCH_TEST_CASE("hexadecimal_string_hex_digits", "[hexadecimal_string]")
 }
 
 
-CATCH_TEST_CASE("hexadecimal_string_16_bit_values", "[hexadecimal_string]")
+CATCH_TEST_CASE("hexadecimal_string_16_bit_values", "[hexadecimal][string]")
 {
     CATCH_START_SECTION("hexadecimal_string: all 16 bit values")
     {
@@ -242,7 +242,7 @@ CATCH_TEST_CASE("hexadecimal_string_16_bit_values", "[hexadecimal_string]")
 }
 
 
-CATCH_TEST_CASE("hexadecimal_string_invalid_input", "[hexadecimal_string][error]")
+CATCH_TEST_CASE("hexadecimal_string_invalid_input", "[hexadecimal][string][error]")
 {
     CATCH_START_SECTION("hexadecimal_string: invalid length")
     {
