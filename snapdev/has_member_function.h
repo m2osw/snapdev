@@ -96,5 +96,5 @@ class has_equal_operator
 
 
 
-} // snap namespacedev
+} // namespace snapdev
 // vim: ts=4 sw=4 et

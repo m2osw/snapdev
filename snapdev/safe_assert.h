@@ -67,5 +67,5 @@ void SAFE_ASSERT(bool test_result, Args && ... args)
 
 
 
-} // snap namespacedev
+} // namespace snapdev
 // vim: ts=4 sw=4 et

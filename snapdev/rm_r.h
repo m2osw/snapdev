@@ -385,5 +385,5 @@ inline int rm_r(
 
 
 
-} // snap namespacedev
+} // namespace snapdev
 // vim: ts=4 sw=4 et
