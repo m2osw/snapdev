@@ -18,15 +18,7 @@ Package: snapdev
 Section: devel
 Architecture: any
 Depends: ${misc:Depends}
-Suggests: snapdev-doc
 Description: C++ headers for development purposes.
  This library provides useful C++ headers for our Snap! C++ and other projects.
-
-Package: snapdev-doc
-Section: doc
-Architecture: all
-Depends: ${misc:Depends}
-Description: Documentation for the snapdev project.
- The documentation from the snapdev headers extracted using Doxygen.
 
 # vim: ts=4 sw=4 et
