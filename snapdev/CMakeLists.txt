@@ -60,6 +60,7 @@ install(
         mounts.h
         not_reached.h
         not_used.h
+        number_to_string.h
         numeric_string.h
         ostream_int128.h
         ostream_to_buf.h

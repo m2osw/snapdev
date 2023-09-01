@@ -43,6 +43,7 @@ if(SnapCatch2_FOUND)
         catch_matrix.cpp
         catch_memsearch.cpp
         catch_mkdir_p.cpp
+        catch_number_to_string.cpp
         catch_pathinfo.cpp
         catch_remove_duplicates.cpp
         catch_rm_r.cpp
