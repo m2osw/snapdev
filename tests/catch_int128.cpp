@@ -65,7 +65,18 @@ CATCH_TEST_CASE("ostream_int128", "[stream][int128]")
             {
                 std::stringstream v;
                 v << std::showpos << l;
-                std::string const e((i >= 0 ? "+" : "") + std::to_string(i));
+
+                // WARNING: I broke up the following on multiple lines because
+                //          there seems to be a huge bug in g++12.3.0 which
+                //          otherwise generates a buffer overflow error
+                //
+                //std::string e((i >= 0 ? "+" : "") + std::to_string(i));
+                std::string e(std::to_string(i));
+                if(i >= 0)
+                {
+                    e = "+" + e;
+                }
+
                 CATCH_REQUIRE(e == v.str());
             }
 
