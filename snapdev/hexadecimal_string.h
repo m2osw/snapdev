@@ -37,6 +37,7 @@
 //
 #include    <algorithm>
 #include    <climits>
+#include    <cstdint>
 #include    <iomanip>
 
 
