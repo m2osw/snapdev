@@ -60,12 +60,13 @@ CATCH_TEST_CASE("ostream_int128", "[stream][int128]")
             {
                 std::stringstream v;
                 v << l;
-                CATCH_REQUIRE(v.str() == std::to_string(i));
+                CATCH_REQUIRE(std::to_string(i) == v.str());
             }
             {
                 std::stringstream v;
                 v << std::showpos << l;
-                CATCH_REQUIRE(v.str() == (i >= 0 ? "+" : "") + std::to_string(i));
+                std::string const e((i >= 0 ? "+" : "") + std::to_string(i));
+                CATCH_REQUIRE(e == v.str());
             }
 
             // hexadecimal
@@ -73,7 +74,7 @@ CATCH_TEST_CASE("ostream_int128", "[stream][int128]")
                 std::stringstream v, e;
                 v << std::hex << l;
                 e << (i < 0 ? "ffffffffffffffffffffffff" : "") << std::hex << i;
-                CATCH_REQUIRE(v.str() == e.str());
+                CATCH_REQUIRE(e.str() == v.str());
             }
             {
                 std::stringstream v, e;

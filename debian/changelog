@@ -1,3 +1,9 @@
+snapdev (1.1.36.0~jammy) jammy; urgency=high
+
+  * Try slightly different code to possibly avoid the overflow at compile time.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sat, 04 Nov 2023 20:08:30 -0700
+
 snapdev (1.1.35.0~jammy) jammy; urgency=high
 
   * Fix fclose() type in default RAII template to avoid attribute issue.
