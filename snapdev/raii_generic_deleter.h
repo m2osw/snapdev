@@ -473,7 +473,7 @@ struct shared_ptr_with_deleter
  * This is a pointer so the null (a.k.a. closed, already released) is
  * expected to be represented by a nullptr.
  */
-typedef std::unique_ptr<FILE, raii_pointer_deleter<FILE, decltype(&::fclose), &::fclose>>     raii_file_t;
+typedef std::unique_ptr<FILE, raii_pointer_deleter<FILE, int(*)(FILE *), &::fclose>>     raii_file_t;
 
 
 } // namespace snapdev
