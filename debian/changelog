@@ -1,3 +1,9 @@
+snapdev (1.1.37.0~jammy) jammy; urgency=high
+
+  * Applied hack so all tests compile under lunar.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 05 Nov 2023 07:10:37 -0800
+
 snapdev (1.1.36.0~jammy) jammy; urgency=high
 
   * Try slightly different code to possibly avoid the overflow at compile time.
