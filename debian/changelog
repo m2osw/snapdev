@@ -1,3 +1,9 @@
+snapdev (1.1.37.1~jammy) jammy; urgency=high
+
+  * Added #pragma -Wrestrict to the timespec_ex.h for lunar.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Mon, 06 Nov 2023 04:46:12 +0000
+
 snapdev (1.1.37.0~jammy) jammy; urgency=high
 
   * Applied hack so all tests compile under lunar.

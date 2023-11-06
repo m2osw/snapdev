@@ -834,7 +834,10 @@ public:
                     std::string::size_type const last_non_zero(n.find_last_not_of('0'));
                     if(last_non_zero == std::string::npos)
                     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wrestrict"
                         n = "0";
+#pragma GCC diagnostic pop
                     }
                     else
                     {
