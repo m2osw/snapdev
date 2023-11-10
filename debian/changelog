@@ -1,3 +1,9 @@
+snapdev (1.1.38.0~jammy) jammy; urgency=high
+
+  * Added another #include <cstdint>.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Fri, 10 Nov 2023 13:32:29 -0800
+
 snapdev (1.1.37.1~jammy) jammy; urgency=high
 
   * Added #pragma -Wrestrict to the timespec_ex.h for lunar.
