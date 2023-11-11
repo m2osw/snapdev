@@ -1285,6 +1285,30 @@ public:
     {
         return compare(t) >= 0;
     }
+
+
+    /** \brief Return the minimum possible timespec.
+     *
+     * This function returns a timespec with the smallest possible time.
+     *
+     * \return A timespec_ex with the minimum possible time.
+     */
+    static timespec_ex min()
+    {
+        return timespec_ex(std::numeric_limits<std::int64_t>::min(), 0);
+    }
+
+
+    /** \brief Return the maximum possible timespec.
+     *
+     * This function returns a timespec with the smallest possible time.
+     *
+     * \return A timespec_ex with the minimum possible time.
+     */
+    static timespec_ex max()
+    {
+        return timespec_ex(std::numeric_limits<std::int64_t>::max(), 999'999'999L);
+    }
 };
 
 

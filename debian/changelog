@@ -1,3 +1,9 @@
+snapdev (1.1.39.0~jammy) jammy; urgency=high
+
+  * Added min()/max() for timespec_ex.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sat, 11 Nov 2023 15:02:52 -0800
+
 snapdev (1.1.38.0~jammy) jammy; urgency=high
 
   * Added another #include <cstdint>.
