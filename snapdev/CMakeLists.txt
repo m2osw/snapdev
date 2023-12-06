@@ -80,6 +80,7 @@ install(
         safe_variable.h
         sizeof_bitfield.h
         static_to_dynamic_buffer.h
+        stream_fd.h
         stringize.h
         string_replace_many.h
         timespec_ex.h

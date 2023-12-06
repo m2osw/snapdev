@@ -82,6 +82,10 @@ DECLARE_EXCEPTION(timespec_ex_exception, syntax_error);
 DECLARE_EXCEPTION(timespec_ex_exception, overflow);
 
 
+class timespec_ex;
+inline timespec_ex now(clockid_t clk_id = CLOCK_REALTIME);
+
+
 class timespec_ex
     : public timespec
 {
@@ -1309,6 +1313,32 @@ public:
     {
         return timespec_ex(std::numeric_limits<std::int64_t>::max(), 999'999'999L);
     }
+
+
+    /** \brief Check whether time is in the future.
+     *
+     * This function checks whether this timespec_ex represents a time in the
+     * future.
+     *
+     * You may pass an \p epsilon parameter to allow a gap between now and
+     * the time you consider in the future. By default, \p epsilon is set to
+     * zero. If you may pass a negative time in which case the threshold is
+     * moved in the past (i.e. a -5 second epsilon means this function returns
+     * true if "this >= now - 5 second").
+     *
+     * \note
+     * If this time is exactly equal to now(), then the function returns
+     * false (assuming an epsilon of 0).
+     *
+     * \param[in] epsilon  The allowed discrepancy, 0 by default.
+     *
+     * \return true if time is in the future.
+     */
+    bool is_in_the_future(snapdev::timespec_ex const & epsilon = { 0, 0 }) const
+    {
+        snapdev::timespec_ex const threshold(now() + epsilon);
+        return *this > threshold;
+    }
 };
 
 
@@ -1327,7 +1357,7 @@ public:
  *
  * \return A timespec_ex object with "now" as the time.
  */
-inline timespec_ex now(clockid_t clk_id = CLOCK_REALTIME)
+inline timespec_ex now(clockid_t clk_id)
 {
     timespec_ex n;
     int const r(clock_gettime(clk_id, &n));
