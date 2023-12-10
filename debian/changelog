@@ -1,8 +1,10 @@
 snapdev (1.1.39.0~jammy) jammy; urgency=high
 
   * Added min()/max() for timespec_ex.
+  * Extracted stream_fd.h from isatty.h.
+  * Added a function to detect whether a timestamp is in the future or not.
 
- -- Alexis Wilke <alexis@m2osw.com>  Sat, 11 Nov 2023 15:02:52 -0800
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 10 Dec 2023 15:11:37 -0800
 
 snapdev (1.1.38.0~jammy) jammy; urgency=high
 
