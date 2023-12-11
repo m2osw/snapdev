@@ -604,7 +604,7 @@ public:
     /** \brief Convert the timespec_ex to a simple Unix timestamp.
      *
      * This function converts this timespec_ex structure to a string.
-     * The seconds and nanoseconds are not adjust in any way making
+     * The seconds and nanoseconds are not adjusted in any way making
      * it possible to use this function to serialize the timespec_ex
      * value. Use the set(std::string const & timestamp) function
      * to convert the string back to a timespec_ex value.
