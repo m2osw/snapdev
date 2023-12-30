@@ -1385,7 +1385,7 @@ inline timespec_ex now(clockid_t clk_id)
  * This function allows one to print out a timespec. By default the function
  * prints the timespec as a floating point.
  *
- * To wrinte a date and time string instead, use the timespec_ex::to_string()
+ * To write a date and time string instead, use the timespec_ex::to_string()
  * function as in:
  *
  * \code
