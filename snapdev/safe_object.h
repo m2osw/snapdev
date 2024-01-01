@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2023  Made to Order Software Corp.  All Rights Reserved
+// Copyright (c) 2019-2024  Made to Order Software Corp.  All Rights Reserved
 //
 // https://snapwebsites.org/project/snapdev
 // contact@m2osw.com
@@ -20,10 +20,10 @@
 /** \file
  * \brief Implementation of a safe object template.
  *
- * Once in a while, an object is created and it needs to be a bare pointer
- * for some reason. This template allows you to make sure that the object
- * will be deleted until it is safely saved in a place where it will be
- * remembered.
+ * Once in a while, an object (such as a C resource) is created and it is
+ * a bare pointer for some time. This template allows you to make sure that
+ * the object will either be deleted (i.e. if an exception or early return
+ * happens) or safely saved in a place where it will be remembered properly.
  *
  * You want to supply the bare pointer type, the pointer itself, and when
  * required a deleter. By default, the deleter is simply uses the delete

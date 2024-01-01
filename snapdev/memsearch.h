@@ -1,4 +1,4 @@
-// Copyright (c) 2022-2023  Made to Order Software Corp.  All Rights Reserved
+// Copyright (c) 2022-2024  Made to Order Software Corp.  All Rights Reserved
 //
 // https://snapwebsites.org/project/snapdev
 // contact@m2osw.com
@@ -32,8 +32,8 @@ namespace snapdev
 /** \brief Search memory haystack for a needle.
  *
  * This function searches for \p needle within \p haystack. If found, it
- * returns the position at which \p needle is in \p haystack as a byte
- * position from the start of \p haystack.
+ * returns the position at which \p needle is in \p haystack as a
+ * position as a multiple of sizeof(T) from the start of \p haystack.
  *
  * If \p needle is not found in \p haystack then the function returns -1.
  *
