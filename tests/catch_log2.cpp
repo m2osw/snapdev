@@ -28,7 +28,7 @@
 
 
 
-// snapdev lib
+// snapdev
 //
 #include    <snapdev/log2.h>
 

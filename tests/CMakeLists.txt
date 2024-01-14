@@ -39,6 +39,7 @@ if(SnapCatch2_FOUND)
         catch_int128.cpp
         catch_isatty.cpp
         catch_join_strings.cpp
+        catch_lockfile.cpp
         catch_log2.cpp
         catch_matrix.cpp
         catch_memsearch.cpp
@@ -57,6 +58,7 @@ if(SnapCatch2_FOUND)
         catch_tokenize_string.cpp
         catch_to_string_literal.cpp
         catch_trim_string.cpp
+        catch_unique_number.cpp
         catch_user_groups.cpp
         catch_version.cpp
     )

@@ -91,6 +91,7 @@ install(
         to_string_literal.h
         to_upper.h
         trim_string.h
+        unique_number.h
         user_groups.h
         ${CMAKE_CURRENT_BINARY_DIR}/version.h
 
