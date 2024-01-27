@@ -423,8 +423,8 @@ inline std::string realpath(std::string const & path, std::string & error_msg)
  *
  * \note
  * The removal of the ".." is not verifying whether the path is valid on
- * the current file system. If you want to do, use the realpath() function
- * instead.
+ * the current file system. If you want to do such a verification, use the
+ * system realpath() function instead.
  *
  * \param[in] path  The introducer path.
  * \param[in] filename  A filename to happen to the path.
@@ -623,7 +623,7 @@ inline bool has_pattern(
 }
 
 
-/** \brief Check whether a path is a equal or a child of another path.
+/** \brief Check whether a path is equal or a child of another path.
  *
  * This function compares \p child against \p parent to see whether
  * \p child is indeed a child of \p parent.
@@ -647,7 +647,7 @@ inline bool has_pattern(
  *
  * \todo
  * Fully support the `"" == "."` case. We support that properly only at
- * the top at the moment (i.e. `"/var" != "/var/."` is currently viewed
+ * the top at the moment (i.e. `"/var" == "/var/."` is currently viewed
  * as false).
  *
  * \param[in] parent  The parent path.
