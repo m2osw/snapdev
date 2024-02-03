@@ -43,7 +43,7 @@
 
 CATCH_TEST_CASE("pathinfo_replace_suffix", "[filename][pathinfo]")
 {
-    CATCH_START_SECTION("pathinfo: replace existing suffix")
+    CATCH_START_SECTION("pathinfo_replace_suffix: replace existing suffix")
     {
         CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.cpp"
@@ -77,7 +77,7 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[filename][pathinfo]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("pathinfo: replace non-existant suffix")
+    CATCH_START_SECTION("pathinfo_replace_suffix: replace non-existant suffix")
     {
         std::string full_path_c("/full/path/example/pathinfo.c");
         std::string full_path_hpp("/full/path/example/pathinfo.hpp");
@@ -120,7 +120,7 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[filename][pathinfo]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("pathinfo: remove suffix when present")
+    CATCH_START_SECTION("pathinfo_replace_suffix: remove suffix when present")
     {
         CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.cpp"
@@ -148,7 +148,7 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[filename][pathinfo]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("pathinfo: remove suffix when absent")
+    CATCH_START_SECTION("pathinfo_replace_suffix: remove suffix when absent")
     {
         CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.c"
@@ -176,7 +176,7 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[filename][pathinfo]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("pathinfo: do nothing if non-existant suffix")
+    CATCH_START_SECTION("pathinfo_replace_suffix: do nothing if non-existant suffix")
     {
         CATCH_REQUIRE(snapdev::pathinfo::replace_suffix<std::string>(
                   "/full/path/example/pathinfo.c"
@@ -208,7 +208,7 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[filename][pathinfo]")
 
 CATCH_TEST_CASE("pathinfo_canonicalize", "[filename][pathinfo]")
 {
-    CATCH_START_SECTION("pathinfo: canonicalize paths")
+    CATCH_START_SECTION("pathinfo_canonicalize: canonicalize paths")
     {
         char const * to_canonicalize[] =
         {
@@ -239,7 +239,7 @@ CATCH_TEST_CASE("pathinfo_canonicalize", "[filename][pathinfo]")
 
 CATCH_TEST_CASE("pathinfo_has_pattern", "[filename][pathinfo]")
 {
-    CATCH_START_SECTION("pathinfo: has pattern function")
+    CATCH_START_SECTION("pathinfo_has_pattern: has pattern function")
     {
         struct test_data
         {
@@ -319,7 +319,7 @@ CATCH_TEST_CASE("pathinfo_has_pattern", "[filename][pathinfo]")
 
 CATCH_TEST_CASE("pathinfo_is_child_path", "[filename][pathinfo]")
 {
-    CATCH_START_SECTION("pathinfo: is child path function")
+    CATCH_START_SECTION("pathinfo_is_child_path: is child path function")
     {
         struct test_data
         {
@@ -497,6 +497,33 @@ CATCH_TEST_CASE("pathinfo_is_child_path", "[filename][pathinfo]")
 //          << " result: " << std::boolalpha << result
 //          << "\n";
             CATCH_REQUIRE(result == parent_child[idx].f_result);
+        }
+    }
+    CATCH_END_SECTION()
+}
+
+
+CATCH_TEST_CASE("pathinfo_is_absolute", "[filename][pathinfo]")
+{
+    CATCH_START_SECTION("pathinfo_is_absolute: check absolute and relative paths")
+    {
+        struct path_expected_t
+        {
+            char const * const  f_path = nullptr;
+            bool                f_absolute = false;
+        };
+        path_expected_t paths[] = {
+            { "/absolute",                  true  },
+            { "/the/length/has/no/effect",  true  },
+            { "/",                          true  },
+            { "relative",                   false },
+            { ".",                          false },
+            { "",                           false },
+        };
+        for(auto const & p : paths)
+        {
+            CATCH_REQUIRE(snapdev::pathinfo::is_absolute(p.f_path) == p.f_absolute);
+            CATCH_REQUIRE(snapdev::pathinfo::is_relative(p.f_path) == !p.f_absolute);
         }
     }
     CATCH_END_SECTION()

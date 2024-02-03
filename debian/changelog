@@ -1,8 +1,10 @@
-snapdev (1.1.39.1~jammy) jammy; urgency=high
+snapdev (1.1.40.0~jammy) jammy; urgency=high
 
+  * Added is_absolute() and is_relative() functions in pathinfo.
+  * Added the raii_buffer_t type to call free() on a buffer.
   * Fixed grammar in docs.
 
- -- Alexis Wilke <alexis@m2osw.com>  Mon, 11 Dec 2023 10:59:04 -0800
+ -- Alexis Wilke <alexis@m2osw.com>  Sat, 03 Feb 2024 08:13:50 -0800
 
 snapdev (1.1.39.0~jammy) jammy; urgency=high
 

@@ -29,6 +29,7 @@
 //
 #include    "snapdev/join_strings.h"
 #include    "snapdev/not_reached.h"
+#include    "snapdev/raii_generic_deleter.h"
 #include    "snapdev/reverse_cstring.h"
 #include    "snapdev/tokenize_string.h"
 
@@ -45,6 +46,7 @@
 #include    <limits.h>
 #include    <stdlib.h>
 #include    <string.h>
+#include    <unistd.h>
 
 
 
@@ -53,6 +55,48 @@ namespace snapdev
 namespace pathinfo
 {
 
+
+
+/** \brief Check whether the path is absolute or not.
+ *
+ * This function returns true if the path starts with a '/'.
+ *
+ * \warning
+ * It is considered valid to call this function with an empty string.
+ * In that case, the function returns false. However, it is not valid
+ * to call the function with a nullptr and you are likely to crash
+ * in that case.
+ *
+ * \param[in] path  The path to check.
+ *
+ * \return true if \p path start with a '/'.
+ */
+inline bool is_absolute(char const * path)
+{
+    return *path == '/';
+}
+
+
+inline bool is_absolute(std::string const & path)
+{
+    return is_absolute(path.c_str());
+}
+
+
+/** \brief Check whether \p path is relative or not.
+ *
+ * This function is the inverse of the is_absolute() function. It returns
+ * true if \p path is relative and false otherwise.
+ *
+ * \param[in] path  The path to be checked.
+ *
+ * \return true if the path is considered relative.
+ */
+template<class T>
+bool is_relative(T const & path)
+{
+    return !is_absolute(path);
+}
 
 
 /** \brief Retrieve the basename of a path.
@@ -236,7 +280,7 @@ StringT dirname(StringT const & path)
     }
     else if(pos == 0)
     {
-        if(path[0] == '/')
+        if(is_absolute(path))
         {
             return StringT("/");
         }
@@ -312,6 +356,67 @@ inline bool is_dot_or_dot_dot(std::string const & filename)
 }
 
 
+/** \brief Get the current working directory.
+ *
+ * This function retrieves the current working directory.
+ *
+ * If an error occurs, a message is saved in error_msg and the function
+ * returns an empty string.
+ *
+ * \exception bad_alloc
+ * If the command cannot allocation a buffer to save the current working
+ * directory the function throws this exception.
+ *
+ * \param[out] error_msg  A variable where we save the error message.
+ *
+ * \return The current working directory or an empty string on error.
+ */
+inline std::string getcwd(std::string & error_msg)
+{
+    char * cwd(get_current_dir_name());
+    if(cwd != nullptr)
+    {
+        raii_buffer_t auto_free(cwd);
+        return std::string(cwd);
+    }
+
+    if(errno == ENOMEM)
+    {
+        throw std::bad_alloc();
+    }
+
+    int const e(errno);
+
+    std::stringstream ss;
+    ss << "getcwd() ";
+
+    switch(e)
+    {
+    case EACCES:
+        ss << "is missing permission to read or search a component of the current working directory.";
+        break;
+
+    case ENOENT:
+        ss << "found an unlinked current working directory.";
+        break;
+
+    default:
+        ss << "failed: "
+           << strerror(e);
+        break;
+
+    }
+    error_msg = ss.str();
+
+    // trying to get errno returned as expected, assuming std::string does
+    // not modify it we should be good
+    //
+    std::string result;
+    errno = e;
+    return result;
+}
+
+
 /** \brief Convert the input \p path in a canonicalized path.
  *
  * This function goes through the specified \p path and canonicalize
@@ -336,6 +441,10 @@ inline bool is_dot_or_dot_dot(std::string const & filename)
  * were relative on input). Similarly, we could then allow for softlink
  * to be taken or not and completely replace the input or not.
  *
+ * \exception bad_alloc
+ * If the command cannot allocation a buffer to save the current working
+ * directory the function throws this exception.
+ *
  * \param[in] path  The path to canonicalize.
  * \param[out] error_msg  A variable where we save the error message.
  *
@@ -350,6 +459,11 @@ inline std::string realpath(std::string const & path, std::string & error_msg)
     {
         error_msg.clear();
         return buf;
+    }
+
+    if(errno == ENOMEM)
+    {
+        throw std::bad_alloc();
     }
 
     // it failed
@@ -380,10 +494,6 @@ inline std::string realpath(std::string const & path, std::string & error_msg)
 
     case ENOENT:
         ss << "could not find the specified file.";
-        break;
-
-    case ENOMEM:
-        ss << "could not allocate necessary memory.";
         break;
 
     case ENOTDIR:
@@ -439,8 +549,8 @@ inline std::string canonicalize(
         path.empty()
             ? (filename.empty()
                 ? false
-                : filename[0] == '/')
-            : path[0] == '/');
+                : is_absolute(filename))
+            : is_absolute(path));
 
     // break up the path & filename as segments
     //
@@ -674,7 +784,7 @@ inline bool is_child_path(
 
     // both paths must be full or relative
     //
-    if((parent[0] == '/') ^ (child[0] == '/'))
+    if(is_absolute(parent) ^ is_absolute(child))
     {
         return false;
     }

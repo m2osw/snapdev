@@ -462,6 +462,35 @@ struct shared_ptr_with_deleter
 };
 
 
+/** \brief Handle the release of a buffer allocated with malloc().
+ *
+ * This type can be used to make sure free() gets called on a buffer
+ * that was allocated using malloc().
+ *
+ * For example, if you call the get_current_dir_name() function and
+ * assuming the function worked, you end up with a pointer to a buffer
+ * that was allocated with malloc(). To make sure it gets freed, you
+ * can save that pointer in an raii_buffer_t object like so:
+ *
+ * \code
+ *     char * cwd(get_current_dir_name());
+ *     if(cwd != nullptr)
+ *     {
+ *         raii_buffer_t auto_free(cwd);
+ *         ...
+ *     }
+ *     else
+ *     {
+ *         ...handle error...
+ *     }
+ * \endcode
+ *
+ * This is a pointer so the null (a.k.a. closed, already released) is
+ * expected to be represented by a nullptr.
+ */
+typedef std::unique_ptr<char, raii_pointer_deleter<char, void(*)(void *), &::free>>     raii_buffer_t;
+
+
 /** \brief Handle the closure of a FILE handle.
  *
  * One of the common type of file handle is the FILE object. It manages
@@ -473,7 +502,7 @@ struct shared_ptr_with_deleter
  * This is a pointer so the null (a.k.a. closed, already released) is
  * expected to be represented by a nullptr.
  */
-typedef std::unique_ptr<FILE, raii_pointer_deleter<FILE, int(*)(FILE *), &::fclose>>     raii_file_t;
+typedef std::unique_ptr<FILE, raii_pointer_deleter<FILE, int(*)(FILE *), &::fclose>>    raii_file_t;
 
 
 } // namespace snapdev
