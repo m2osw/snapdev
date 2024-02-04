@@ -517,6 +517,68 @@ inline std::string realpath(std::string const & path, std::string & error_msg)
 }
 
 
+/** \brief Change path to a relative path.
+ *
+ * This function make a path relative to another.
+ *
+ * Say you have:
+ *
+ * \code
+ * base = "/a/b/c/d/e/f";
+ * path = "/a/b/c/g/h/i";
+ * \endcode
+ *
+ * the function removes the common path segments (`a/b/c`) and then adds
+ * a number of parent (`..`) equal to the number of segments left in
+ * the base, three in our example. The result is then:
+ *
+ * \code
+ *     "../../../g/h/i"
+ * \endcode
+ *
+ * \param[in] base  Make \p path relative to this base.
+ * \param[in] path  The path to transform to relative.
+ *
+ * \return The relative path.
+ */
+inline std::string relative_path(std::string const & base, std::string const & path)
+{
+    if(is_relative(base) || is_relative(path))
+    {
+        return std::string();
+    }
+
+    std::vector<std::string> base_segments;
+    tokenize_string(base_segments, base, "/", true);
+
+    std::vector<std::string> path_segments;
+    tokenize_string(path_segments, path, "/", true);
+
+    std::size_t const max(std::min(base_segments.size(), path_segments.size()));
+    std::size_t idx(0);
+    for(; idx < max; ++idx)
+    {
+        if(base_segments[idx] != path_segments[idx])
+        {
+            break;
+        }
+    }
+
+    if(idx > 0)
+    {
+        base_segments.erase(base_segments.begin(), base_segments.begin() + idx);
+        path_segments.erase(path_segments.begin(), path_segments.begin() + idx);
+    }
+
+    for(idx = 0; idx < base_segments.size(); ++idx)
+    {
+        path_segments.insert(path_segments.begin(), "..");
+    }
+
+    return join_strings(path_segments, "/");
+}
+
+
 /** \brief Canonicalize a path and filename.
  *
  * This function concatenate path and filename with a "/" in between and

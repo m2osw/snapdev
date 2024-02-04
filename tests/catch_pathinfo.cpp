@@ -530,5 +530,81 @@ CATCH_TEST_CASE("pathinfo_is_absolute", "[filename][pathinfo]")
 }
 
 
+CATCH_TEST_CASE("pathinfo_relative", "[filename][pathinfo]")
+{
+    CATCH_START_SECTION("pathinfo_relative: verify that path gets properly changed")
+    {
+        struct path_expected_t
+        {
+            char const * const  f_base = nullptr;
+            char const * const  f_path = nullptr;
+            char const * const  f_result = nullptr;
+        };
+        path_expected_t paths[] = {
+            {
+                "/a/b/c/d/e",
+                "/a/b/c/g/h/i",
+                "../../g/h/i",
+            },
+            {
+                "/a/b/c/d/e/f",
+                "/a/b/c/g/h/i",
+                "../../../g/h/i",
+            },
+            {
+                "/a/b/c/d/e/f",
+                "/x/y/z/g/h/i",
+                "../../../../../../x/y/z/g/h/i",
+            },
+            {
+                "a/b/c/d/e/f",
+                "/x/y/z/g/h/i",
+                "",
+            },
+            {
+                "/a/b/c/d/e/f",
+                "x/y/z/g/h/i",
+                "",
+            },
+        };
+        for(auto const & p : paths)
+        {
+            CATCH_REQUIRE(snapdev::pathinfo::relative_path(p.f_base, p.f_path) == p.f_result);
+        }
+    }
+    CATCH_END_SECTION()
+}
+
+
+CATCH_TEST_CASE("pathinfo_realpath", "[filename][pathinfo]")
+{
+    CATCH_START_SECTION("pathinfo_realpath: make sure the realpath works")
+    {
+        std::string error_msg;
+        std::string const cwd(snapdev::pathinfo::getcwd(error_msg));
+        CATCH_REQUIRE(!cwd.empty());
+        CATCH_REQUIRE(error_msg.empty());
+        CATCH_REQUIRE(snapdev::pathinfo::realpath(".", error_msg) == cwd);
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("pathinfo_realpath: realpath fails for non-existant files")
+    {
+        std::string error_msg;
+        CATCH_REQUIRE(snapdev::pathinfo::realpath("/this/is/not/valid", error_msg) == std::string());
+        CATCH_REQUIRE(error_msg == "realpath(\"/this/is/not/valid\") could not find the specified file.");
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("pathinfo_realpath: realpath fails for file instead of directory")
+    {
+        std::string error_msg;
+        CATCH_REQUIRE(snapdev::pathinfo::realpath("/bin/ls/invalid", error_msg) == std::string());
+        CATCH_REQUIRE(error_msg == "realpath(\"/bin/ls/invalid\") found a file instead of a directory within the path.");
+    }
+    CATCH_END_SECTION()
+}
+
+
 
 // vim: ts=4 sw=4 et
