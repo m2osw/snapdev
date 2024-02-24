@@ -196,6 +196,8 @@ template<typename S>
 class serializer
 {
 public:
+    static_assert(sizeof(typename S::char_type) == 1, "we only support 1 byte characters in the brs::serializer");
+
     /** \brief Initialize the stream with the magic header.
      *
      * This function adds the magic header at the beginning of your file.
