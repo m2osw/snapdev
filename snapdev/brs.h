@@ -107,8 +107,10 @@ constexpr magic_t const         BRS_MAGIC_LITTLE_ENDIAN = build_magic('L');
 
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 constexpr magic_t const         BRS_MAGIC = BRS_MAGIC_BIG_ENDIAN;
-#else
+#elif __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 constexpr magic_t const         BRS_MAGIC = BRS_MAGIC_LITTLE_ENDIAN;
+#else
+#error "Unsupported endianess"
 #endif
 
 
