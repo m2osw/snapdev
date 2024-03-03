@@ -438,8 +438,9 @@ public:
      * The number of seconds must be indicated with at least one digit,
      * even if zero (0). If the number starts with any other character,
      * this exception is raised. Further, if the string includes any
-     * character other than digits, a decimal point, and the 's' unit
-     * at the end, then a syntax error is also raised.
+     * character other than a sign ('+' or '-' at the start), digits,
+     * a decimal point, and the 's' unit at the end, then a syntax error
+     * is also raised.
      *
      * \param[in] timestamp  The string to convert to a timespec_ex.
      */
@@ -1383,7 +1384,7 @@ inline timespec_ex now(clockid_t clk_id)
 /** \brief Output a timespec to a basic_ostream.
  *
  * This function allows one to print out a timespec. By default the function
- * prints the timespec as a floating point.
+ * prints the timespec as a floating point (\<seconds>.\<nanoseconds>).
  *
  * To write a date and time string instead, use the timespec_ex::to_string()
  * function as in:

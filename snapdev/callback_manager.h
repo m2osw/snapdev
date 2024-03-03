@@ -67,17 +67,17 @@ namespace snapdev
  *             return true;
  *         }
  *     };
- *     callback_manager<foo::pointer_t> callbacks;
+ *     snapdev::callback_manager<foo::pointer_t> callbacks;
  *
  *     callbacks.add_callback(obj1);
- *     snap::callback_manager::callback_id_t save_id(callbacks.add_callback(obj2));
+ *     snapdev::callback_manager::callback_id_t saved_id(callbacks.add_callback(obj2));
  *     callbacks.add_callback(obj3);
  *
  *     // call member_function() on obj1, obj2, obj3 with parameters p1, p2, p3
  *     //
  *     callbacks.call(&T::member_function, p1, p2, p3);
  *
- *     callbacks.remove_callback(save_id);  // won't call functions on obj2 anymore
+ *     callbacks.remove_callback(saved_id);  // won't call functions on obj2 anymore
  * \endcode
  *
  * If you instead want to add direct function calls, you can use a function
@@ -89,10 +89,10 @@ namespace snapdev
  *     // note that the function MUST return `bool`
  *     //
  *     typedef std::function<bool(int, float, std::string const &)> F;
- *     callback_manager<F> callbacks;
+ *     snapdev::callback_manager<F> callbacks;
  *
- *     snap::callback_manager::callback_id_t save1(callbacks.add_callback(std::bind(&T::member_function, obj1, std::placeholders::_1, std::placeholders::_2, ...)));
- *     snap::callback_manager::callback_id_t save2(callbacks.add_callback(my_func));
+ *     snapdev::callback_manager::callback_id_t save1(callbacks.add_callback(std::bind(&T::member_function, obj1, std::placeholders::_1, std::placeholders::_2, ...)));
+ *     snapdev::callback_manager::callback_id_t save2(callbacks.add_callback(my_func));
  *
  *     // call the functions added earlier with p1, p2, p3
  *     //
