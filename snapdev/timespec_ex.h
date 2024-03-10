@@ -645,7 +645,7 @@ public:
      * This function uses strftime() which interprets the input time as
      * localtime, no matter what. You may want to consider using the
      * ostream<<() function if you want to save the time as a UTC string
-     * as seconds & nanoseconds.
+     * as seconds & nanoseconds or use the to_timestamp() function.
      *
      * This function transforms the time in a string and returns that string.
      * The function uses the strftime(). See that manual page to define
@@ -686,6 +686,8 @@ public:
      * \return The formatted date and time.
      *
      * \sa from_string()
+     * \sa to_timestamp()
+     * \sa set(std::string const & timestamp)
      */
     template<nl_langinfo_func_t nl_langinfo_wrapper = nl_langinfo>
     std::string to_string(std::string const & format = std::string()) const
@@ -907,7 +909,7 @@ public:
     void from_string(std::string const & s, std::string const & format)
     {
         // I really have no clue how to properly support the %N option
-        // without rewriting strptime() which I readlly don't want to do
+        // without rewriting strptime() which I really don't want to do
         //
         // one way is to look for the '.' (assuming the %N is preceeded
         // by such) but some people write dates with those as in:
