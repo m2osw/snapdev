@@ -29,6 +29,7 @@
 #include    <sstream>
 
 
+
 namespace snapdev
 {
 
@@ -117,7 +118,7 @@ inline std::string to_string(unsigned __int128 x, unsigned __int128 base = 10, b
 }
 #pragma GCC diagnostic pop
 
-} //namespace snap
+} // namespace snapdev
 
 
 // no namespace for operators, it's easier that way
@@ -143,6 +144,15 @@ inline std::string to_string(unsigned __int128 x, unsigned __int128 base = 10, b
  * which means the result is not what you'd expect if you
  * used formatting such as std::setfill() and std::setw().
  *
+ * \note
+ * This is not ADL. You may need to add a `using` definition like so:
+ * \code
+ *     using ::operator<<;
+ *     std::cout << my_int128_number;
+ * \endcode
+ *
+ * \tparam _CharT  The character type of this stream.
+ * \tparam _Traits  The trait of this stream.
  * \param[in] os  The output stream.
  * \param[in] x  The value to be output in \p os.
  *
@@ -150,7 +160,8 @@ inline std::string to_string(unsigned __int128 x, unsigned __int128 base = 10, b
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-inline std::ostream & operator << (std::ostream & os, __int128 x)
+template<class _CharT, class _Traits>
+std::basic_ostream<_CharT, _Traits> & operator << (std::basic_ostream<_CharT, _Traits> & os, __int128 x)
 {
     std::ios_base::fmtflags const fmt(os.flags() & std::ios_base::basefield);
 
@@ -207,6 +218,15 @@ inline std::ostream & operator << (std::ostream & os, __int128 x)
  * which means the result is not what you'd expect if you
  * used formatting such as std::setfill() and std::setw().
  *
+ * \note
+ * This is not ADL. You may need to add a `using` definition like so:
+ * \code
+ *     using ::operator<<;
+ *     std::cout << my_uint128_number;
+ * \endcode
+ *
+ * \tparam _CharT  The character type of this stream.
+ * \tparam _Traits  The trait of this stream.
  * \param[in] os  The output stream.
  * \param[in] x  The value to be output in \p os.
  *
@@ -214,7 +234,8 @@ inline std::ostream & operator << (std::ostream & os, __int128 x)
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
-inline std::ostream & operator << (std::ostream & os, unsigned __int128 x)
+template<class _CharT, class _Traits>
+std::basic_ostream<_CharT, _Traits> & operator << (std::basic_ostream<_CharT, _Traits> & os, unsigned __int128 x)
 {
     std::ios_base::fmtflags const fmt(os.flags() & std::ios_base::basefield);
 

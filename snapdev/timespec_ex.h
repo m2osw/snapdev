@@ -703,7 +703,7 @@ public:
         std::string f(format);
         if(f.empty())
         {
-            // compute the default using the lcoale
+            // compute the default using the locale
             //
             // if there is a %r, we convert it to the T_FMT_AMPM
             // if there is a %X, we convert it to the T_FMT
@@ -897,12 +897,12 @@ public:
      * the specified \p format.
      *
      * \note
-     * The format is used with the strptime() function. Please refer
+     * The \p format is used with the strptime() function. Please refer
      * to that function for additional information. To some extend, the
      * function also supports our %N extension.
      *
      * \param[in] s  The string to be converted to this timespec_ex.
-     * \param[in] format  The format to use for the input data.
+     * \param[in] format  The format to use to parse the input data.
      *
      * \sa to_string()
      */
@@ -910,6 +910,9 @@ public:
     {
         // I really have no clue how to properly support the %N option
         // without rewriting strptime() which I really don't want to do
+        // (note: the strptime() function returns a pointer on the first
+        // unconsumed character, so we may be able to use that %N is at
+        // the end)
         //
         // one way is to look for the '.' (assuming the %N is preceeded
         // by such) but some people write dates with those as in:
