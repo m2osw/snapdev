@@ -586,6 +586,9 @@ CATCH_TEST_CASE("timespec_ex_string", "[time][string]")
         b = "4511.913788345144763"; // ignore digits after 9 decimals
         CATCH_REQUIRE(a == b);
 
+        b = "4511.91378834598771"; // try again with an odd number of digits
+        CATCH_REQUIRE(a == b);
+
         // 83207.000000000
         ss.str(std::string());
         a.tv_sec = 83207L;

@@ -490,10 +490,7 @@ public:
 
             // skip additional digits
             //
-            for(; *s >= '0' && *s <= '9'; ++s)
-            {
-                ++s;
-            }
+            for(; *s >= '0' && *s <= '9'; ++s);
 
             // in case all 9 digits were not included
             //
