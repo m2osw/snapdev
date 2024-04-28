@@ -1308,9 +1308,9 @@ public:
 
     /** \brief Return the maximum possible timespec.
      *
-     * This function returns a timespec with the smallest possible time.
+     * This function returns a timespec with the largest possible time.
      *
-     * \return A timespec_ex with the minimum possible time.
+     * \return A timespec_ex with the maximum possible time.
      */
     static timespec_ex max()
     {
