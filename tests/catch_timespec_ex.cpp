@@ -595,7 +595,7 @@ CATCH_TEST_CASE("timespec_ex_string", "[time][string]")
         a.tv_nsec = 0;
         ss << a;
 
-        CATCH_REQUIRE(ss.str() == "83207.000000000");
+        CATCH_REQUIRE(ss.str() == "83207");
         CATCH_REQUIRE(a.to_timestamp() == "83207.000000000");
         CATCH_REQUIRE(a.to_timestamp(true) == "83207");
 
@@ -636,7 +636,7 @@ CATCH_TEST_CASE("timespec_ex_string", "[time][string]")
         ss.str(std::string());
         a.tv_sec = 1000000000L;
         a.tv_nsec = 781200000;
-        ss << a;
+        ss << snapdev::setremovetrailingzeroes(false) << a;
 
         CATCH_REQUIRE(ss.str() == "1000000000.781200000");
         CATCH_REQUIRE(a.to_timestamp() == "1000000000.781200000");

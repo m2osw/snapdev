@@ -47,6 +47,7 @@
 #include    <iomanip>
 #include    <iostream>
 #include    <sstream>
+#include    <thread>
 
 
 // C
@@ -80,6 +81,82 @@ DECLARE_MAIN_EXCEPTION(timespec_ex_exception);
 DECLARE_EXCEPTION(timespec_ex_exception, clock_error);
 DECLARE_EXCEPTION(timespec_ex_exception, syntax_error);
 DECLARE_EXCEPTION(timespec_ex_exception, overflow);
+
+
+/** \brief Internal declarations.
+ *
+ * The ostream system makes use of a few internal variables and functions
+ * which are defined here.
+ */
+namespace
+{
+
+
+
+/** \brief Set of flags attached to an ostream for a timespec_ex object.
+ *
+ * This structure holds data used to output a timespec_ex object in an ostream.
+ *
+ * The f_remove_trailing_zeroes parameter is used to call the to_timestamp()
+ * member function.
+ */
+struct _ostream_info
+{
+    bool                f_remove_trailing_zeroes = true;
+};
+
+
+/** \brief Mutex used to allocate the ostream index.
+ *
+ * When getting the ostream index, it requires multiple instructions and
+ * a function call. As a result we need a mutex to make sure that the
+ * allocate happens only once in a single thread.
+ */
+inline std::mutex g_mutex = std::mutex();
+
+
+/** \brief Whether the ostream index was already allocated or not.
+ *
+ * This variable is used to know whether we need to allocate the ostream
+ * index (false) or whether that was already done.
+ */
+inline bool g_ostream_index_allocated = false;
+
+
+/** \brief The ostream index.
+ *
+ * The timespec_ex object allows for one flag used to determine whether
+ * trailing zeroes after the decimal point should be printed or not.
+ * This flag is recorded in the ostream concerned using this index.
+ */
+inline int g_ostream_index = 0;
+
+
+/** \brief Retrieve the ios_base index for the timespec_ex class.
+ *
+ * In order to allow for flags specific to the timespec_ex class in ostream
+ * functions, we need an index which this function supplies. The index
+ * is allocated whenever you first use one of the timespec_ex ostream
+ * functions.
+ *
+ * \return The unique ostream index for the timespec_ex class.
+ */
+inline int get_ostream_index()
+{
+    std::lock_guard lock(g_mutex);
+
+    if(!g_ostream_index_allocated)
+    {
+        g_ostream_index_allocated = true;
+        g_ostream_index = std::ios_base::xalloc();
+    }
+
+    return g_ostream_index;
+}
+
+
+
+} // no name namespace
 
 
 class timespec_ex;
@@ -607,21 +684,24 @@ public:
      * value. Use the set(std::string const & timestamp) function
      * to convert the string back to a timespec_ex value.
      *
-     * If the \p remove_ending_zeroes parameter is set to true, the
-     * nanoseconds ending zeroes are removed from the resulting string.
+     * If the \p remove_trailing_zeroes parameter is set to true, the
+     * nanoseconds trailing zeroes are removed from the resulting string.
      * If there were no nanoseconds (0), then the period also gets
      * removed.
+     *
+     * \param remove_trailing_zeroes  Whether to keep or remove trailing
+     * zeroes and the decimal point.
      *
      * \return A string representing this timespec_ex exactly.
      *
      * \sa set(std::string const & timestamp);
      */
-    std::string to_timestamp(bool remove_ending_zeroes = false) const
+    std::string to_timestamp(bool remove_trailing_zeroes = false) const
     {
         std::stringstream s;
         s << tv_sec << "." << std::setw(9) << std::setfill('0') << tv_nsec;
         std::string result(s.str());
-        if(remove_ending_zeroes)
+        if(remove_trailing_zeroes)
         {
             while(result.back() == '0')
             {
@@ -833,7 +913,7 @@ public:
                 }
                 if(it->has_flags(snapdev::strftime_flag_traits<char>::FORMAT_FLAG_EXTENDED))
                 {
-                    // remove ending zeroes
+                    // remove trailing zeroes
                     //
                     std::string::size_type const last_non_zero(n.find_last_not_of('0'));
                     if(last_non_zero == std::string::npos)
@@ -1383,6 +1463,119 @@ inline timespec_ex now(clockid_t clk_id)
 
 
 
+/** \brief Callback for ostream extension handling.
+ *
+ * The ostream handling of timespec defined below supports additional
+ * parameters. This uses an allocated buffer which we need to
+ * delete and/or copy as required by the standard library. This
+ * function handles those parameters.
+ *
+ * \param[in] e  The event to be handled.
+ * \param[in,out] out  The standard stream.
+ * \param[in] index  The index being handled.
+ */
+inline void basic_stream_event_callback(std::ios_base::event e, std::ios_base & out, int index)
+{
+    switch(e)
+    {
+    case std::ios_base::erase_event:
+        delete static_cast<_ostream_info *>(out.pword(index));
+        out.pword(index) = nullptr;
+        break;
+
+    case std::ios_base::copyfmt_event:
+        {
+            _ostream_info * info(static_cast<_ostream_info *>(out.pword(index)));
+            if(info != nullptr)
+            {
+                _ostream_info * new_info(new _ostream_info(*info));
+                out.pword(index) = new_info;
+            }
+        }
+        break;
+
+    default:
+        // ignore imbue; we have nothing to do with the locale
+        break;
+
+    }
+}
+
+
+/** \brief Structure used to set the f_remove_trailing_zeroes in an ostream.
+ *
+ * This structure is used to set the f_remove_trailing_zeroes in the
+ * _ostream_info structure. This makes it very easy to do using the
+ * setremovetrailingzeroes() function as an ostream parameter:
+ *
+ * \code
+ *      out << snapdev::setremovetrailingzeroes(false) << timestamp;
+ * \endcode
+ *
+ * The default value is true, so you are more likely to use the function
+ * to change it to false as shown above.
+ *
+ * This structure is considered private. You are not expected to create
+ * an instance directly, Instead, you are supposed to use the
+ * setremovetrailingzeroes() function.
+ *
+ * \private
+ *
+ * \sa setremovetrailingzeroes()
+ */
+struct _setremovetrailingzeroes
+{
+    bool                f_remove_trailing_zeroes = true;
+};
+
+
+/** \brief Change the output of timespec_ex to include all trailing zeroes.
+ *
+ * This function initializes a _setremovetrailingzeroes structure which can
+ * be passed to an ostream in order to change how the trailing zeroes are
+ * handled in the ostream.
+ *
+ * The default is to remove the trailing zeroes, so you are likely to
+ * use this flag to set it to false like so:
+ *
+ * \code
+ *     std::cout << snapdev::setremovetrailingzeroes(false) << timestamp << std::endl;
+ * \endcode
+ *
+ * \param[in] remove_trailing_zeroes  Whether trailing zeroes are to be removed
+ * (true--the default) or be kept (false).
+ */
+inline _setremovetrailingzeroes setremovetrailingzeroes(bool remove_trailing_zeroes)
+{
+    return { remove_trailing_zeroes };
+}
+
+
+/** \brief Change the current remove trailing zeroes flag.
+ *
+ * The value of the timespec_ex object can be printed with an ostream. This
+ * parameter defines whether to printing trailing zeroes and the decimal
+ * point when all zeroes. By default, the trailing zeroes are all removed.
+ *
+ * \sa setremovetrailingzeroes()
+ */
+template<typename _CharT, typename _Traits>
+inline std::basic_ostream<_CharT, _Traits> &
+operator << (std::basic_ostream<_CharT, _Traits> & out, _setremovetrailingzeroes removetrailingzeroes)
+{
+    int const index(get_ostream_index());
+    _ostream_info * info(static_cast<_ostream_info *>(out.pword(index)));
+    if(info == nullptr)
+    {
+        info = new _ostream_info;
+        out.pword(index) = info;
+        out.register_callback(basic_stream_event_callback, index);
+    }
+    info->f_remove_trailing_zeroes = removetrailingzeroes.f_remove_trailing_zeroes;
+    return out;
+}
+
+
 /** \brief Output a timespec to a basic_ostream.
  *
  * This function allows one to print out a timespec. By default the function
@@ -1399,7 +1592,7 @@ inline timespec_ex now(clockid_t clk_id)
  * timespec_ex::from_string() reverses the value back to a timespec_ex.
  *
  * \todo
- * Add a flag to determine whether the nanoseconds ending zeroes should
+ * Add a flag to determine whether the nanoseconds trailing zeroes should
  * be removed or not (warning: the timespec_ex::to_timestamp() cannot
  * be used as is because this function receives a timespec not our
  * timespec_ex structure).
@@ -1412,20 +1605,16 @@ inline timespec_ex now(clockid_t clk_id)
 template<typename CharT, typename Traits>
 std::basic_ostream<CharT, Traits> & operator << (std::basic_ostream<CharT, Traits> & out, timespec const & t)
 {
-    // write to a string buffer first
-    //
-    std::basic_ostringstream<CharT, Traits, std::allocator<CharT> > s;
+    bool remove_trailing_zeroes(true);
+    int const index(get_ostream_index());
+    _ostream_info * info(static_cast<_ostream_info *>(out.pword(index)));
+    if(info != nullptr)
+    {
+        remove_trailing_zeroes = info->f_remove_trailing_zeroes;
+    }
 
-    // setup the string output like the out stream
-    //
-    s.flags(out.flags());
-    s.imbue(out.getloc());
-    s.precision(out.precision());
-    s << t.tv_sec << "." << std::setw(9) << std::setfill('0') << t.tv_nsec;
-
-    // buffer is ready, display in output in one go
-    //
-    return out << s.str();
+    timespec_ex u(t);
+    return out << u.to_timestamp(remove_trailing_zeroes);
 }
 
 
