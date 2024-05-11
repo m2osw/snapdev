@@ -78,7 +78,7 @@ namespace snapdev
 
 DECLARE_MAIN_EXCEPTION(timespec_ex_exception);
 
-DECLARE_EXCEPTION(timespec_ex_exception, clock_error);
+DECLARE_EXCEPTION(timespec_ex_exception, clock_error); // LCOV_EXCL_LINE
 DECLARE_EXCEPTION(timespec_ex_exception, syntax_error);
 DECLARE_EXCEPTION(timespec_ex_exception, overflow);
 
