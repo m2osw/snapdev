@@ -450,6 +450,8 @@ inline std::string getcwd(std::string & error_msg)
  *
  * \return The canonicalized version of \p path or an error and errno set
  * to whatever error realpath(3) returned.
+ *
+ * \sa file_exists()
  */
 inline std::string realpath(std::string const & path, std::string & error_msg)
 {
@@ -514,6 +516,32 @@ inline std::string realpath(std::string const & path, std::string & error_msg)
     std::string result;
     errno = e;
     return result;
+}
+
+
+/** \brief Check whether a file exists.
+ *
+ * This function checks whether a fileexists. You can tweak the flags
+ * to test whether the file is executable and/or writable. See the \p mode
+ * parameter as defined by the access() function:
+ *
+ * \li F_OK -- the file exists
+ * \li R_OK -- the file can be opened for reading
+ * \li W_OK -- the file can be opened for writing
+ * \li X_OK -- the file can be executed
+ *
+ * The default this function uses if `F_OK`. In many cases, you may want
+ * to change the default to `R_OK` or `X_OK` if you want to read that
+ * file or execute that script.
+ *
+ * \param[in] filename  The name of the file to check.
+ * \param[in] mode  The mode to check the file permissions with.
+ *
+ * \return true if the mode matches the file permissions.
+ */
+inline bool file_exists(std::string const & filename, int mode = F_OK)
+{
+    return access(filename.c_str(), mode) == 0;
 }
 
 

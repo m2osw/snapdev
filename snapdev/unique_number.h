@@ -26,6 +26,13 @@
  *
  * The number is managed as a 128 bits number. You may cast it down to any
  * number of bits as required by your function.
+ *
+ * The function also accepts an index which gives you the ability to create
+ * any number of counters within one file. This is particularly useful if
+ * your service makes use of many different counter. Instead of create a
+ * separate file for each counter, reuse the same file with varying
+ * indexes. This is likely faster since the kernel only needs to cache one
+ * single file.
  */
 
 // libexcept

@@ -56,6 +56,13 @@ constexpr std::enable_if_t<std::is_enum<T>::value, T> operator + (T e, int offse
 }
 
 
+template<typename T>
+constexpr std::enable_if_t<std::is_enum<T>::value, T> & operator += (T & e, int offset)
+{
+    return e = e + offset;
+}
+
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
 template<typename T>
@@ -95,6 +102,13 @@ template<typename T>
 constexpr std::enable_if_t<std::is_enum<T>::value, T> operator - (T e, int offset)
 {
     return static_cast<T>(static_cast<int>(e) - offset);
+}
+
+
+template<typename T>
+constexpr std::enable_if_t<std::is_enum<T>::value, T> & operator -= (T & e, int offset)
+{
+    return e = e - offset;
 }
 
 
