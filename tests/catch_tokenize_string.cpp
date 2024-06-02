@@ -48,7 +48,31 @@ namespace
 
 CATCH_TEST_CASE("tokenize_string", "[string]")
 {
-    CATCH_START_SECTION("generate tokens: keep empty entries")
+    CATCH_START_SECTION("tokenize_string: empty input non-empty output if keeping empty entries")
+    {
+        std::vector<std::string> tokens;
+        CATCH_REQUIRE(snapdev::tokenize_string(
+                  tokens
+                , ""
+                , " ") == 1);
+        CATCH_REQUIRE(tokens.size() == 1);
+        CATCH_REQUIRE(tokens[0] == "");
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("tokenize_string: empty input empty output when removing empty entries")
+    {
+        std::vector<std::string> tokens;
+        CATCH_REQUIRE(snapdev::tokenize_string(
+                  tokens
+                , ""
+                , " "
+                , true) == 0);
+        CATCH_REQUIRE(tokens.size() == 0);
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("tokenize_string: keep empty entries")
     {
         std::vector<std::string> tokens;
         CATCH_REQUIRE(snapdev::tokenize_string(
@@ -72,7 +96,7 @@ CATCH_TEST_CASE("tokenize_string", "[string]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("generate tokens: remove empty entries")
+    CATCH_START_SECTION("tokenize_string: remove empty entries")
     {
         std::vector<std::string> tokens;
         CATCH_REQUIRE(snapdev::tokenize_string(
@@ -87,7 +111,7 @@ CATCH_TEST_CASE("tokenize_string", "[string]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("generate tokens: comma separated")
+    CATCH_START_SECTION("tokenize_string: comma separated")
     {
         std::vector<std::string> tokens;
         CATCH_REQUIRE(snapdev::tokenize_string(
@@ -111,7 +135,7 @@ CATCH_TEST_CASE("tokenize_string", "[string]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("generate tokens: comma separated, remove empty")
+    CATCH_START_SECTION("tokenize_string: comma separated, remove empty")
     {
         std::vector<std::string> tokens;
         CATCH_REQUIRE(snapdev::tokenize_string(
@@ -126,7 +150,7 @@ CATCH_TEST_CASE("tokenize_string", "[string]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("generate tokens: comma separated, remove empty and trim")
+    CATCH_START_SECTION("tokenize_string: comma separated, remove empty and trim")
     {
         std::vector<std::string> tokens;
         CATCH_REQUIRE(snapdev::tokenize_string(
@@ -142,7 +166,7 @@ CATCH_TEST_CASE("tokenize_string", "[string]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("generate tokens: arrow (string) separated, remove empty and trim")
+    CATCH_START_SECTION("tokenize_string: arrow (string) separated, remove empty and trim")
     {
         std::vector<std::string> tokens;
         CATCH_REQUIRE(snapdev::tokenize_string(
