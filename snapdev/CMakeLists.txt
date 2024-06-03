@@ -38,6 +38,7 @@ install(
         empty_set_intersection.h
         enumerate.h
         enum_class_math.h
+        escape_special_regex_characters.h
         file_contents.h
         gethostname.h
         glob_to_list.h
