@@ -1557,22 +1557,27 @@ inline _setremovetrailingzeroes setremovetrailingzeroes(bool remove_trailing_zer
  * parameter defines whether to printing trailing zeroes and the decimal
  * point when all zeroes. By default, the trailing zeroes are all removed.
  *
+ * \tparam _CharT  The character type of this stream.
+ * \tparam _Traits  The trait of this stream.
+ * \param[in] os  The output stream.
+ * \param[in] removetrailingzeroes  A setremovetrailingzeroes(bool) call.
+ *
  * \sa setremovetrailingzeroes()
  */
 template<typename _CharT, typename _Traits>
 inline std::basic_ostream<_CharT, _Traits> &
-operator << (std::basic_ostream<_CharT, _Traits> & out, _setremovetrailingzeroes removetrailingzeroes)
+operator << (std::basic_ostream<_CharT, _Traits> & os, _setremovetrailingzeroes removetrailingzeroes)
 {
     int const index(get_ostream_index());
-    _ostream_info * info(static_cast<_ostream_info *>(out.pword(index)));
+    _ostream_info * info(static_cast<_ostream_info *>(os.pword(index)));
     if(info == nullptr)
     {
         info = new _ostream_info;
-        out.pword(index) = info;
-        out.register_callback(basic_stream_event_callback, index);
+        os.pword(index) = info;
+        os.register_callback(basic_stream_event_callback, index);
     }
     info->f_remove_trailing_zeroes = removetrailingzeroes.f_remove_trailing_zeroes;
-    return out;
+    return os;
 }
 
 
@@ -1597,24 +1602,26 @@ operator << (std::basic_ostream<_CharT, _Traits> & out, _setremovetrailingzeroes
  * be used as is because this function receives a timespec not our
  * timespec_ex structure).
  *
- * \param[in] out  The output stream where the timespec gets written.
+ * \tparam _CharT  The character type of this stream.
+ * \tparam _Traits  The trait of this stream.
+ * \param[in] os  The output stream where the timespec gets written.
  * \param[in] t  The actual timespec that is to be printed.
  *
  * \return A reference to the basic_ostream object.
  */
-template<typename CharT, typename Traits>
-std::basic_ostream<CharT, Traits> & operator << (std::basic_ostream<CharT, Traits> & out, timespec const & t)
+template<typename _CharT, typename _Traits>
+std::basic_ostream<_CharT, _Traits> & operator << (std::basic_ostream<_CharT, _Traits> & os, timespec const & t)
 {
     bool remove_trailing_zeroes(true);
     int const index(get_ostream_index());
-    _ostream_info * info(static_cast<_ostream_info *>(out.pword(index)));
+    _ostream_info * info(static_cast<_ostream_info *>(os.pword(index)));
     if(info != nullptr)
     {
         remove_trailing_zeroes = info->f_remove_trailing_zeroes;
     }
 
     timespec_ex u(t);
-    return out << u.to_timestamp(remove_trailing_zeroes);
+    return os << u.to_timestamp(remove_trailing_zeroes);
 }
 
 
