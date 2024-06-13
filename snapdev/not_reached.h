@@ -49,7 +49,7 @@ namespace snapdev
 
 [[noreturn]] [[deprecated]] inline void NOTREACHED()
 {
-    std::cerr << "NOT_REACHED called, process will abort." << std::endl;
+    std::cerr << "NOTREACHED() called, process will abort." << std::endl;
 
     std::cerr << "Stack trace:" << std::endl;
     libexcept::stack_trace_t trace(libexcept::collect_stack_trace_with_line_numbers());
@@ -64,7 +64,7 @@ namespace snapdev
 
 [[noreturn]] inline void NOT_REACHED()
 {
-    std::cerr << "NOT_REACHED called, process will abort." << std::endl;
+    std::cerr << "NOT_REACHED() called, process will abort." << std::endl;
 
     std::cerr << "Stack trace:" << std::endl;
     libexcept::stack_trace_t trace(libexcept::collect_stack_trace_with_line_numbers());
@@ -129,7 +129,7 @@ namespace snapdev
 inline void NOT_REACHED_IN_TEST()
 {
 #ifdef __SANITIZE_ADDRESS__
-    std::cerr << "NOT_REACHED_TEST called, process will abort." << std::endl;
+    std::cerr << "NOT_REACHED_IN_TEST() called, process will abort." << std::endl;
 
     std::cerr << "Stack trace:" << std::endl;
     libexcept::stack_trace_t trace(libexcept::collect_stack_trace_with_line_numbers());
