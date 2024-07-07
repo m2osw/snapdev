@@ -84,7 +84,7 @@ bool is_hexdigit(charT c)
  *
  * To get uppercase, simple set the \p uppercase parameter to true.
  *
- * \param[in] d  The hexadecimal digit convert.
+ * \param[in] d  The hexadecimal digit to convert.
  *
  * \return An hexadecimal character.
  */
