@@ -81,4 +81,36 @@ install(
 )
 
 
+##
+## build the c++regex command line tool
+##
+project(c++regex)
+
+add_executable(${PROJECT_NAME}
+    c++regex.cpp
+)
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        ${SNAPDEV_INCLUDE_DIRS}
+        ${BOOST_INCLUDE_DIRS}
+        ${LIBEXCEPT_INCLUDE_DIRS}
+)
+
+target_link_libraries(${PROJECT_NAME}
+    ${LIBEXCEPT_LIBRARIES}
+)
+
+install(
+    TARGETS
+        ${PROJECT_NAME}
+
+    RUNTIME DESTINATION
+        bin
+
+    COMPONENT
+        runtime
+)
+
+
 # vim: ts=4 sw=4 et nocindent

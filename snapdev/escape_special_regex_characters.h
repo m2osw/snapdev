@@ -42,8 +42,14 @@ namespace
  *
  * This macro is used so we can pick the largest character at compile time
  * since that gives us a valid sizeof().
+ *
+ * \note
+ * TBD: for proper ECMA regex we may need to have the '/'. Either way, it
+ * is probably safer to have it. We may want to change this parameter with
+ * a dynamic one so we can choose the type of regex we're dealying with
+ * and whether such and such character is special or not.
  */
-#define SNAPDEV_SPECIAL_REGEX_CHARACTERS    "$()*+.?[\\]^{|}"
+#define SNAPDEV_SPECIAL_REGEX_CHARACTERS    "$()*+./?[\\]^{|}"
 
 
 /** \brief List of special regular expression characters.
