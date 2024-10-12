@@ -447,7 +447,7 @@ enum class glob_to_list_flag_t
     GLOB_FLAG_PERIOD,             // allow period at the start (i.e. pattern ".*")
     GLOB_FLAG_DOT_AND_DOT_DOT,    // allow "." and ".." to be included
     GLOB_FLAG_TILDE,              // transform "~/..." with "$HOME/..."
-    GLOB_FLAG_RECURSIVE,          // when a directory is found, read it too
+    GLOB_FLAG_RECURSIVE,          // when a directory is found, read inside it too
     GLOB_FLAG_FOLLOW_SYMLINK,     // in recursive mode, do or do not follow symlinks
     GLOB_FLAG_EMPTY,              // on a GLOB_NOMATCH error, still return true
 };
@@ -527,7 +527,7 @@ public:
      * function in a part of your code which is locked.
      *
      * \todo
-     * Add a read_path() which supports dynamic flags.
+     * Add a read_path() which better supports dynamic flags.
      *
      * \tparam args  A list of one or more glob to list flags.
      * \param[in] path  The path with glob patterns.
