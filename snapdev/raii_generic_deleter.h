@@ -76,7 +76,7 @@ namespace snapdev
  * For example, a file descriptor can use this template class as follow:
  *
  * \code
- *   typedef std::unique_ptr<int, snap::raii_generic_deleter<int, -1, decltype(&::close), &::close>> raii_fd_t;
+ *   typedef std::unique_ptr<int, snapdev::raii_generic_deleter<int, -1, decltype(&::close), &::close>> raii_fd_t;
  *
  *   raii_fd_t fd(open("/tmp/test.tmp", O_RDWR));
  * \endcode
@@ -424,8 +424,8 @@ public:
  *     {
  *         ::av_frame_free(&ptr);
  *     }
- *     typedef snap::raii_pointer_deleter<AVFrame, decltype(&av_frame_free_ptr), &av_frame_free_ptr> av_frame_deleter_t;
- *     typedef snap::shared_ptr_with_deleter<AVFrame, av_frame_deleter_t> av_frame_t;
+ *     typedef snapdev::raii_pointer_deleter<AVFrame, decltype(&av_frame_free_ptr), &av_frame_free_ptr> av_frame_deleter_t;
+ *     typedef snapdev::shared_ptr_with_deleter<AVFrame, av_frame_deleter_t> av_frame_t;
  * \endcode
  *
  * Source:
