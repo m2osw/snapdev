@@ -35,6 +35,7 @@ namespace snapdev
 {
 
 
+
 /** \brief Transform ASCII characters (a-z) to uppercase.
  *
  * This function transforms a string ASCII characters (a-z) to uppercase.
@@ -64,6 +65,8 @@ StringT to_upper(StringT const & str)
 
     return result;
 }
+
+
 
 } // namespace snapdev
 // vim: ts=4 sw=4 et
