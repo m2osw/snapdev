@@ -145,20 +145,24 @@ constexpr magic_t const         BRS_MAGIC = BRS_MAGIC_LITTLE_ENDIAN;
  *     out.add_value("field-name", my_buffer, size_of_my_buffer);
  *
  *     // add a value with an index (array)
- *     // in this case you pass 3 values
+ *     // in this case you pass 3 parameters
  *     // this also supports the buffer/size as above
  *     //
  *     out.add_value("field-name", 123, my_value);
+ *     out.add_value("field-name", 123, my_buffer, size_of_my_buffer);
  *
  *     // add a value with a sub-field name (map)
- *     // in this case you pass 3 values, the second being a string as well
+ *     // in this case you pass 3 parameters, the second being a string as well
  *     // this also supports the buffer/size as above
  *     //
  *     out.add_value("field-name", "sub-field", my_value);
+ *     out.add_value("field-name", "sub-field", my_buffer, size_of_my_buffer);
  *
- *     // the add to the output stream is immediate
+ *     // the add to the output stream is immediate (no caching happening in
+ *     // the serialize class itself)
  *     //
  *     // so to save it to a file you could do this
+ *     // (of course, `out` could also just be set to that output file)
  *     //
  *     std::ofstream p("my-data.brs");
  *     p << buffer.str();
@@ -212,7 +216,7 @@ public:
     }
 
     template<typename T>
-    void add_value(name_t name, T const * ptr, std::size_t size)
+    void add_value(name_t const & name, T const * ptr, std::size_t size)
     {
         if(name.length() == 0)
         {
@@ -249,7 +253,7 @@ public:
 
 
     template<typename T>
-    void add_value(name_t name, int index, T const * ptr, std::size_t size)
+    void add_value(name_t const & name, int index, T const * ptr, std::size_t size)
     {
         if(name.length() == 0)
         {
@@ -290,9 +294,8 @@ public:
                 , size);
     }
 
-
     template<typename T>
-    void add_value(name_t name, name_t sub_name, T const * ptr, std::size_t size)
+    void add_value(name_t const & name, name_t const & sub_name, T const * ptr, std::size_t size)
     {
         if(name.empty())
         {
@@ -316,7 +319,7 @@ public:
 
         if(hunk_sizes.f_name != name.length()
         || hunk_sizes.f_hunk != size
-        || sub_name.length() > std::numeric_limits<decltype(len)>::max())
+        || sub_name.length() != len)
         {
             throw brs_out_of_range("name, sub-name, or hunk too large");
         }
@@ -359,31 +362,31 @@ public:
     typename std::enable_if_t<!snapdev::is_vector_v<T>
                             && !std::is_same_v<char const *, T>
                             && !std::is_same_v<std::string const &, T>, void>
-    add_value(name_t name, T const & value)
+    add_value(name_t const & name, T const & value)
     {
         add_value(name, &value, sizeof(value));
     }
 
 
-    void add_value(name_t name, std::nullptr_t)
+    void add_value(name_t const & name, std::nullptr_t)
     {
         NOT_USED(name);
     }
 
 
-    void add_value(name_t name, char const * value)
+    void add_value(name_t const & name, char const * value)
     {
         add_value(name, value, strlen(value));
     }
 
 
-    void add_value(name_t name, std::string const & value)
+    void add_value(name_t const & name, std::string const & value)
     {
         add_value(name, value.c_str(), value.length());
     }
 
 
-    void add_value_if_not_empty(name_t name, std::string const & value)
+    void add_value_if_not_empty(name_t const & name, std::string const & value)
     {
         if(!value.empty())
         {
@@ -394,7 +397,7 @@ public:
 
     template<typename T>
     typename std::enable_if_t<snapdev::is_vector_v<T>>
-    add_value(name_t name, T const & value)
+    add_value(name_t const & name, T const & value)
     {
         add_value(name, value.data(), value.size() * sizeof(typename T::value_type));
     }
@@ -404,25 +407,25 @@ public:
     template<typename T>
     typename std::enable_if_t<!snapdev::is_vector_v<T>
                             && !std::is_same_v<char const *, T>, void>
-    add_value(name_t name, int index, T const & value)
+    add_value(name_t const & name, int index, T const & value)
     {
         add_value(name, index, &value, sizeof(value));
     }
 
 
-    void add_value(name_t name, int index, std::nullptr_t)
+    void add_value(name_t const & name, int index, std::nullptr_t)
     {
         NOT_USED(name, index);
     }
 
 
-    void add_value(name_t name, int index, char const * value)
+    void add_value(name_t const & name, int index, char const * value)
     {
         add_value(name, index, value, strlen(value));
     }
 
 
-    void add_value(name_t name, int index, std::string const & value)
+    void add_value(name_t const & name, int index, std::string const & value)
     {
         add_value(name, index, value.c_str(), value.length());
     }
@@ -431,31 +434,31 @@ public:
 // *** MAPS ***
     template<typename T>
     typename std::enable_if_t<!std::is_same_v<T, typename std::string>, void>
-    add_value(name_t name, name_t sub_name, T const & value)
+    add_value(name_t const & name, name_t const & sub_name, T const & value)
     {
         add_value(name, sub_name, &value, sizeof(value));
     }
 
 
-    void add_value(name_t name, name_t sub_name, std::nullptr_t)
+    void add_value(name_t const & name, name_t const & sub_name, std::nullptr_t)
     {
         NOT_USED(name, sub_name);
     }
 
 
-    void add_value(name_t name, name_t sub_name, char const * value)
+    void add_value(name_t const & name, name_t const & sub_name, char const * value)
     {
         add_value(name, sub_name, value, strlen(value));
     }
 
 
-    void add_value(name_t name, name_t sub_name, std::string const & value)
+    void add_value(name_t const & name, name_t const & sub_name, std::string const & value)
     {
         add_value(name, sub_name, value.c_str(), value.length());
     }
 
 
-    void add_value_if_not_empty(name_t name, name_t sub_name, std::string const & value)
+    void add_value_if_not_empty(name_t const & name, name_t const & sub_name, std::string const & value)
     {
         if(!value.empty())
         {
@@ -465,7 +468,7 @@ public:
 
 
 // *** SUB-FIELDS ***
-    void start_subfield(name_t name)
+    void start_subfield(name_t const & name)
     {
         if(name.empty())
         {
@@ -522,7 +525,7 @@ template<typename S>
 class recursive
 {
 public:
-    recursive(serializer<S> & s, name_t name)
+    recursive(serializer<S> & s, name_t const & name)
         : f_serializer(s)
     {
         f_serializer.start_subfield(name);
@@ -567,22 +570,11 @@ struct field_t
 
 /** \brief Unserialize the specified buffer.
  *
- * This function reads each hunk and calls the specified \p callback
- * with them. You can then save the data in your object fields.
+ * The deserialize() function reads each hunk and calls the specified
+ * callback with the data. That function can save the data in your object
+ * fields as required.
  *
- * The root buffer is expected to include the magic code at the start.
- * Set the \p include_magic to true in that case to verify that it
- * is indeed set and valid. If you do not do that, the unserialization
- * will fail since everything will be off by sizeof(magic_t).
- *
- * \param[in] buffer  The buffer to unserialize.
- * \param[in] callback  The callback manager used to store the callbacks to
- * call on each hunk.
- * \param[in] includes_magic  Whether \p buffer includes the a magic code
- * at the start or not. The top buffer is expected to include a magic
- * code. Sub-buffers should not include the magic code.
- *
- * \return true if the unserialization succeeded, false otherwise.
+ * The buffer must start with the BRS magic code.
  */
 template<typename S>
 class deserializer
@@ -590,6 +582,18 @@ class deserializer
 public:
     typedef std::function<bool(deserializer<S> &, field_t const &)>    process_hunk_t;
 
+    /** \brief Initialize the deserializer.
+     *
+     * The deserializer keeps a reference to your input stream. You must
+     * make sure that the input stream remains valid for the duration
+     * of the deserialization process.
+     *
+     * \exception brs_magic_missing
+     * The function reads and verifies the magic. If that fails, this
+     * exception is raised.
+     *
+     * \param[in,out] input  The input stream to parse.
+     */
     deserializer(S & input)
         : f_input(input)
     {
@@ -609,7 +613,28 @@ public:
         }
     }
 
-
+    /** \brief Deserialize the input stream specified on the constructor.
+     *
+     * The function goes through all the hunks found in the input stream.
+     * For each hunk, it calls the \p callback function with the hunk
+     * definition saved in a field_t structure. Your callback is expected
+     * to call the read_data() corresponding to the field being read.
+     *
+     * If any hunk looks invalid, then the function returns false. If
+     * a hunk is found, but it cannot be read properly, then the function
+     * throw about it.
+     *
+     * \exception brs_map_name_cannot_be_empty
+     * Found a size of 0 for the name of a map item.
+     *
+     * \exception brs_unknown_type
+     * The hunk type is not currently supported.
+     *
+     * \param[in] callback  The callback function called with each field
+     *                      found in the input stream.
+     *
+     * \return true if the unserialization succeeded, false otherwise.
+     */
     bool deserialize(process_hunk_t & callback)
     {
         for(;;)
