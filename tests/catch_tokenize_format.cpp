@@ -1945,6 +1945,431 @@ printf_formats_t const g_strftime_formats[] =
 
 
 
+// a few templates for an hypothetical format which allows escaping the
+// introducer with a different character (backslash in our case)
+//
+template<typename _CharT>
+class escapable_letter_traits
+{
+public:
+    static std::basic_string<_CharT>::size_type is_format(char const * s, snapdev::format_item<_CharT> & f)
+    {
+        if(s[0] == 'q'
+        || s[0] == 'z')
+        {
+            f.format(s[0]);
+            return 1UL;
+        }
+        f.add_error(snapdev::format_error_t::FORMAT_ERROR_UNKNOWN);
+        return 0;
+    }
+};
+
+template<typename _CharT>
+class escapable_flag_traits
+{
+public:
+    typedef _CharT  char_t;
+
+    static constexpr snapdev::format_flag_t const       FORMAT_FLAG_LARGE = 0x0001; // '*'
+
+    static bool is_flag(char_t c, snapdev::format_item<_CharT> & f)
+    {
+        if(c == 'L')
+        {
+            if(f.has_flags(FORMAT_FLAG_LARGE))
+            {
+                f.add_error(snapdev::format_error_t::FORMAT_ERROR_DUPLICATE);
+            }
+            f.add_flags(FORMAT_FLAG_LARGE);
+            return true;
+        }
+        return false;
+    }
+};
+
+template<typename _CharT>
+class dollar_escapable_introducer_traits
+{
+public:
+    typedef _CharT char_t;
+
+    static bool is_introducer(char_t c)
+    {
+        return c == '$';
+    }
+
+    static bool is_start_enclose(char_t c)
+    {
+        return c == '{';
+    }
+
+    static bool is_end_enclose(char_t c)
+    {
+        return c == '}';
+    }
+
+    static bool double_to_escape()
+    {
+        return false;
+    }
+
+    static bool escape_character(char_t c)
+    {
+        return c == '\\';
+    }
+};
+
+
+printf_formats_t const g_shell_formats[] =
+{
+    {
+        .f_format_string = "Escape Simple \\$z Variable",
+        .f_results = {
+            {
+                .f_string = "Escape Simple ",
+            },
+            {
+                .f_string = "$z Variable",
+            },
+        },
+    },
+    {
+        .f_format_string = "Escape Enclosed \\${Lz} Variable",
+        .f_results = {
+            {
+                .f_string = "Escape Enclosed "
+            },
+            {
+                .f_string = "${Lz} Variable",
+            },
+        },
+    },
+    {
+        .f_format_string = "Simple $z Code",
+        .f_results = {
+            {
+                .f_string = "Simple ",
+            },
+            {
+                .f_string = "$z",
+                .f_format = 'z',
+            },
+            {
+                .f_string = " Code",
+            },
+        },
+    },
+    {
+        .f_format_string = "Enclosed ${q} Variable",
+        .f_results = {
+            {
+                .f_string = "Enclosed ",
+            },
+            {
+                .f_string = "${q}",
+                .f_format = 'q',
+            },
+            {
+                .f_string = " Variable",
+            },
+        },
+    },
+    {
+        .f_format_string = "Large $Lz Format Code",
+        .f_results = {
+            {
+                .f_string = "Large ",
+            },
+            {
+                .f_string = "$Lz",
+                .f_flags = escapable_flag_traits<char>::FORMAT_FLAG_LARGE,
+                .f_format = 'z',
+            },
+            {
+                .f_string = " Format Code",
+            },
+        },
+    },
+    {
+        .f_format_string = "Large $35Lz Format Code",
+        .f_results = {
+            {
+                .f_string = "Large ",
+            },
+            {
+                .f_string = "$35Lz",
+                .f_flags = escapable_flag_traits<char>::FORMAT_FLAG_LARGE,
+                .f_width = 35,
+                .f_format = 'z',
+            },
+            {
+                .f_string = " Format Code",
+            },
+        },
+    },
+    {
+        .f_format_string = "Large $L91z Format Code",
+        .f_results = {
+            {
+                .f_string = "Large ",
+            },
+            {
+                .f_string = "$L91z",
+                .f_flags = escapable_flag_traits<char>::FORMAT_FLAG_LARGE,
+                .f_width = 91,
+                .f_format = 'z',
+            },
+            {
+                .f_string = " Format Code",
+            },
+        },
+    },
+    {
+        .f_format_string = "Enclose & Large ${Lq} Flag",
+        .f_results = {
+            {
+                .f_string = "Enclose & Large ",
+            },
+            {
+                .f_string = "${Lq}",
+                .f_flags = escapable_flag_traits<char>::FORMAT_FLAG_LARGE,
+                .f_format = 'q',
+            },
+            {
+                .f_string = " Flag",
+            },
+        },
+    },
+    {
+        .f_format_string = "Enclose & Large ${L28q} Flag",
+        .f_results = {
+            {
+                .f_string = "Enclose & Large ",
+            },
+            {
+                .f_string = "${L28q}",
+                .f_flags = escapable_flag_traits<char>::FORMAT_FLAG_LARGE,
+                .f_width = 28,
+                .f_format = 'q',
+            },
+            {
+                .f_string = " Flag",
+            },
+        },
+    },
+    {
+        .f_format_string = "Enclose & Large ${62Lq} Flag",
+        .f_results = {
+            {
+                .f_string = "Enclose & Large ",
+            },
+            {
+                .f_string = "${62Lq}",
+                .f_flags = escapable_flag_traits<char>::FORMAT_FLAG_LARGE,
+                .f_width = 62,
+                .f_format = 'q',
+            },
+            {
+                .f_string = " Flag",
+            },
+        },
+    },
+    {
+        .f_format_string = "Invalid $c Code ('c' not a valid format)",
+        .f_results = {
+            {
+                .f_string = "Invalid ",
+            },
+            {
+                .f_errors = { snapdev::format_error_t::FORMAT_ERROR_UNKNOWN },
+                .f_string = "$",
+            },
+            {
+                .f_string = "c Code ('c' not a valid format)",
+            },
+        },
+    },
+    {
+        .f_format_string = "Invalid ${a} Code ('a' not a valid format)",
+        .f_results = {
+            {
+                .f_string = "Invalid ",
+            },
+            {
+                .f_errors = { snapdev::format_error_t::FORMAT_ERROR_UNKNOWN },
+                .f_string = "$",
+            },
+            {
+                .f_string = "{a} Code ('a' not a valid format)",
+            },
+        },
+    },
+    {
+        .f_format_string = "Invalid ${zc} Code ('z' is known, not 'zc', we expect '}' instead of 'c')",
+        .f_results = {
+            {
+                .f_string = "Invalid ",
+            },
+            {
+                .f_errors = { snapdev::format_error_t::FORMAT_ERROR_SYNTAX },
+                .f_string = "$",
+                .f_format = 'z',
+            },
+            {
+                .f_string = "{zc} Code ('z' is known, not 'zc', we expect '}' instead of 'c')",
+            },
+        },
+    },
+    {
+        .f_format_string = "Invalid ${3.5z} Code (no precision allowed)",
+        .f_results = {
+            {
+                .f_string = "Invalid ",
+            },
+            {
+                .f_errors = { snapdev::format_error_t::FORMAT_ERROR_UNKNOWN },
+                .f_string = "$",
+                .f_width = 3,
+            },
+            {
+                .f_string = "{3.5z} Code (no precision allowed)",
+            },
+        },
+    },
+    {
+        .f_format_string = "Missing '}' at the end of the string ${8z",
+        .f_results = {
+            {
+                .f_string = "Missing '}' at the end of the string ",
+            },
+            {
+                .f_errors = { snapdev::format_error_t::FORMAT_ERROR_SYNTAX },
+                .f_string = "$",
+                .f_width = 8,
+                .f_format = 'z',
+            },
+            {
+                .f_string = "{8z",
+            },
+        },
+    },
+};
+
+
+
+
+
+
+
+
+
+// a few templates for an hypothetical format: *<l|r>
+//
+template<typename _CharT>
+class star_letter_traits
+{
+public:
+    static std::basic_string<_CharT>::size_type is_format(char const * s, snapdev::format_item<_CharT> & f)
+    {
+        if(s[0] == 'l'
+        || s[0] == 'r')
+        {
+            f.format(s[0]);
+            return 1UL;
+        }
+        f.add_error(snapdev::format_error_t::FORMAT_ERROR_UNKNOWN);
+        return 0;
+    }
+};
+
+template<typename _CharT>
+class star_flag_traits
+{
+public:
+    typedef _CharT  char_t;
+
+    static constexpr snapdev::format_flag_t const       FORMAT_FLAG_ZERO = 0x0001; // '*'
+
+    static bool is_flag(char_t c, snapdev::format_item<_CharT> & f)
+    {
+        if(c == 'Z')
+        {
+            if(f.has_flags(FORMAT_FLAG_ZERO))
+            {
+                f.add_error(snapdev::format_error_t::FORMAT_ERROR_DUPLICATE);
+            }
+            f.add_flags(FORMAT_FLAG_ZERO);
+            return true;
+        }
+        return false;
+    }
+};
+
+printf_formats_t const g_star_formats[] =
+{
+    {
+        .f_format_string = "Without brackets *l or *r variables and double star: ** for escaping",
+        .f_results = {
+            {
+                .f_string = "Without brackets ",
+            },
+            {
+                .f_string = "*l",
+                .f_format = 'l',
+            },
+            {
+                .f_string = " or ",
+            },
+            {
+                .f_string = "*r",
+                .f_format = 'r',
+            },
+            {
+                .f_string = " variables and double star: ",
+            },
+            {
+                .f_string = "*",
+            },
+            {
+                .f_string = " for escaping",
+            },
+        },
+    },
+    {
+        .f_format_string = "Enclosed *<Zr> and *<Zl> variables",
+        .f_results = {
+            {
+                .f_string = "Enclosed "
+            },
+            {
+                .f_string = "*<Zr>",
+                .f_flags = star_flag_traits<char>::FORMAT_FLAG_ZERO,
+                .f_format = 'r',
+            },
+            {
+                .f_string = " and ",
+            },
+            {
+                .f_string = "*<Zl>",
+                .f_flags = star_flag_traits<char>::FORMAT_FLAG_ZERO,
+                .f_format = 'l',
+            },
+            {
+                .f_string = " variables",
+            },
+        },
+    },
+};
+
+
+
+
+
+
+
+
+
 // the full implementation is found in the advgetopt library
 //
 template<typename _CharT>
@@ -1987,8 +2412,7 @@ public:
     }
 };
 
-
-printf_formats_t const g_usage_formats[] =
+printf_formats_t const g_advgetopt_usage_formats[] =
 {
     {
         .f_format_string = "Data Driven %% Tests",
@@ -2044,7 +2468,33 @@ printf_formats_t const g_usage_formats[] =
 
 
 
-CATCH_TEST_CASE("tokenize_format_printf", "[string]")
+
+CATCH_TEST_CASE("tokenize_no_numbers_template", "[tokenize_format][number]")
+{
+    CATCH_START_SECTION("tokenize_no_numbers_template: verify all the no-number functions")
+    {
+        snapdev::no_number_traits<char> nn;
+
+        CATCH_REQUIRE_FALSE(nn.support_numbers());
+
+        for(char d = '0'; d <= '9'; ++d)
+        {
+            CATCH_REQUIRE_FALSE(nn.is_number_separator(d));
+            CATCH_REQUIRE_FALSE(nn.is_number_position(d));
+            CATCH_REQUIRE_FALSE(nn.is_dynamic_position(d));
+
+            int const r(rand());
+            int number(r);
+            snapdev::format_item<char> item;
+            CATCH_REQUIRE_FALSE(nn.parse_number(d, number, item));
+            CATCH_REQUIRE(number == r);
+        }
+    }
+    CATCH_END_SECTION()
+}
+
+
+CATCH_TEST_CASE("tokenize_format_printf", "[tokenize_format][string]")
 {
     CATCH_START_SECTION("tokenize_format_printf: escape %")
     {
@@ -2373,7 +2823,7 @@ CATCH_TEST_CASE("tokenize_format_printf", "[string]")
 }
 
 
-CATCH_TEST_CASE("tokenize_format_strftime", "[string]")
+CATCH_TEST_CASE("tokenize_format_strftime", "[tokenize_format][string]")
 {
     CATCH_START_SECTION("tokenize_format_strftime: no nanoseconds support")
     {
@@ -2476,23 +2926,23 @@ CATCH_TEST_CASE("tokenize_format_strftime", "[string]")
 // the following tests a small subset of the advgetopt Usage: ... format
 // support to verify the "no number" implementation
 //
-CATCH_TEST_CASE("tokenize_format_advgetopt", "[string]")
+CATCH_TEST_CASE("tokenize_format_advgetopt", "[tokenize_format][string]")
 {
     CATCH_START_SECTION("tokenize_format_advgetopt: data driven tests")
     {
-        for(std::size_t idx(0); idx < std::size(g_usage_formats); ++idx)
+        for(std::size_t idx(0); idx < std::size(g_advgetopt_usage_formats); ++idx)
         {
             snapdev::format_item<char>::list_t items(snapdev::tokenize_format<
                       char
                     , usage_letter_traits<char>
-                    , usage_flag_traits<char>>(g_usage_formats[idx].f_format_string));
+                    , usage_flag_traits<char>>(g_advgetopt_usage_formats[idx].f_format_string));
 
-            CATCH_REQUIRE(items.size() == g_usage_formats[idx].f_results.size());
+            CATCH_REQUIRE(items.size() == g_advgetopt_usage_formats[idx].f_results.size());
 
-            auto r(g_usage_formats[idx].f_results.begin());
+            auto r(g_advgetopt_usage_formats[idx].f_results.begin());
             for(auto it(items.begin()); it != items.end(); ++it, ++r)
             {
-//std::cerr << "   +++ parsed [" << g_usage_formats[idx].f_format_string << "] compare item [" << it->string() << "]\n";
+//std::cerr << "   +++ parsed [" << g_advgetopt_usage_formats[idx].f_format_string << "] compare item [" << it->string() << "]\n";
 //if(it->has_errors())
 //{
 //for(auto const & e : it->errors())
@@ -2503,8 +2953,103 @@ CATCH_TEST_CASE("tokenize_format_advgetopt", "[string]")
                 // verify that test data match in size (we already verified
                 // the size, but this is better than a SEGV)
                 //
-                CATCH_REQUIRE(r != g_usage_formats[idx].f_results.end());
+                CATCH_REQUIRE(r != g_advgetopt_usage_formats[idx].f_results.end());
 
+                CATCH_REQUIRE(it->errors() == r->f_errors);
+                CATCH_REQUIRE(it->string() == r->f_string);
+                CATCH_REQUIRE(it->flags() == r->f_flags);
+                CATCH_REQUIRE(it->width() == r->f_width);
+                CATCH_REQUIRE(it->precision() == r->f_precision);
+                CATCH_REQUIRE(it->position() == r->f_position);
+                CATCH_REQUIRE(it->format() == r->f_format);
+            }
+        }
+    }
+    CATCH_END_SECTION()
+}
+
+
+// the following tests a $...L type of implementation where the $ can be
+// escaped by a backslash; this is to verify that the escape works as expected
+//
+CATCH_TEST_CASE("tokenize_format_shell", "[tokenize_format][string]")
+{
+    CATCH_START_SECTION("tokenize_format_shell: test the ${[<number>][L]q|z} syntax (a bit like in a shell)")
+    {
+        for(std::size_t idx(0); idx < std::size(g_shell_formats); ++idx)
+        {
+            snapdev::format_item<char>::list_t items(snapdev::tokenize_format<
+                          char
+                        , escapable_letter_traits<char>
+                        , escapable_flag_traits<char>
+                        , snapdev::strftime_number_traits<char>
+                        , dollar_escapable_introducer_traits<char>
+                    >(g_shell_formats[idx].f_format_string));
+
+            CATCH_REQUIRE(items.size() == g_shell_formats[idx].f_results.size());
+
+            auto r(g_shell_formats[idx].f_results.begin());
+            for(auto it(items.begin()); it != items.end(); ++it, ++r)
+            {
+                // verify that test data match in size (we already verified
+                // the size, but this is better than a SEGV)
+                //
+                CATCH_REQUIRE(r != g_shell_formats[idx].f_results.end());
+
+//std::cerr << "   +++ parsed [" << g_shell_formats[idx].f_format_string << "] compare item [" << it->string() << "] == [" << r->f_string << "]\n";
+//if(it->has_errors())
+//{
+//for(auto const & e : it->errors())
+//{
+//std::cerr << "     >>> error: " << static_cast<int>(e) << "\n";
+//}
+//}
+                CATCH_REQUIRE(it->errors() == r->f_errors);
+                CATCH_REQUIRE(it->string() == r->f_string);
+                CATCH_REQUIRE(it->flags() == r->f_flags);
+                CATCH_REQUIRE(it->width() == r->f_width);
+                CATCH_REQUIRE(it->precision() == r->f_precision);
+                CATCH_REQUIRE(it->position() == r->f_position);
+                CATCH_REQUIRE(it->format() == r->f_format);
+            }
+        }
+    }
+    CATCH_END_SECTION()
+}
+
+
+CATCH_TEST_CASE("tokenize_format_star", "[tokenize_format][string]")
+{
+    CATCH_START_SECTION("tokenize_format_star: test a *<l|r> syntax (with angle brackets)")
+    {
+        for(std::size_t idx(0); idx < std::size(g_star_formats); ++idx)
+        {
+            snapdev::format_item<char>::list_t items(snapdev::tokenize_format<
+                          char
+                        , star_letter_traits<char>
+                        , star_flag_traits<char>
+                        , snapdev::no_number_traits<char>
+                        , snapdev::percent_introducer_traits<char, '*', '<', '>'>
+                    >(g_star_formats[idx].f_format_string));
+
+            CATCH_REQUIRE(items.size() == g_star_formats[idx].f_results.size());
+
+            auto r(g_star_formats[idx].f_results.begin());
+            for(auto it(items.begin()); it != items.end(); ++it, ++r)
+            {
+                // verify that test data match in size (we already verified
+                // the size, but this is better than a SEGV)
+                //
+                CATCH_REQUIRE(r != g_star_formats[idx].f_results.end());
+
+std::cerr << "   +++ parsed [" << g_star_formats[idx].f_format_string << "] compare item [" << it->string() << "] == [" << r->f_string << "]\n";
+if(it->has_errors())
+{
+for(auto const & e : it->errors())
+{
+std::cerr << "     >>> error: " << static_cast<int>(e) << "\n";
+}
+}
                 CATCH_REQUIRE(it->errors() == r->f_errors);
                 CATCH_REQUIRE(it->string() == r->f_string);
                 CATCH_REQUIRE(it->flags() == r->f_flags);

@@ -893,7 +893,7 @@ format_item<_CharT>::list_t tokenize_format(std::basic_string<_CharT> const & fo
     typename std::basic_string<_CharT>::size_type end(format_string.length());
     for(typename std::basic_string<_CharT>::size_type pos(0); pos < end; )
     {
-        typename std::basic_string<_CharT>::size_type const begin(pos);
+        typename std::basic_string<_CharT>::size_type begin(pos);
         if(IntroducerTraits::is_introducer(format_string[pos]))
         {
             format_item<_CharT> item;
@@ -915,6 +915,11 @@ format_item<_CharT>::list_t tokenize_format(std::basic_string<_CharT> const & fo
                 bool found_number_separator(false);
                 bool found_precision(false);
                 bool found_position(false);
+                bool const enclosed(IntroducerTraits::is_start_enclose(format_string[pos]));
+                if(enclosed)
+                {
+                    ++pos;
+                }
                 for(;; ++pos)
                 {
                     if(pos >= end)
@@ -954,7 +959,7 @@ format_item<_CharT>::list_t tokenize_format(std::basic_string<_CharT> const & fo
                                 continue;
                             }
                         }
-                        bool dynamic_position(NumberTraits::is_dynamic_position(format_string[pos]));
+                        bool const dynamic_position(NumberTraits::is_dynamic_position(format_string[pos]));
                         if(dynamic_position)
                         {
                             if(pos + 1 >= end)
@@ -1053,7 +1058,21 @@ format_item<_CharT>::list_t tokenize_format(std::basic_string<_CharT> const & fo
 
                     // handle the letter (must match or that format is not valid)
                     //
-                    typename std::basic_string<_CharT>::size_type const len(LetterTraits::is_format(format_string.c_str() + pos, item));
+                    typename std::basic_string<_CharT>::size_type len(LetterTraits::is_format(format_string.c_str() + pos, item));
+                    if(enclosed)
+                    {
+                        // to be 100% valid, we need the closing character
+                        //
+                        if(IntroducerTraits::is_end_enclose(format_string[pos + len]))
+                        {
+                            ++len;
+                        }
+                        else if(len != 0)
+                        {
+                            len = 0;
+                            item.add_error(format_error_t::FORMAT_ERROR_SYNTAX);
+                        }
+                    }
                     if(len != 0)
                     {
                         pos += len;
@@ -1077,7 +1096,6 @@ format_item<_CharT>::list_t tokenize_format(std::basic_string<_CharT> const & fo
         }
         else
         {
-            format_item<_CharT> item;
             for(++pos; pos < end; ++pos)
             {
                 if(IntroducerTraits::is_introducer(format_string[pos]))
@@ -1087,16 +1105,30 @@ format_item<_CharT>::list_t tokenize_format(std::basic_string<_CharT> const & fo
                 if(pos + 1 < end
                 && IntroducerTraits::escape_character(format_string[pos]))
                 {
+                    // we want to remove the escape characters from the
+                    // results so we do not have to deal with them on
+                    // return; so here we have to push one string up to
+                    // the escape character and then restart a new item
+                    //
+                    format_item<_CharT> item;
+                    item.string(format_string.substr(begin, pos - begin));
+                    result.push_back(item);
+
                     ++pos;
+                    begin = pos;
                 }
             }
-            item.string(format_string.substr(begin, pos - begin));
-            result.push_back(item);
+
+            {
+                format_item<_CharT> item;
+                item.string(format_string.substr(begin, pos - begin));
+                result.push_back(item);
+            }
         }
     }
 
     return result;
-}
+} // LCOV_EXCL_LINE
 
 
 //template<typename _CharT>

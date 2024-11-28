@@ -40,21 +40,6 @@ namespace snapdev
 {
 
 
-[[deprecated]] inline constexpr void NOTUSED()
-{
-}
-
-
-template <class T, class ...ARGS>
-[[deprecated]] inline constexpr void NOTUSED( T && first, ARGS && ...args )
-{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-result"
-    static_cast<void>( first );
-#pragma GCC diagnostic pop
-    NOTUSED(args...);
-}
-
 
 inline constexpr void NOT_USED()
 {
@@ -62,11 +47,11 @@ inline constexpr void NOT_USED()
 
 
 template <class T, class ...ARGS>
-inline constexpr void NOT_USED( T && first, ARGS && ...args )
+inline constexpr void NOT_USED(T && first, ARGS && ...args)
 {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-result"
-    static_cast<void>( first );
+    static_cast<void>(first);
 #pragma GCC diagnostic pop
     NOT_USED(args...);
 }

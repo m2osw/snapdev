@@ -47,21 +47,6 @@ namespace snapdev
 
 
 
-[[noreturn]] [[deprecated]] inline void NOTREACHED()
-{
-    std::cerr << "NOTREACHED() called, process will abort." << std::endl;
-
-    std::cerr << "Stack trace:" << std::endl;
-    libexcept::stack_trace_t trace(libexcept::collect_stack_trace_with_line_numbers());
-    for(auto l : trace)
-    {
-        std::cerr << "  " << l << std::endl;
-    }
-
-    abort();
-}
-
-
 [[noreturn]] inline void NOT_REACHED()
 {
     std::cerr << "NOT_REACHED() called, process will abort." << std::endl;
@@ -74,7 +59,7 @@ namespace snapdev
     }
 
     abort();
-}
+} // LCOV_EXCL_LINE
 
 
 /** \brief Check whether code is unexpectendly reached in a test.
@@ -140,7 +125,7 @@ inline void NOT_REACHED_IN_TEST()
 
    abort();
 #endif
-}
+} // LCOV_EXCL_LINE
 
 
 

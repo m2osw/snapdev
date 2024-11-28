@@ -60,91 +60,13 @@ namespace
 {
 
 
-class lockfile_thread
-{
-public:
-    lockfile_thread(
-              std::string const & filename
-            , snapdev::operation_t operation = snapdev::operation_t::OPERATION_EXCLUSIVE)
-        : f_filename(filename)
-        , f_operation(operation)
-    {
-    }
-
-    lockfile_thread(lockfile_thread const &) = delete;
-    lockfile_thread & operator = (lockfile_thread const &) = delete;
-
-    ~lockfile_thread()
-    {
-        if(f_thread != nullptr)
-        {
-            f_thread->join();
-            delete f_thread;
-        }
-    }
-
-    void start_thread(int try_lock = 0)
-    {
-        f_running = true;
-        if(try_lock)
-        {
-            f_thread = new std::thread(&lockfile_thread::run_try_lock, this, try_lock);
-        }
-        else
-        {
-            f_thread = new std::thread(&lockfile_thread::run, this);
-        }
-    }
-
-    void run()
-    {
-        snapdev::lockfile lock(f_filename, f_operation);
-        CATCH_REQUIRE_FALSE(lock.is_locked());
-        lock.lock();
-        CATCH_REQUIRE(lock.is_locked());
-
-        std::lock_guard<std::mutex> guard(f_mutex);
-        f_running = false;
-    }
-
-    void run_try_lock(int try_lock)
-    {
-        snapdev::lockfile lock(f_filename, f_operation);
-        CATCH_REQUIRE_FALSE(lock.is_locked());
-        lock.try_lock();
-        if(try_lock == 1)
-        {
-            CATCH_REQUIRE(lock.is_locked());
-        }
-        else
-        {
-            CATCH_REQUIRE_FALSE(lock.is_locked());
-        }
-
-        std::lock_guard<std::mutex> guard(f_mutex);
-        f_running = false;
-    }
-
-    bool is_running() const
-    {
-        std::lock_guard<std::mutex> guard(f_mutex);
-        return f_running;
-    }
-
-private:
-    mutable std::mutex      f_mutex = std::mutex();
-    std::string             f_filename = std::string();
-    snapdev::operation_t    f_operation = snapdev::operation_t::OPERATION_EXCLUSIVE;
-    std::thread *           f_thread = nullptr;
-    bool                    f_running = false;
-};
 
 
 } // no name namespace
 
 
 
-CATCH_TEST_CASE("unique_number", "[file]")
+CATCH_TEST_CASE("unique_number", "[number][file]")
 {
     CATCH_START_SECTION("unique_number: verify unique number basic counter")
     {
@@ -168,7 +90,7 @@ CATCH_TEST_CASE("unique_number", "[file]")
 
         std::string const path(SNAP_CATCH2_NAMESPACE::g_tmp_dir());
         std::string const filename(path + "/test-2.number");
-std::cerr << "--- file: " << filename << "\n";
+//std::cerr << "--- file: " << filename << "\n";
 
         snapdev::NOT_USED(unlink(filename.c_str()));
 
@@ -199,7 +121,7 @@ std::cerr << "--- file: " << filename << "\n";
 }
 
 
-CATCH_TEST_CASE("unique_number_error", "[file][error]")
+CATCH_TEST_CASE("unique_number_error", "[number][file][error]")
 {
     CATCH_START_SECTION("unique_number_error: non-empty filename is required")
     {
