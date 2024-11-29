@@ -21,8 +21,8 @@
  * \brief Functions used for sanity checks.
  *
  * Often, we have points in our code that cannot be logically reached. By
- * adding the snapdev::NOT_REACHED() function call at those location, you
- * ensures that if somehow those are actually reached, then the program
+ * adding the snapdev::NOT_REACHED() function call at those locations, you
+ * ensure that if somehow those are actually reached, then the program
  * terminates since it is not expected to go there.
  */
 
@@ -58,7 +58,7 @@ namespace snapdev
         std::cerr << "  " << l << std::endl;
     }
 
-    abort();
+    std::abort();
 } // LCOV_EXCL_LINE
 
 
@@ -123,7 +123,7 @@ inline void NOT_REACHED_IN_TEST()
         std::cerr << "  " << l << std::endl;
     }
 
-   abort();
+   std::abort();
 #endif
 } // LCOV_EXCL_LINE
 
