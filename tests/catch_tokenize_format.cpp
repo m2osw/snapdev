@@ -3042,14 +3042,14 @@ CATCH_TEST_CASE("tokenize_format_star", "[tokenize_format][string]")
                 //
                 CATCH_REQUIRE(r != g_star_formats[idx].f_results.end());
 
-std::cerr << "   +++ parsed [" << g_star_formats[idx].f_format_string << "] compare item [" << it->string() << "] == [" << r->f_string << "]\n";
-if(it->has_errors())
-{
-for(auto const & e : it->errors())
-{
-std::cerr << "     >>> error: " << static_cast<int>(e) << "\n";
-}
-}
+//std::cerr << "   +++ parsed [" << g_star_formats[idx].f_format_string << "] compare item [" << it->string() << "] == [" << r->f_string << "]\n";
+//if(it->has_errors())
+//{
+//for(auto const & e : it->errors())
+//{
+//std::cerr << "     >>> error: " << static_cast<int>(e) << "\n";
+//}
+//}
                 CATCH_REQUIRE(it->errors() == r->f_errors);
                 CATCH_REQUIRE(it->string() == r->f_string);
                 CATCH_REQUIRE(it->flags() == r->f_flags);

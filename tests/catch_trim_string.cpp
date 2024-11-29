@@ -129,7 +129,7 @@ constexpr strings_t const   g_strings[] =
 
 CATCH_TEST_CASE("trim_string", "[string]")
 {
-    CATCH_START_SECTION("trim_string many cases")
+    CATCH_START_SECTION("trim_string: many cases")
     {
         for(auto const & p : g_strings)
         {
