@@ -739,7 +739,7 @@ private:
         if(r == 0)
         {
             glob_pointer_t auto_release_dir(&dir);
-            for(size_t idx(0); idx < dir.gl_pathc; ++idx)
+            for(std::size_t idx(0); idx < dir.gl_pathc; ++idx)
             {
                 if(!f_dot_and_dot_dot
                 && pathinfo::is_dot_or_dot_dot(dir.gl_pathv[idx]))
@@ -751,9 +751,8 @@ private:
         }
         else
         {
-            // do nothing when errors occur
+            // handle errors
             //
-            std::string err_msg;
             switch(r)
             {
             case GLOB_NOSPACE:
