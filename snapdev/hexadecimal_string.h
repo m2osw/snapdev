@@ -98,7 +98,7 @@ char to_hex(intT d, bool uppercase = false)
                 + std::to_string(d)
                 + ") is negative or too large to represent one hexadecimal digit.");
     }
-    return d < 10 ? d + '0' : d + ((uppercase ? 'A' : 'a') - 10);
+    return d < 10 ? d + '0' : d + (uppercase ? 'A' - 10 : 'a' - 10);
 }
 
 
@@ -131,15 +131,17 @@ int hexdigit_to_number(charT c)
     {
         return c - ('A' - 10);
     }
-    if(static_cast<typename std::make_unsigned<charT>::type>(c) < 0x80)
+    if(static_cast<typename std::make_unsigned<charT>::type>(c) >= 0x20
+    && static_cast<typename std::make_unsigned<charT>::type>(c) < 0x7F)
     {
         throw hexadecimal_string_invalid_parameter(
                   std::string("input character '")
                 + static_cast<char>(c)
                 + "' is not an hexadecimal digit.");
     }
-    // if character represents a UTF-8 charater, we do not have all the
-    // bytes to convert it so just use a plan error message
+    // if character represents a UTF-8 character, we do not have all the
+    // bytes to convert it so just use a plain error message; do so for
+    // control characters too
     //
     throw hexadecimal_string_invalid_parameter(
               "input character is not an hexadecimal digit.");
