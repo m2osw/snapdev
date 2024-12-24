@@ -35,6 +35,7 @@ install(
         callback_manager.h
         case_insensitive_string.h
         chownnm.h
+        concat_strings.h
         empty_set_intersection.h
         enumerate.h
         enum_class_math.h

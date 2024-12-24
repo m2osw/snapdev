@@ -18,9 +18,9 @@
 #pragma once
 
 /** \file
- * \brief Determine whether a parameter can represent a string literal.
+ * \brief Determine whether a parameter represents a string literal.
  *
- * This template can be used to determine whether the input looks like
+ * This template is used to determine whether the input is
  * a string literal.
  *
  * There are two main idea about a string literal. It is represented
@@ -29,19 +29,19 @@
  * function returns false.
  *
  * So if you have an array of bytes not representing an actual string,
- * you will still get a "true" as long as the array is constant.
+ * you will still get "true" as long as the array is constant.
  *
  * In general, you use this function this way:
  *
  * \code
- *     if(is_string_literal(str)) ...
+ *     if(snapdev::is_string_literal(str)) ...
  * \endcode
  *
  * The function is overloaded for `char`, `wchar_t`, `char8_t`,
  * `char16_t`, and `char32_t`.
  *
  * \note
- * The `char8_t` type is only available in C++20 and over.
+ * The `char8_t` type is only available since C++20.
  */
 
 
