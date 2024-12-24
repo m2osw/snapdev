@@ -44,6 +44,7 @@
  * The `char8_t` type is only available since C++20.
  */
 
+#include    <cstdint>
 
 
 namespace snapdev

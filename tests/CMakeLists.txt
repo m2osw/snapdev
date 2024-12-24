@@ -33,6 +33,7 @@ if(SnapCatch2_FOUND)
         catch_brs.cpp
         catch_callback_manager.cpp
         catch_change_owner.cpp
+        catch_concat_strings.cpp
         catch_file_contents.cpp
         catch_glob_to_list.cpp
         catch_hexadecimal_string.cpp
