@@ -30,7 +30,7 @@
  * and not statically accessible at compile time. (See as2js project for
  * details about names.an files.)
  *
- * Source: https://stackoverflow.com/a/4693941/212378
+ * Source: https://stackoverflow.com/questions/24783400/#answer-72510788
  */
 
 
