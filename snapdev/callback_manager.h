@@ -404,7 +404,7 @@ public:
      *
      * \return The current size of the list of callbacks.
      */
-    size_t size() const
+    std::size_t size() const
     {
         return f_callbacks.size();
     }

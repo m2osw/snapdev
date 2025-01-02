@@ -92,7 +92,7 @@ private:
     /** \brief Initialize the output buffer.
      *
      * The following defines a buffer which will hold the final string.
-     * We use a lambda function to compute the exact lengrh of the output
+     * We use a lambda function to compute the exact length of the output
      * at compile time (i.e. constexpr).
      */
     CharT   f_buf[BUFFER_SIZE] = {};
