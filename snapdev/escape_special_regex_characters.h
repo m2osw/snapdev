@@ -26,7 +26,9 @@
 
 // C++
 //
+#include    <cstring>
 #include    <string>
+#include    <stdexcept>
 
 
 
@@ -44,10 +46,15 @@ namespace
  * since that gives us a valid sizeof().
  *
  * \note
- * TBD: for proper ECMA regex we may need to have the '/'. Either way, it
- * is probably safer to have it. We may want to change this parameter with
- * a dynamic one so we can choose the type of regex we're dealying with
- * and whether such and such character is special or not.
+ * For proper ECMA regex we need to have the `'/'`. Either way, it
+ * is probably safer to have it (for someone may also want to create
+ * regular expressions to use with a command such as `sed`). We may want
+ * to change this parameter with a dynamic one so we can choose the type
+ * of regex we are dealing with and whether such and such character is
+ * special or not.
+ *
+ * \warning
+ * The characters have to be sorted by their ASCII code.
  */
 #define SNAPDEV_SPECIAL_REGEX_CHARACTERS    "$()*+./?[\\]^{|}"
 
@@ -116,16 +123,16 @@ std::basic_string<CharT, Traits, Allocator> escape_special_regex_characters(std:
     {
         if(r[-1] >= r[0])
         {
-            throw std::logic_error("g_special_regex_characters characters are not properly sorted.");
+            throw std::logic_error("g_special_regex_characters characters are not properly sorted."); // LCOV_EXCL_LINE
         }
     }
     if(g_special_regex_characters[0] != g_min_special_regex_character)
     {
-        throw std::logic_error("g_min_special_regex_character is not the minimum.");
+        throw std::logic_error("g_min_special_regex_character is not the minimum."); // LCOV_EXCL_LINE
     }
     if(g_special_regex_characters[strlen(g_special_regex_characters) - 1] != g_max_special_regex_character)
     {
-        throw std::logic_error(
+        throw std::logic_error( // LCOV_EXCL_LINE
               "g_max_special_regex_character ("
             + std::to_string(static_cast<int>(g_max_special_regex_character))
             + ") is not the maximum (sizeof = "
@@ -160,7 +167,7 @@ std::basic_string<CharT, Traits, Allocator> escape_special_regex_characters(std:
     }
 
     return result;
-}
+} // LCOV_EXCL_LINE
 
 
 

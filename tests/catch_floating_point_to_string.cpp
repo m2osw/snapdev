@@ -116,6 +116,16 @@ CATCH_TEST_CASE("floating_point_to_string", "[float][string]")
                 .f_keep_period = false,
                 .f_string = "-Infinity",
             },
+            {
+                .f_floating_point = std::numeric_limits<double>::quiet_NaN(),
+                .f_keep_period = true,
+                .f_string = "NaN",
+            },
+            {
+                .f_floating_point = std::numeric_limits<double>::quiet_NaN(),
+                .f_keep_period = false,
+                .f_string = "NaN",
+            },
         };
 
         for(auto const & c : conversions)

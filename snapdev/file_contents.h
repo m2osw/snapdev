@@ -291,7 +291,7 @@ public:
                 ssize_t sz(in.gcount());
                 if(sz <= 0)
                 {
-                    break;
+                    break; // LCOV_EXCL_LINE
                 }
                 f_contents.insert(f_contents.end(), buf, buf + sz);
             }
@@ -312,7 +312,7 @@ public:
                     + " bytes to read file.";                       // LCOV_EXCL_LINE
                 f_contents.clear();                                 // LCOV_EXCL_LINE
                 return false;                                       // LCOV_EXCL_LINE
-            }
+            } // LCOV_EXCL_LINE
 
             // read the data
             //

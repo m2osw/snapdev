@@ -145,7 +145,7 @@ CATCH_TEST_CASE("file_contents", "[os]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("file_contents: read from /proc/self/cmd")
+    CATCH_START_SECTION("file_contents: read from /proc/self/comm")
     {
         snapdev::file_contents comm("/proc/self/comm");
         CATCH_REQUIRE(comm.read_all());
