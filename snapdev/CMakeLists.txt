@@ -41,6 +41,7 @@ install(
         enum_class_math.h
         escape_special_regex_characters.h
         file_contents.h
+        floating_point_to_string.h
         gethostname.h
         glob_to_list.h
         has_member_function.h

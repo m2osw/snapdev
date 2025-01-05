@@ -35,6 +35,7 @@ if(SnapCatch2_FOUND)
         catch_change_owner.cpp
         catch_concat_strings.cpp
         catch_file_contents.cpp
+        catch_floating_point_to_string.cpp
         catch_glob_to_list.cpp
         catch_hexadecimal_string.cpp
         catch_int128.cpp
