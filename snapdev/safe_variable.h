@@ -33,7 +33,7 @@
  * \code
  *     // for a simple boolean flag
  *     {
- *         safe_variable<bool> safe(my_flag, true, false);
+ *         snapdev::safe_variable<bool> safe(my_flag, true, false);
  *
  *         ...your statements while `my_flag = true;`...
  *
@@ -41,7 +41,7 @@
  *
  *     // any type is supported
  *     {
- *         safe_variable<decltype(my_var)> safe(my_var, 123);
+ *         snapdev::safe_variable<decltype(my_var)> safe(my_var, 123);
  *
  *         ...your statements while `my_var = 123`...
  *
