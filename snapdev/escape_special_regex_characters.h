@@ -73,6 +73,7 @@ namespace
  * * '*' -- the or operator (0x2A)
  * * '+' -- the one or more character (0x2B)
  * * '.' -- the any character (0x2E)
+ * * '/' -- the slash character (0x2F)
  * * '?' -- the or operator (0x3F)
  * * '[' -- the start character set (0x5B)
  * * '\\' -- the escape character (0x5C)
