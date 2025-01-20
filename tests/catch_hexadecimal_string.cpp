@@ -323,7 +323,7 @@ CATCH_TEST_CASE("hexadecimal_string_invalid_input", "[hexadecimal][string][error
                           snapdev::hex_to_bin(ss.str())
                         , snapdev::hexadecimal_string_invalid_parameter
                         , Catch::Matchers::ExceptionMessage(
-                                    "hexadecimal_string_exception: input character is not an hexadecimal digit."));
+                                    "hexadecimal_string_exception: input character is not a hexadecimal digit."));
             }
             else
             {
@@ -333,7 +333,7 @@ CATCH_TEST_CASE("hexadecimal_string_invalid_input", "[hexadecimal][string][error
                         , Catch::Matchers::ExceptionMessage(
                                     std::string("hexadecimal_string_exception: input character '")
                                   + static_cast<char>(invalid)
-                                  + "' is not an hexadecimal digit."));
+                                  + "' is not a hexadecimal digit."));
             }
         }
     }
@@ -354,7 +354,7 @@ CATCH_TEST_CASE("hexadecimal_string_invalid_input", "[hexadecimal][string][error
                       snapdev::hex_to_int<std::uint8_t>(ss.str())
                     , snapdev::hexadecimal_string_out_of_range
                     , Catch::Matchers::ExceptionMessage(
-                              "hexadecimal_string_out_of_range: input string has an hexadecimal number which is too large for the output integer type."));
+                              "hexadecimal_string_out_of_range: input string has a hexadecimal number which is too large for the output integer type."));
         }
     }
     CATCH_END_SECTION()

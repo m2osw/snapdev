@@ -2536,7 +2536,7 @@ CATCH_TEST_CASE("int128_literal", "[literal][int128]")
             CATCH_REQUIRE(s == -v);
         }
 
-        // test an hexadecimal number of 128 bits
+        // test a hexadecimal number of 128 bits
         {
             unsigned __int128 const top(0xFA83B93D5C387C22);
             unsigned __int128 const bottom(0x1A94C329111A73AF);

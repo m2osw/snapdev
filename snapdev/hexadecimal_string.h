@@ -55,10 +55,10 @@ DECLARE_EXCEPTION(hexadecimal_string_exception, hexadecimal_string_invalid_param
 
 
 
-/** \brief Check whether character is an hexadecimal digit.
+/** \brief Check whether character is a hexadecimal digit.
  *
  * This function checks whether the given \p c character represents
- * an hexadecimal digit.
+ * a hexadecimal digit.
  *
  * The function accepts upper and lower case characters (A-F or a-f)
  * as the same set of digits.
@@ -66,7 +66,7 @@ DECLARE_EXCEPTION(hexadecimal_string_exception, hexadecimal_string_invalid_param
  * \rparam charT  The type of character to be tested.
  * \param[in] c  The character to be tested.
  *
- * \return true if the the character represents an hexadecimal digit.
+ * \return true if the the character represents a hexadecimal digit.
  */
 template<class charT>
 bool is_hexdigit(charT c)
@@ -79,8 +79,8 @@ bool is_hexdigit(charT c)
 
 /** \brief Convert one hexadecimal digit to a character.
  *
- * This function converts an hexadecimal number from 0 to 15 into
- * an hexadecimal character: '0' to '9' or 'a' to 'f'.
+ * This function converts a hexadecimal number from 0 to 15 into
+ * a hexadecimal character: '0' to '9' or 'a' to 'f'.
  *
  * To get uppercase, simple set the \p uppercase parameter to true.
  *
@@ -102,9 +102,9 @@ char to_hex(intT d, bool uppercase = false)
 }
 
 
-/** \brief Convert an hexadecimal character in a number.
+/** \brief Convert a hexadecimal character in a number.
  *
- * This function converts an hexadecimal character that represents a valid
+ * This function converts a hexadecimal character that represents a valid
  * digit in an integer.
  *
  * \exception hexadecimal_string_invalid_parameter
@@ -137,14 +137,14 @@ int hexdigit_to_number(charT c)
         throw hexadecimal_string_invalid_parameter(
                   std::string("input character '")
                 + static_cast<char>(c)
-                + "' is not an hexadecimal digit.");
+                + "' is not a hexadecimal digit.");
     }
     // if character represents a UTF-8 character, we do not have all the
     // bytes to convert it so just use a plain error message; do so for
     // control characters too
     //
     throw hexadecimal_string_invalid_parameter(
-              "input character is not an hexadecimal digit.");
+              "input character is not a hexadecimal digit.");
 }
 
 
@@ -187,7 +187,7 @@ inline std::string bin_to_hex(std::string const & binary, bool uppercase = false
 }
 
 
-/** \brief Convert an hexadecimal string to a binary string.
+/** \brief Convert a hexadecimal string to a binary string.
  *
  * This function is the inverse of the bin_to_hex() function. It
  * converts a text string of hexadecimal numbers (exactly 2 digits
@@ -201,7 +201,7 @@ inline std::string bin_to_hex(std::string const & binary, bool uppercase = false
  *
  * \exception hexadecimal_string_invalid_parameter
  * If the input string is not considered valid, then this exception is
- * raised. To be valid every single character must be an hexadecimal
+ * raised. To be valid every single character must be a hexadecimal
  * digit (0-9, a-f, A-F) and the length of the string must be even.
  *
  * \param[in] hex  The hexadecimal string of characters.
@@ -297,7 +297,7 @@ inline std::string int_to_hex(
 
 /** \brief Convert a string to an integer.
  *
- * This function converts a string that represents an hexadecimal number
+ * This function converts a string that represents a hexadecimal number
  * in an integer.
  *
  * \exception out_of_range
@@ -306,7 +306,7 @@ inline std::string int_to_hex(
  *
  * \exception hexadecimal_string_invalid_parameter
  * If the input string is not considered valid, then this exception is
- * raised. To be valid every single character must be an hexadecimal
+ * raised. To be valid every single character must be a hexadecimal
  * digit (0-9, a-f, A-F) and the length of the string must be even.
  *
  * \tparam T  The type of integer to return.
@@ -322,7 +322,7 @@ T hex_to_int(std::string const & hex)
     {
         if((value >> (sizeof(T) * CHAR_BIT - 4)) != 0)
         {
-            throw hexadecimal_string_out_of_range("input string has an hexadecimal number which is too large for the output integer type.");
+            throw hexadecimal_string_out_of_range("input string has a hexadecimal number which is too large for the output integer type.");
         }
         value *= 16;
         value += hexdigit_to_number(c);

@@ -83,7 +83,7 @@ constexpr __int128 operator ""_int128(char const * literal, std::size_t len)
         if(*literal == 'x'
         || *literal == 'X')
         {
-            // parse an hexadecimal number
+            // parse a hexadecimal number
             //
             base = 16;
             ++literal;
@@ -220,7 +220,7 @@ constexpr unsigned __int128 operator ""_uint128(char const * literal, std::size_
         if(*literal == 'x'
         || *literal == 'X')
         {
-            // parse an hexadecimal number
+            // parse a hexadecimal number
             //
             base = 16;
             ++literal;

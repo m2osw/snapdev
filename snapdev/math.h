@@ -285,7 +285,7 @@ std::enable_if_t<(std::is_integral_v<T> && std::is_unsigned_v<T>)
  * \p r bits.
  *
  * In most cases, if the processor you are using has a `rotl` instruction
- * (i.e. x86, amd64 do) then that instration will be used by your compiler.
+ * (i.e. x86, amd64 do) then that instruction will be used by your compiler.
  *
  * \note
  * If r is negative, rotate to the right.
