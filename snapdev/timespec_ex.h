@@ -289,6 +289,20 @@ public:
     }
 
 
+    /** \brief Initialize a timespec_ex from a tm structure.
+     *
+     * This function initializes this timespec_ex object from a time
+     * structure (struct tm). As a result, the nanosecond field is
+     * always set to 0.
+     *
+     * \param[in] t  The tm structure to convert to this timespec_ex.
+     */
+    timespec_ex(tm const & t)
+    {
+        from_tm(t);
+    }
+
+
     /** \brief Set the timespec_ex to the specified timespec_ex.
      *
      * This function copies the specified timespec_ex (\p t) to this
@@ -376,6 +390,21 @@ public:
     timespec_ex & operator = (std::string const & timestamp)
     {
         set(timestamp);
+        return *this;
+    }
+
+
+    /** \brief Set this timespec_ex to a tm structure.
+     *
+     * This function sets this timespec_ex object from a time
+     * structure (struct tm). As a result, the nanosecond field is
+     * always set to 0.
+     *
+     * \param[in] t  The tm structure to convert to this timespec_ex.
+     */
+    timespec_ex & operator = (tm const & t)
+    {
+        from_tm(t);
         return *this;
     }
 
@@ -747,7 +776,7 @@ public:
      * call.
      *
      * \warning
-     * The `%N` should be preceeded by a period if included just after the
+     * The `%N` should be preceded by a period if included just after the
      * seconds (`%s` or `%S`). Some format arguments do not end with seconds,
      * such as the `%c`, `%r`, `%X`, `%EX`. If you want to use those, then
      * the `%N` should be separated by a space and probably followed by `ns`.
@@ -991,7 +1020,7 @@ public:
         // unconsumed character, so we may be able to use that %N is at
         // the end)
         //
-        // one way is to look for the '.' (assuming the %N is preceeded
+        // one way is to look for the '.' (assuming the %N is preceded
         // by such) but some people write dates with those as in:
         //
         //    29.05.2023
@@ -1003,7 +1032,22 @@ public:
 
         struct tm t;
         strptime(s.c_str(), format.c_str(), &t);
-        tv_sec = mktime(&t);
+        from_tm(t);
+    }
+
+
+    /** \brief Put the specifed tm data in this timespec_ex.
+     *
+     * This function takes a tm structure as input and converts it to
+     * a timespec_ex. The input is expected to be a valid UTC time
+     * structure.
+     *
+     * \param[in] t  The tm to convert to this timespec_ex.
+     */
+    void from_tm(tm const & t)
+    {
+        tm copy(t);
+        tv_sec = timegm(&copy);
         tv_nsec = 0;
     }
 
