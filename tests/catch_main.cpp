@@ -31,18 +31,18 @@
 #include    "catch_main.h"
 
 
-// snapdev lib
+// snapdev
 //
-#include    <snapdev/not_used.h>
+#include    <snapdev/clocale.h>
 #include    <snapdev/version.h>
 
 
-// libexcept lib
+// libexcept
 //
 #include    <libexcept/exception.h>
 
 
-// C++ lib
+// C++
 //
 #include    <sstream>
 
@@ -53,32 +53,10 @@
 
 
 
-
-namespace SNAP_CATCH2_NAMESPACE
-{
-
-
-
-
-
-
-}
-// SNAP_CATCH2_NAMESPACE namespace
-
-
-namespace
-{
-
-
-
-
-
-
-}
-
-
 int main(int argc, char * argv[])
 {
+    snapdev::clocale();
+
     return SNAP_CATCH2_NAMESPACE::snap_catch2_main(
               "snapdev"
             , SNAPDEV_VERSION_STRING

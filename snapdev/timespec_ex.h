@@ -48,6 +48,7 @@
 #include    <iostream>
 #include    <sstream>
 #include    <thread>
+#include    <type_traits>
 
 
 // C
@@ -60,14 +61,13 @@
 
 
 
-
 extern "C" {
 /** \brief Define the nl_langinfo() function type.
  *
  * This is primarily used to allow for testing with any format which
  * the test can control through an nl_langinfo() wrapper.
  *
- * See nl_langinfo(3) for details about the actualy function.
+ * See nl_langinfo(3) for details about the actual function.
  */
 typedef char *(nl_langinfo_func_t)(nl_item item);
 }
@@ -796,11 +796,18 @@ public:
      * \sa set(std::string const & timestamp)
      */
     template<nl_langinfo_func_t nl_langinfo_wrapper = nl_langinfo>
-    std::string to_string(std::string const & format = std::string()) const
+    std::string to_string(std::string const & format = std::string(), bool use_localtime = false) const
     {
         struct tm date_and_time = {};
         struct tm * ptr(nullptr);
-        ptr = localtime_r(&tv_sec, &date_and_time);
+        if(use_localtime)
+        {
+            ptr = localtime_r(&tv_sec, &date_and_time);
+        }
+        else
+        {
+            ptr = gmtime_r(&tv_sec, &date_and_time);
+        }
         if(ptr == nullptr)
         {
             throw overflow("the specified number of seconds could not be transformed in a 'struct tm'."); // LCOV_EXCL_LINE
@@ -1171,8 +1178,21 @@ public:
                     ? 0
                     : (tv_nsec < rhs.tv_nsec ? -1 : 1);
         }
-        
+
         return tv_sec < rhs.tv_sec ? -1 : 1;
+    }
+
+
+    /** \brief Check whether the timespec_ex is zero.
+     *
+     * This function returns true if the timespec_ex represents zero
+     * (i.e. zero seconds and zero nano-seconds).
+     *
+     * \return true if the timespec_ex is not zero, false if zero.
+     */
+    operator bool () const
+    {
+        return tv_sec != 0 || tv_nsec != 0;
     }
 
 
@@ -1236,17 +1256,37 @@ public:
     /** \brief Add two timespec_ex objects and return the result.
      *
      * This function computes the addition of this timespec_ex object
-     * and the \p t timespec_ex and returns the result. The inputs
+     * and the \p rhs timespec_ex and returns the result. The inputs
      * are not modified.
      *
-     * \param[in] t  The right handside to add to this timespex_ex object.
+     * \param[in] rhs  The right handside to add to this timespex_ex object.
      *
      * \return The sum of the inputs in a new timespec_ex object.
      */
-    timespec_ex operator + (timespec_ex const & t) const
+    timespec_ex operator + (timespec_ex const & rhs) const
     {
         timespec_ex result(*this);
-        result += t;
+        result += rhs;
+        return result;
+    }
+
+
+    /** \brief Add a number to this timespec_ex object and return the result.
+     *
+     * This function computes the addition of this timespec_ex object
+     * and the \p rhs number and returns the result. The input timespec_ex
+     * is not modified.
+     *
+     * \param[in] rhs  An integer or floating point number.
+     *
+     * \return The sum of the inputs in a new timespec_ex object.
+     */
+    template<typename T>
+    std::enable_if_t<std::is_integral_v<T>
+        || std::is_floating_point_v<T>, timespec_ex> operator + (T rhs) const
+    {
+        timespec_ex result(*this);
+        result += rhs;
         return result;
     }
 
@@ -1321,7 +1361,7 @@ public:
     /** \brief Subtract \p t from this timespec_ex object.
      *
      * This function computes the difference of this timespec_ex object
-     * and the \p t timespec_ex object and returns the result. The inputs
+     * and the \p rhs timespec_ex object and returns the result. The inputs
      * are not modified.
      *
      * \param[in] rhs  The right handside to subtract from this timespex_ex
@@ -1336,6 +1376,27 @@ public:
         return result;
     }
 
+
+    /** \brief Subtract a number from this timespec_ex object and return the result.
+     *
+     * This function computes the subtraction of this timespec_ex object
+     * and the \p rhs number and returns the result. The input timespec_ex
+     * is not modified.
+     *
+     * \param[in] rhs  An integer or floating point number.
+     *
+     * \return The subtraction of the inputs in a new timespec_ex object.
+     */
+    template<typename T>
+    std::enable_if_t<std::is_integral_v<T>
+        || std::is_floating_point_v<T>, timespec_ex> operator - (T rhs) const
+    {
+        timespec_ex result(*this);
+        result -= rhs;
+        return result;
+    }
+
+
 #if 0
     // it looks like catch is not quite ready for this one
     auto operator <=> (timespec_ex const & t) const
@@ -1346,13 +1407,30 @@ public:
 
     /** \brief Compare whether the two timespec_ex are equal.
      *
-     * \param[in] t  The time to compare against.
+     * \param[in] rhs  The time to compare against.
      *
      * \return true if both timespec_ex objects are equal.
      */
-    bool operator == (timespec_ex const & t) const
+    bool operator == (timespec_ex const & rhs) const
     {
-        return compare(t) == 0;
+        return compare(rhs) == 0;
+    }
+
+
+    /** \brief Compare whether the timespec_ex equal a number.
+     *
+     * The input number is taken as a number of seconds. If a floating
+     * point is used, you can add precision up to nanoseconds.
+     *
+     * \param[in] rhs  The number to compare against.
+     *
+     * \return true if both timespec_ex objects are equal.
+     */
+    template<typename T>
+    std::enable_if_t<std::is_integral_v<T>
+        || std::is_floating_point_v<T>, bool> operator == (T rhs) const
+    {
+        return compare(rhs) == 0;
     }
 
 
@@ -1368,6 +1446,23 @@ public:
     }
 
 
+    /** \brief Compare whether the timespec_ex is not equal to a number.
+     *
+     * The input number is taken as a number of seconds. If a floating
+     * point is used, you can add precision up to nanoseconds.
+     *
+     * \param[in] rhs  The number to compare against.
+     *
+     * \return true if both timespec_ex objects are not equal.
+     */
+    template<typename T>
+    std::enable_if_t<std::is_integral_v<T>
+        || std::is_floating_point_v<T>, bool> operator != (T rhs) const
+    {
+        return compare(rhs) != 0;
+    }
+
+
     /** \brief Compare whether the left handside is smaller.
      *
      * \param[in] t  The time to compare against.
@@ -1375,6 +1470,23 @@ public:
      * \return true if the left handside timespec_ex object is smaller.
      */
     bool operator < (timespec_ex const & t) const
+    {
+        return compare(t) == -1;
+    }
+
+
+    /** \brief Compare whether the timespec_ex is less than a number.
+     *
+     * The input number is taken as a number of seconds. If a floating
+     * point is used, you can add precision up to nanoseconds.
+     *
+     * \param[in] rhs  The number to compare against.
+     *
+     * \return true if the timespec_ex object is less than the number.
+     */
+    template<typename T>
+    std::enable_if_t<std::is_integral_v<T>
+        || std::is_floating_point_v<T>, bool> operator < (T t) const
     {
         return compare(t) == -1;
     }
@@ -1393,6 +1505,23 @@ public:
     }
 
 
+    /** \brief Compare whether the timespec_ex is less than or equal to a number.
+     *
+     * The input number is taken as a number of seconds. If a floating
+     * point is used, you can add precision up to nanoseconds.
+     *
+     * \param[in] rhs  The number to compare against.
+     *
+     * \return true if the timespec_ex object is less than or equal to the number.
+     */
+    template<typename T>
+    std::enable_if_t<std::is_integral_v<T>
+        || std::is_floating_point_v<T>, bool> operator <= (T t) const
+    {
+        return compare(t) <= 0;
+    }
+
+
     /** \brief Compare whether the left handside is larger.
      *
      * \param[in] t  The time to compare against.
@@ -1400,6 +1529,23 @@ public:
      * \return true if the left handside timespec_ex object is larger.
      */
     bool operator > (timespec_ex const & t) const
+    {
+        return compare(t) == 1;
+    }
+
+
+    /** \brief Compare whether the timespec_ex is greater than a number.
+     *
+     * The input number is taken as a number of seconds. If a floating
+     * point is used, you can add precision up to nanoseconds.
+     *
+     * \param[in] rhs  The number to compare against.
+     *
+     * \return true if the timespec_ex object is greater than the number.
+     */
+    template<typename T>
+    std::enable_if_t<std::is_integral_v<T>
+        || std::is_floating_point_v<T>, bool> operator > (T t) const
     {
         return compare(t) == 1;
     }
@@ -1413,6 +1559,23 @@ public:
      * or equal.
      */
     bool operator >= (timespec_ex const & t) const
+    {
+        return compare(t) >= 0;
+    }
+
+
+    /** \brief Compare whether the timespec_ex is greater than or equal to a number.
+     *
+     * The input number is taken as a number of seconds. If a floating
+     * point is used, you can add precision up to nanoseconds.
+     *
+     * \param[in] rhs  The number to compare against.
+     *
+     * \return true if the timespec_ex object is greater than or equal to the number.
+     */
+    template<typename T>
+    std::enable_if_t<std::is_integral_v<T>
+        || std::is_floating_point_v<T>, bool> operator >= (T t) const
     {
         return compare(t) >= 0;
     }

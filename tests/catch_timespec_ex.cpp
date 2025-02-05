@@ -667,11 +667,18 @@ CATCH_TEST_CASE("timespec_ex_string", "[time][string]")
         snapdev::timespec_ex a(timespec{ 4511L, 913'788'345L });
 
 //        struct tm date_and_time = {};
-//        struct tm * ptr(nullptr);
-//        ptr = localtime_r(&a.tv_sec, &date_and_time);
-//std::cerr << "a.tv_sec = " << a.tv_sec << " but " << date_and_time.tm_sec << "\n";
+//        localtime_r(&a.tv_sec, &date_and_time);
+//std::cerr << "a.tv_sec = " << a.tv_sec << " but localtime.tm_sec = " << date_and_time.tm_sec;
+//        gmtime_r(&a.tv_sec, &date_and_time);
+//std::cerr << " and gmtime.tm_sec = " << date_and_time.tm_sec << "\n";
 
-        std::string out(a.to_string("%s.%N"));
+        // for these tests, we change the timezone to UTC so localtime_r()
+        // and gmtime_r() both return the same thing
+        //
+        std::string out(a.to_string("%s.%N", true));
+        CATCH_REQUIRE(out == "4511.913788345");
+
+        out = a.to_string("%s.%N", false);
         CATCH_REQUIRE(out == "4511.913788345");
 
         out = a.to_string();
@@ -697,7 +704,7 @@ CATCH_TEST_CASE("timespec_ex_string", "[time][string]")
         snapdev::timespec_ex a(timespec{ 4511L, 913'788'345L });
 
         time_t date(4511L);
-        struct tm t = *localtime(&date);
+        struct tm t = *gmtime(&date);
         char expected[256];
         strftime(expected, sizeof(expected), "%a %b %e %H:%M:%S.913788345 %Y", &t);
 
@@ -715,7 +722,7 @@ CATCH_TEST_CASE("timespec_ex_string", "[time][string]")
         snapdev::timespec_ex a(timespec{ 4511L, 913'788'345L });
 
         time_t date(4511L);
-        struct tm t = *localtime(&date);
+        struct tm t = *gmtime(&date);
         char expected[256];
         strftime(expected, sizeof(expected), "%T.913788345", &t);
 
@@ -733,7 +740,7 @@ CATCH_TEST_CASE("timespec_ex_string", "[time][string]")
         snapdev::timespec_ex a(timespec{ 4511L, 913'788'345L });
 
         time_t date(4511L);
-        struct tm t = *localtime(&date);
+        struct tm t = *gmtime(&date);
         char expected[256];
         strftime(
               expected
