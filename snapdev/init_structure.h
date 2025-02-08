@@ -190,7 +190,7 @@ class StructureValue
 public:
     typedef T   value_t;
 
-    constexpr StructureValue<T>(T const v)
+    constexpr StructureValue(T const v)
         : f_value(v)
     {
     }
