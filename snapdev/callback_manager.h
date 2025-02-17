@@ -54,7 +54,7 @@ namespace snapdev
  * functions or your objects with member functions you'd like to call on
  * an event.
  *
- * The following shows how objects are added:
+ * The following shows how objects are added and removed:
  *
  * \code
  *     struct foo
@@ -94,11 +94,11 @@ namespace snapdev
  *     snapdev::callback_manager::callback_id_t save1(callbacks.add_callback(std::bind(&T::member_function, obj1, std::placeholders::_1, std::placeholders::_2, ...)));
  *     snapdev::callback_manager::callback_id_t save2(callbacks.add_callback(my_func));
  *
- *     // call the functions added earlier with p1, p2, p3
+ *     // call the functions added earlier with arguments p1, p2, p3
  *     //
  *     callbacks.call(p1, p2, p3);
  *
- *     callbacks.remove_callback(save2);
+ *     callbacks.remove_callback(save2); // my_func() won't be called anymore
  * \endcode
  *
  * Note that to be able to remove a callback, you must save the identifier
