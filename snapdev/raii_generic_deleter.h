@@ -476,7 +476,7 @@ struct shared_ptr_with_deleter
  *     char * cwd(get_current_dir_name());
  *     if(cwd != nullptr)
  *     {
- *         raii_buffer_t auto_free(cwd);
+ *         snapdev::raii_buffer_t auto_free(cwd);
  *         ...
  *     }
  *     else
