@@ -124,19 +124,21 @@ constexpr magic_t const         BRS_MAGIC = BRS_MAGIC_LITTLE_ENDIAN;
  * fields representing maps.
  *
  * \code
- *     // create a serialize that writes to a stringstream
+ *     // create a serializer that writes to a stringstream
  *     //
  *     std::stringstream buffer;
  *     snapdev::serializer out(buffer);
  *
  *     // add a value as is; all basic types, strings, etc. are supported
  *     // in this case you pass 2 values
+ *     //
  *     // note that my_value can be any basic struct type
  *     //
  *     // if you use a binary type (i.e. `std::int16_t`) then you must re-read
- *     // the value with the exact same type; if the type changes later,
- *     // if the size is different, you can detect which type using the size
- *     // otherwise make sure to change the field name
+ *     // the value with the exact same type; if you need to change the type
+ *     // later and its size is different, you can detect which type (old or
+ *     // new) using the size of the field, otherwise make sure to change the
+ *     // field name
  *     //
  *     out.add_value("field-name", my_value);
  *
@@ -172,22 +174,22 @@ constexpr magic_t const         BRS_MAGIC = BRS_MAGIC_LITTLE_ENDIAN;
  * you want to use the recursive class like so:
  *
  * \code
- *     s.add_value("type", f_type);     // regular field
+ *     out.add_value("type", f_type);     // regular field
  *
  *     // start the recursive entry
  *     {
- *         brs::recursive r(s, "headers");
+ *         brs::recursive r(out, "headers");
  *         for(auto const & h : f_headers)
  *         {
- *             h.serialize(s);  // serialize one header
+ *             h.serialize(out);  // serialize one header
  *
  *             // for example, the header serialization may just be a name/value
- *             //     s.add_value("header:" + f_name, f_value);
+ *             //     out.add_value("header:" + f_name, f_value);
  *         }
  *     }
  *     // end the recursive entry
  *
- *     s.add_value("body", f_body);     // another regular field
+ *     out.add_value("body", f_body);     // another regular field
  * \endcode
  *
  * Place the brs::recursive inside a sub-block, that way when you hit the '}'
@@ -549,7 +551,12 @@ private:
 
 /** \brief When deserializing, the data is saved in a field.
  *
- * This field holds the data of one field.
+ * This field holds the metadata of one field.
+ *
+ * Note that the field data will still be in the stream and it's up to you
+ * to read it in your variable. That way, we can avoid a copy. The read
+ * can use the read_data() functions which support all basic types (int,
+ * float, etc.), the std::string, and std::vector<>.
  */
 struct field_t
 {
@@ -601,7 +608,7 @@ public:
         f_input.read(reinterpret_cast<typename S::char_type *>(&magic), sizeof(magic));
         if(!f_input || f_input.gcount() != sizeof(magic))
         {
-            throw brs_magic_missing("magic missing from the start of the buffer.");
+            throw brs_magic_missing("magic missing at the start of the buffer.");
         }
 
         // once we have multiple versions, this is where we'll start splitting
@@ -622,7 +629,7 @@ public:
      *
      * If any hunk looks invalid, then the function returns false. If
      * a hunk is found, but it cannot be read properly, then the function
-     * throw about it.
+     * may throw.
      *
      * \exception brs_map_name_cannot_be_empty
      * Found a size of 0 for the name of a map item.
