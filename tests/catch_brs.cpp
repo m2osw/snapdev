@@ -1676,7 +1676,7 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
                   snapdev::deserializer<std::stringstream>(buffer)
                 , snapdev::brs_magic_missing
                 , Catch::Matchers::ExceptionMessage(
-                          "brs_error: magic missing from the start of the buffer."));
+                          "brs_error: magic missing at the start of the buffer."));
     }
     CATCH_END_SECTION()
 

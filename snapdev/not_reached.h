@@ -47,6 +47,18 @@ namespace snapdev
 
 
 
+/** \brief Mark a specific location as unreachable.
+ *
+ * This function marks a specific branch in a function as unreachable.
+ * This is similar to std::unreachable() without all the optimization
+ * since it will also emit an error and print out the stack trace at
+ * this location.
+ *
+ * At the moment, the function ends by calling std::abort() which should
+ * clearly stop the process at that point.
+ *
+ * The function does not return.
+ */
 [[noreturn]] inline void NOT_REACHED()
 {
     std::cerr << "NOT_REACHED() called, process will abort." << std::endl;
@@ -59,10 +71,11 @@ namespace snapdev
     }
 
     std::abort();
+    //std::unreachable(); // not sure if this would be better?
 } // LCOV_EXCL_LINE
 
 
-/** \brief Check whether code is unexpectendly reached in a test.
+/** \brief Check whether code is unexpectedly reached in a test.
  *
  * Some tests verify that code is being reached by generating all the
  * possible errors. This way we can eventually get full coverage unit
