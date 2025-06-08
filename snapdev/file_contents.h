@@ -341,7 +341,7 @@ public:
      * a backup before making changes and save the new file:
      *
      * \code
-     *      file_content fc("filename.here");
+     *      snapdev::file_content fc("filename.here");
      *      fc.read_all();
      *      fc.write_all("filename.bak");  // create backup
      *      std::string content(fc.contents());
