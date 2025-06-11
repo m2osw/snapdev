@@ -535,7 +535,7 @@ private:
     callbacks_t     f_callbacks = callbacks_t();
 
 
-    /** \brief The next idenfitier.
+    /** \brief The next identifier.
      *
      * Each time you call the add_callback() function, this identifier gets
      * incremented by one. You can record that number to later remove that
