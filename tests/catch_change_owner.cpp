@@ -51,6 +51,10 @@ CATCH_TEST_CASE("chownnm", "[os]")
         struct group const * grp(getgrnam("snapwebsites"));
         if(grp == nullptr)
         {
+            // adding a test otherwise this test fails when the snapwebsites
+            // group is missing
+            //
+            CATCH_REQUIRE(grp == nullptr);
             std::cerr << "warning: skipping change group test because \"snapwebsites\" group doesn't exist.\n";
         }
         else
