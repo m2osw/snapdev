@@ -32,7 +32,7 @@
 #include    "catch_main.h"
 
 
-// C++ lib
+// C++
 //
 #include    <set>
 

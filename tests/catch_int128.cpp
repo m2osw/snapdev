@@ -32,7 +32,7 @@
 
 
 
-// snapdev lib
+// snapdev
 //
 #include    <snapdev/ostream_int128.h>
 #include    <snapdev/int128_literal.h>

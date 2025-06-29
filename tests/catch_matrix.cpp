@@ -35,7 +35,7 @@
 #pragma GCC diagnostic ignored "-Wfloat-equal"
 
 
-// snapdev lib
+// snapdev
 //
 #include    <snapdev/matrix.h>
 

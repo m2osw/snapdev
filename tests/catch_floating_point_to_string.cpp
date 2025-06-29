@@ -30,7 +30,7 @@
 
 
 
-// C++ lib
+// C++
 //
 //#include    <iomanip>
 //#include    <set>

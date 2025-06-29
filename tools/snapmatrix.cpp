@@ -22,7 +22,7 @@
 #include    <snapdev/not_reached.h>
 
 
-// C++ lib
+// C++
 //
 #include    <deque>
 #include    <fstream>
