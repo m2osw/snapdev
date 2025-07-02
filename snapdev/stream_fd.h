@@ -19,14 +19,9 @@
 
 // C++
 //
-//#include    <fstream>
 #include    <iostream>
 #include    <ext/stdio_filebuf.h>
 #include    <ext/stdio_sync_filebuf.h>
-
-// C
-//
-//#include    <unistd.h>
 
 
 

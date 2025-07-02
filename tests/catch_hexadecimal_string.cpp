@@ -314,7 +314,7 @@ CATCH_TEST_CASE("hexadecimal_string_invalid_input", "[hexadecimal][string][error
                 ss << std::hex << rand() % 16;
             }
 
-            if(invalid < 0x20 || invalid >= 0x80)
+            if(invalid < 0x20 || invalid >= 0x7F)
             {
                 // in this case the character is not available so we cannot
                 // just add it cleanly to the exception message
