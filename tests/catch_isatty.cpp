@@ -87,10 +87,15 @@ CATCH_TEST_CASE("isatty", "[os]")
 
     CATCH_START_SECTION("isatty: /dev/tty")
     {
+        // opening the /dev/tty works only when running the test from a
+        // terminal; from a cron job, it fails
+        //
         std::fstream out;
         out.open("/dev/tty");
-        CATCH_REQUIRE(out.is_open());
-        CATCH_REQUIRE(snapdev::isatty(out));
+        if(out.is_open())
+        {
+            CATCH_REQUIRE(snapdev::isatty(out));
+        }
     }
     CATCH_END_SECTION()
 }

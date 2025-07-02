@@ -43,13 +43,8 @@ namespace snapdev
  * returns false, even if ultimately the stream does represent a TTY. This
  * is because we can really only handle the standard fstream's objects here.
  *
- * \note
- * The function dynamic casts to a the three different types of buffers
- * to see whether we can find a file() function. If so, then we check
- * that the file isatty() or not.
- *
  * \tparam _CharT  type of character this stream handles.
- * \tparam _Traits  traits of the characters based on CharT by default.
+ * \tparam _Traits  traits of the characters; based on CharT by default.
  * \param[in] stream  The stream to check.
  *
  * \return true if \p stream is a TTY.
