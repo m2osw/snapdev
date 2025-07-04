@@ -34,6 +34,16 @@
 
 
 
+// C++
+//
+#include    <cstdint>
+
+
+// C
+//
+#include    <unistd.h>
+
+
 
 namespace snapdev
 {

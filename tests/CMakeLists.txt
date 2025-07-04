@@ -65,6 +65,7 @@ if(SnapCatch2_FOUND)
         catch_trim_string.cpp
         catch_unique_number.cpp
         catch_user_groups.cpp
+        catch_username.cpp
         catch_version.cpp
     )
 

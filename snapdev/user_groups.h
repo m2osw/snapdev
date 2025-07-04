@@ -54,6 +54,11 @@ namespace snapdev
 template<class ContainerT>
 ContainerT user_group_names(std::string const & user)
 {
+    if(user.empty())
+    {
+        return ContainerT();
+    }
+
     struct passwd * pw(getpwnam(user.c_str()));
     if(pw == nullptr)
     {

@@ -30,6 +30,7 @@
 #include    <snapdev/join_strings.h>
 #include    <snapdev/ostream_to_buf.h>
 #include    <snapdev/tokenize_string.h>
+#include    <snapdev/username.h>
 
 #include    "catch_main.h"
 
@@ -58,8 +59,7 @@ CATCH_TEST_CASE("user_groups", "[os]")
         snapdev::file_contents system_groups(filename);
         system_groups.read_all();
 
-        char const * user(getenv("USER"));
-        CATCH_REQUIRE(user != nullptr);
+        std::string const user(snapdev::username());
         std::set<std::string> our_groups(snapdev::user_group_names<std::set<std::string>>(user));
 
         std::set<std::string> system_set;

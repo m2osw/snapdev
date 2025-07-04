@@ -97,6 +97,7 @@ install(
         trim_string.h
         unique_number.h
         user_groups.h
+        username.h
         ${CMAKE_CURRENT_BINARY_DIR}/version.h
 
     DESTINATION

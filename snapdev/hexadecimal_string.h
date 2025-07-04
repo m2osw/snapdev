@@ -66,7 +66,7 @@ DECLARE_EXCEPTION(hexadecimal_string_exception, hexadecimal_string_invalid_param
  * \rparam charT  The type of character to be tested.
  * \param[in] c  The character to be tested.
  *
- * \return true if the the character represents a hexadecimal digit.
+ * \return true if the character represents a hexadecimal digit.
  */
 template<class charT>
 bool is_hexdigit(charT c)

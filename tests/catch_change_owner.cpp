@@ -28,6 +28,7 @@
 
 #include    <snapdev/file_contents.h>
 #include    <snapdev/user_groups.h>
+#include    <snapdev/username.h>
 
 #include    "catch_main.h"
 
@@ -59,16 +60,16 @@ CATCH_TEST_CASE("chownnm", "[os]")
         }
         else
         {
-            char const * user(getenv("USER"));
+            std::string const user(snapdev::username());
+            CATCH_REQUIRE_FALSE(user.empty());
             bool permitted(true);
-            CATCH_REQUIRE(user != nullptr);
-            if(strcmp(user, "root") != 0)
+            if(user != "root")
             {
                 std::set<std::string> our_groups(snapdev::user_group_names<std::set<std::string>>(user));
                 if(our_groups.find("snapwebsites") == our_groups.end())
                 {
                     permitted = false;
-                    std::cerr << "error: we expect the tester to be the \"root\" user or part of the \"snapwebsites\" group to run this test section.\n";
+                    std::cerr << "warning: we expect the tester to be the \"root\" user or part of the \"snapwebsites\" group to run this test section.\n";
                 }
             }
 
@@ -107,11 +108,11 @@ CATCH_TEST_CASE("chownnm", "[os]")
     {
         // TODO: this is contradictory since we can't run this test as root...
         //
-        char const * user(getenv("USER"));
-        CATCH_REQUIRE(user != nullptr);
+        std::string const user(snapdev::username());
+        CATCH_REQUIRE_FALSE(user.empty());
         struct passwd const * pwd(getpwnam("snapwebsites"));
         if(pwd == nullptr
-        || strcmp(user, "root") != 0)
+        || user != "root")
         {
             std::cerr << "warning: skipping change owner test because your are not root and/or the \"snapwebsites\" user doesn't exist.\n";
         }
@@ -129,7 +130,7 @@ CATCH_TEST_CASE("chownnm", "[os]")
                 // this should not happen since we tested above that we are
                 // root to properly run this test (otherwise we bail out)
                 //
-                std::cerr << "warning: your default owner is \"snapwebsites\" so the test is not going to change anything\n";
+                std::cerr << "warning: your default owner is \"snapwebsites\" so the chownnm() call is not going to test anything.\n";
             }
 
             CATCH_REQUIRE(snapdev::chownnm(filename, "snapwebsites", std::string()) == 0);
