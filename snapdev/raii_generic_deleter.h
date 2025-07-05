@@ -505,5 +505,21 @@ typedef std::unique_ptr<char, raii_pointer_deleter<char, void(*)(void *), &::fre
 typedef std::unique_ptr<FILE, raii_pointer_deleter<FILE, int(*)(FILE *), &::fclose>>    raii_file_t;
 
 
+/** \brief Handle the closure of a FILE handle used as a pipe.
+ *
+ * One of the common type of file handle is the FILE object opened by the
+ * popen() command. It manages a file including an efficient client side
+ * buffering mechanism.
+ *
+ * This typedef makes sure that the pipe gets closed whenever the
+ * handle goes out of scope.
+ *
+ * This is a pointer so the null (a.k.a. closed, already released) is
+ * expected to be represented by a nullptr.
+ */
+typedef std::unique_ptr<FILE, raii_pointer_deleter<FILE, int(*)(FILE *), &::pclose>>    raii_pipe_t;
+
+
+
 } // namespace snapdev
 // vim: ts=4 sw=4 et
