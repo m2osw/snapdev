@@ -104,7 +104,14 @@ StringT string_replace_many(StringT const & input
             // characters in the input string
             //
             result += match->second;
-            pos += match->first.length();
+            if(match->first.empty())
+            {
+                ++pos;
+            }
+            else
+            {
+                pos += match->first.length();
+            }
         }
     }
 
