@@ -235,8 +235,19 @@ CATCH_TEST_CASE("lockfile", "[lock][file]")
             {
                 break;
             }
-            snapdev::timespec_ex wait(0.001); // 1ms
-            CATCH_REQUIRE(nanosleep(&wait, nullptr) == 0);
+            snapdev::timespec_ex const wait(0.001); // 1ms
+            int const r(nanosleep(&wait, nullptr));
+            if(r != 0)
+            {
+                int const e(errno);
+                std::cerr
+                    << "error: nanosleep() returned an error ("
+                    << e
+                    << ", "
+                    << strerror(e)
+                    << ")\n";
+            }
+            CATCH_REQUIRE(r == 0);
         }
     }
     CATCH_END_SECTION()

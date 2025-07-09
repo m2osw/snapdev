@@ -58,6 +58,7 @@ if(SnapCatch2_FOUND)
         catch_saturated_add.cpp
         catch_saturated_subtract.cpp
         catch_stringize.cpp
+        catch_string_replace_many.cpp
         catch_timespec_ex.cpp
         catch_tokenize_format.cpp
         catch_tokenize_string.cpp

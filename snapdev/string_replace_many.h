@@ -106,6 +106,9 @@ StringT string_replace_many(StringT const & input
             result += match->second;
             if(match->first.empty())
             {
+                // empty does not match anything, so keep the character
+                //
+                result += input[pos];
                 ++pos;
             }
             else
@@ -116,7 +119,9 @@ StringT string_replace_many(StringT const & input
     }
 
     return result;
-}
+} // LCOV_EXCL_LINE
+
+
 
 } // namespace snapdev
 // vim: ts=4 sw=4 et
