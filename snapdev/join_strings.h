@@ -110,7 +110,7 @@ typename ContainerT::value_type join_strings(
     }
 
     return result;
-}
+} // LCOV_EXCL_LINE
 
 
 template<class InputIt>
