@@ -1,4 +1,4 @@
-usr/bin/*
-usr/include/*
-usr/share/cmake/*
-usr/share/doc/*
+debian/tmp/usr/bin/*
+debian/tmp/usr/include/*
+debian/tmp/usr/share/cmake/*
+debian/tmp/usr/share/doc/*
