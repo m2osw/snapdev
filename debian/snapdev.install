@@ -1,4 +1,4 @@
-debian/tmp/usr/bin/*
-debian/tmp/usr/include/*
-debian/tmp/usr/share/cmake/*
-debian/tmp/usr/share/doc/*
+debian/snapdev/usr/bin/*
+debian/snapdev/usr/include/*
+debian/snapdev/usr/share/cmake/*
+debian/snapdev/usr/share/doc/*
