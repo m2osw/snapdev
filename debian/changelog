@@ -1,4 +1,4 @@
-snapdev (1.1.40.0~jammy) jammy; urgency=high
+snapdev (1.1.40.0~noble) noble; urgency=high
 
   * Added is_absolute() and is_relative() functions in pathinfo.
   * Added the raii_buffer_t type to call free() on a buffer.
