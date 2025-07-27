@@ -24,7 +24,7 @@
  * to retrieve the system time. We also offer ways to compute durations
  * and add/remove a duration from a timespec.
  *
- * The class also supports convertions to string, negation, and a few
+ * The class also supports conversions to string, negation, and a few
  * other features.
  */
 
