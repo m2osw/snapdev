@@ -75,13 +75,13 @@ public:
          *
          * This mode has to be used with any file which size can't be
          * determine with a seek() function. It will read as much as it
-         * can and then return that contents. There is no real way to
+         * can and then return that content. There is no real way to
          * know whether the entire file was read in this mode.
          *
          * Although it is possible to use this mode to read a regular
          * file, it is not a good idea since (1) it will be slower and
-         * (2) it may re-allocate the contents buffer multiple times
-         * so the data fits.
+         * (2) it may re-allocate the data buffer multiple times
+         * so the content fits.
          */
         SIZE_MODE_READ,
     };
