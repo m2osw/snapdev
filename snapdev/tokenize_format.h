@@ -39,8 +39,8 @@
  *
  * \note
  * The classes are templates allowing you to change the type of character
- * to any available type (i.e. char, wchar_t, char32_t...). However, multibyte
- * characters are not support.
+ * to any available type (i.e. char, wchar_t, char32_t...). However,
+ * multibyte characters are not support.
  *
  * \todo
  * Generate errors if order is incorrect (i.e. strftime() expects optional
@@ -50,11 +50,11 @@
  *
  * \todo
  * Write a generator so we can create a format string by creating a list
- * of format_item which we can then transform in '%...<letter>' entries.
+ * of format_item which we can then transform in `%...<letter>` entries.
  *
  * \todo
  * Add enums for the list of supported formats so we can use that enum
- * instead of a plain letter (i.e. 'd' would be PRINTF_FORMAT_DECIMAL,
+ * instead of a plain letter (i.e. `d` would be PRINTF_FORMAT_DECIMAL,
  * for example).
  *
  * \todo

@@ -20,7 +20,7 @@
 /** \file
  * \brief Get the computer hostname.
  *
- * This function calls the ::gethostname() system function to retrieve this
+ * This function calls the \c ::gethostname() system function to retrieve this
  * computer current hostname. If that fails, it throws, otherwise it returns
  * the name in an std::string.
  */
@@ -40,6 +40,7 @@
 
 namespace snapdev
 {
+
 
 
 DECLARE_MAIN_EXCEPTION(gethostname_error);
@@ -76,6 +77,8 @@ inline std::string gethostname()
 
     return std::string(host);
 }
+
+
 
 } // namespace snapdev
 // vim: ts=4 sw=4 et

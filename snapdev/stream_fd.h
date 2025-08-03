@@ -33,12 +33,28 @@ namespace snapdev
 namespace detail
 {
 
+/** \brief Class used to gain access to the OS file pointer.
+ *
+ * The sole purpose of this class is to retrieve the OS file pointer.
+ * The pointer is protected so it is necessary to create a class that
+ * can inherit the base to gain access to the file pointer.
+ *
+ * \tparam _ChartT  The character type.
+ * \tparam _Traits  The character traits.
+ */
 template<typename _CharT
        , typename _Traits = std::char_traits<_CharT>>
 class our_basic_filebuf
     : public std::basic_filebuf<_CharT, _Traits>
 {
 public:
+    /** \brief Retrieve the OS file.
+     *
+     * This function allows us to access the system file and retrieve
+     * the file pointer.
+     *
+     * \return A copy of the system file pointer.
+     */
     std::__c_file * file() throw()
     {
         //return std::basic_filebuf<_CharT, _Traits>::_M_file.file();

@@ -120,7 +120,7 @@ ContainerT & sorted_remove_duplicates(ContainerT & container)
  * You must make sure to use the std::erase() to remove the last few
  * items. This is done by the unsorted_remove_duplicates() function.
  *
- * \rparam ForwardIterator  The type of iterator from your container.
+ * \tparam ForwardIterator  The type of iterator from your container.
  * \param[in] first  Forward iterator to the container's first element.
  * \param[in] end  Forward iterator to the container's last element + 1.
  *

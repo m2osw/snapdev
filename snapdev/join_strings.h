@@ -220,8 +220,12 @@ template<
     , std::string_view const & ...strings>
 struct join_string_views_with_separator_impl
 {
-    // join all strings into a single std::array of chars
-    //
+    /** \brief Join all the strings into a single std::array of chars.
+     *
+     * This function allocates one array after computing the total size
+     * of all the strings and separator plus one for the null terminator.
+     * This array data can then be viewed as a C-string.
+     */
     static constexpr auto concatenate() noexcept
     {
         constexpr std::size_t const count = sizeof...(strings); //std::tuple_size<std::tuple<strings...>>::value;
@@ -248,12 +252,17 @@ struct join_string_views_with_separator_impl
         return arr;
     }
 
-    // give the joined string static storage
-    //
+    /** \brief Give the joined string static storage
+     *
+     */
     static constexpr auto concatenated_strings = concatenate();
 
-    // view as a std::string_view
-    //
+    /** \brief View of string as a std::string_view.
+     *
+     * This allows us to access this `::value` static parameter which
+     * represents the concatenation of all the strings passed to this
+     * template.
+     */
     static constexpr std::string_view value{
               concatenated_strings.data()
             , concatenated_strings.size() - 1
@@ -283,7 +292,7 @@ struct join_string_views_with_separator_impl
  *     constexpr std::string_view hello_world = join_string_views<hello, space, world, bang>;
  * \endcode
  *
- * \source
+ * \sa
  * https://stackoverflow.com/questions/38955940
  */
 template<std::string_view const & ...strings>

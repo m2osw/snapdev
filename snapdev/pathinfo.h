@@ -215,7 +215,7 @@ StringT basename(StringT const & path
  * \param[in] old_suffix  If the path ends with that suffix, remove it.
  * \param[in] new_suffix  Append this suffix.
  * \param[in] no_change_on_missing  If old_suffix is missing, do not change
- * the \t path.
+ * the \p path.
  *
  * \return \p path with its suffix replaced as defined above.
  */

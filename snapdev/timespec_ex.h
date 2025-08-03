@@ -163,6 +163,15 @@ class timespec_ex;
 inline timespec_ex now(clockid_t clk_id = CLOCK_REALTIME);
 
 
+/** \brief An expanded timespec class.
+ *
+ * This class includes many functions that allow one to manage a timespec
+ * without reinventing the wheel each time.
+ *
+ * It is capable of doing additions, subtractions, test whether it is zero,
+ * verify validity, serialize, convert to string, support floating point
+ * numbers, etc.
+ */
 class timespec_ex
     : public timespec
 {
@@ -401,6 +410,8 @@ public:
      * always set to 0.
      *
      * \param[in] t  The tm structure to convert to this timespec_ex.
+     *
+     * \return A reference to this object.
      */
     timespec_ex & operator = (tm const & t)
     {
@@ -415,8 +426,6 @@ public:
      * tv_sec and tv_nsec representation.
      *
      * \param[in] t  The nano-seconds to save in this timespec_ex.
-     *
-     * \return A reference to this object.
      */
     void set(timespec_ex const & t)
     {
@@ -430,8 +439,6 @@ public:
      * This function copies the timespec in \p t in this timespec_ex object.
      *
      * \param[in] t  The timespec to save in this timespec_ex.
-     *
-     * \return A reference to this object.
      */
     void set(timespec const & t)
     {
@@ -461,8 +468,6 @@ public:
      * tv_sec and tv_nsec representation.
      *
      * \param[in] nsec  The nano-seconds to save in this timespec_ex.
-     *
-     * \return A reference to this object.
      */
     void set(std::int64_t nsec)
     {
@@ -488,8 +493,6 @@ public:
      * At this time, the number of nanoseconds is floored.
      *
      * \param[in] sec  The number of seconds defined in a double.
-     *
-     * \return A reference to this object.
      */
     void set(double sec)
     {
@@ -788,6 +791,7 @@ public:
      *
      * \param[in] format  The format used to transform the date and time in
      * a string.
+     * \param[in] use_localtime  Whether to use UTC or local time.
      *
      * \return The formatted date and time.
      *
@@ -1342,8 +1346,6 @@ public:
      *
      * This is equivalent to computing `0 - t`.
      *
-     * \param[in] t  The right handside time to negate.
-     *
      * \return A timespec_ex representing the additive opposite of the input.
      */
     timespec_ex operator - () const
@@ -1367,7 +1369,7 @@ public:
      * \param[in] rhs  The right handside to subtract from this timespex_ex
      * object.
      *
-     * \return The different of the inputs in a new timespec_ex object.
+     * \return The difference of the inputs in a new timespec_ex object.
      */
     timespec_ex operator - (timespec_ex const & rhs) const
     {
@@ -1480,7 +1482,7 @@ public:
      * The input number is taken as a number of seconds. If a floating
      * point is used, you can add precision up to nanoseconds.
      *
-     * \param[in] rhs  The number to compare against.
+     * \param[in] t  The number to compare against.
      *
      * \return true if the timespec_ex object is less than the number.
      */
@@ -1510,7 +1512,7 @@ public:
      * The input number is taken as a number of seconds. If a floating
      * point is used, you can add precision up to nanoseconds.
      *
-     * \param[in] rhs  The number to compare against.
+     * \param[in] t  The number to compare against.
      *
      * \return true if the timespec_ex object is less than or equal to the number.
      */
@@ -1539,7 +1541,7 @@ public:
      * The input number is taken as a number of seconds. If a floating
      * point is used, you can add precision up to nanoseconds.
      *
-     * \param[in] rhs  The number to compare against.
+     * \param[in] t  The number to compare against.
      *
      * \return true if the timespec_ex object is greater than the number.
      */
@@ -1569,7 +1571,7 @@ public:
      * The input number is taken as a number of seconds. If a floating
      * point is used, you can add precision up to nanoseconds.
      *
-     * \param[in] rhs  The number to compare against.
+     * \param[in] t  The number to compare against.
      *
      * \return true if the timespec_ex object is greater than or equal to the number.
      */
@@ -1751,6 +1753,8 @@ struct _setremovetrailingzeroes
  *
  * \param[in] remove_trailing_zeroes  Whether trailing zeroes are to be removed
  * (true--the default) or be kept (false).
+ *
+ * \return An initialized _setremovetrailingzeroes structure.
  */
 inline _setremovetrailingzeroes setremovetrailingzeroes(bool remove_trailing_zeroes)
 {

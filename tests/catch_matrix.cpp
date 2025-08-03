@@ -4294,7 +4294,8 @@ CATCH_TEST_CASE("matrix_color", "[matrix][math]")
                     // pre-calculated numbers; that way we know we have it right
                     //
 
-                    // $R_r$ (red rotation)
+                    // 
+                    // \f$R_r\f$ (red rotation)
                     //
                     snapdev::matrix<double> r_r(4, 4);
                     r_r[1][1] =  1.0 / sqrt(2.0);
@@ -4302,7 +4303,7 @@ CATCH_TEST_CASE("matrix_color", "[matrix][math]")
                     r_r[2][1] = -1.0 / sqrt(2.0);
                     r_r[2][2] =  1.0 / sqrt(2.0);
 
-                    // $R_g$ (green rotation)
+                    // \f$R_g\f$ (green rotation)
                     //
                     snapdev::matrix<double> r_g(4, 4);
                     r_g[0][0] =  sqrt(2.0) / sqrt(3.0);
@@ -4310,11 +4311,11 @@ CATCH_TEST_CASE("matrix_color", "[matrix][math]")
                     r_g[2][0] = -1.0 / sqrt(3.0);
                     r_g[2][2] =  sqrt(2.0) / sqrt(3.0);
 
-                    // $R_rg = R_r R_g$ (red and green rotations combined)
+                    // \f$R_rg = R_r R_g\f$ (red and green rotations combined)
                     //
                     snapdev::matrix<double> r_rg(r_r * r_g);
 
-                    // $w$ (luma vector, a.k.a. color weights to calcalute the perfect grayscale for your monitor)
+                    // \f$w\f$ (luma vector, a.k.a. color weights to calculate the perfect gray scale for your monitor)
                     //
                     snapdev::matrix<double> w(a.get_luma_vector());
                     //w[0][0] = a.RED_WEIGHT;
@@ -4371,7 +4372,7 @@ CATCH_TEST_CASE("matrix_color", "[matrix][math]")
                     CATCH_REQUIRE(fabs(b[3][2] - hue_matrix[3][2]) < 0.0001);
                     CATCH_REQUIRE(fabs(b[3][3] - hue_matrix[3][3]) < 0.0001);
 
-//     * $$
+//     * \f[
 //     * R_r =
 //     * \begin{bmatrix}
 //     *       1 &  0                  & 0                  & 0
@@ -4379,9 +4380,9 @@ CATCH_TEST_CASE("matrix_color", "[matrix][math]")
 //     *    \\ 0 & -{1 \over \sqrt 2 } & {1 \over \sqrt 2 } & 0
 //     *    \\ 0 &  0                  & 0                  & 1
 //     * \end{bmatrix}
-//     * $$
+//     * \f]
 //     *
-//     * $$
+//     * \f[
 //     * R_g =
 //     * \begin{bmatrix}
 //     *       1 & 0 & 0 & 0
@@ -4389,13 +4390,13 @@ CATCH_TEST_CASE("matrix_color", "[matrix][math]")
 //     *    \\ 0 & {1 \over \sqrt 3} & {\sqrt 2 \over \sqrt 3} & 0
 //     *    \\ 0 & 0 & 0 & 1
 //     * \end{bmatrix}
-//     * $$
+//     * \f]
 //     *
-//     * $$
+//     * \f[
 //     * R_{rg} = R_r R_g
-//     * $$
+//     * \f]
 //     *
-//     * $$
+//     * \f[
 //     * \begin{bmatrix}
 //     *        L_r
 //     *     \\ L_g
@@ -4410,13 +4411,13 @@ CATCH_TEST_CASE("matrix_color", "[matrix][math]")
 //     *     \\ W_b
 //     *     \\ 0
 //     * \end{bmatrix}
-//     * $$
+//     * \f]
 //     *
 //     * Now we define a rotation matrix for the blue axis. This one uses
 //     * a variable as the angle. This is the actual rotation angle which
-//     * can go from 0 to $2 \pi$:
+//     * can go from 0 to \f$2 \pi\f$:
 //     *
-//     * $$
+//     * \f[
 //     * R_b =
 //     * \begin{bmatrix}
 //     *       cos( \theta )  & sin( \theta ) & 0 & 0
@@ -4424,18 +4425,18 @@ CATCH_TEST_CASE("matrix_color", "[matrix][math]")
 //     *    \\ 0              & 0             & 1 & 0
 //     *    \\ 0              & 0             & 0 & 1
 //     * \end{bmatrix}
-//     * $$
+//     * \f]
 //     *
 //     * Now we have all the matrices to caculate the hue rotation
 //     * of all the components of an image:
 //     *
-//     * $$
+//     * \f[
 //     * H = R_{rg} S R_b S^{-1} R_{rg}^{-1}
-//     * $$
+//     * \f]
 //     *
-//     * $H$ can then be used as in:
+//     * \f$H\f$ can then be used as in:
 //     *
-//     * $$
+//     * \f[
 //     * \begin{bmatrix}
 //     *      R'
 //     *   \\ G'
@@ -4448,7 +4449,7 @@ CATCH_TEST_CASE("matrix_color", "[matrix][math]")
 //     *   \\ G
 //     *   \\ B
 //     * \end{bmatrix}
-//     * $$
+//     * \f]
 //     *
                 }
             }

@@ -474,7 +474,9 @@ std::cerr << "this " << f_rows << "x" << f_columns
      * The function returns false if the inverse cannot be calculated
      * and the matrix remains unchanged.
      *
-     * $$A^{-1} = {1 \over det(A)} adj(A)$$
+     * \f[
+     * A^{-1} = {\frac{1}{det(A)}} adj(A)
+     * \f]
      *
      * \return true if the inverse computation was successful.
      */
@@ -819,9 +821,11 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *
      * The minor is denoted:
      *
-     * $$M_{ij}$$
+     * \f[
+     * M_{ij}
+     * \f]
      *
-     * It is a matrix built from $A$ without column `i` and row `j`.
+     * It is a matrix built from \f$A\f$ without column `i` and row `j`.
      *
      * \note
      * The matrix must at least be a 2x2 matrix.
@@ -885,7 +889,9 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *
      * This function calculates the determinant of this matrix:
      *
-     * $$det(A) = \sum_{\sigma \in S_n} \Big( sgn(\sigma) \prod_{i=1}^{n} a_{i,\sigma_i} \Big)$$
+     * \f[
+     * det(A) = \sum_{\sigma \in S_n} \Big( sgn(\sigma) \prod_{i=1}^{n} a_{i,\sigma_i} \Big)
+     * \f]
      *
      * The function is implemented using a recursive set of calls. It
      * knows how to calculate a 2x2 matrix. All the others use recursive
@@ -988,11 +994,15 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *
      * Generally noted as:
      *
-     * $$A^T$$
+     * \f[
+     * A^T
+     * \f]
      *
      * The definition of the transpose is:
      *
-     * $$[A^T]_{ij} = [A]_{ji}$$
+     * \f[
+     * [A^T]_{ij} = [A]_{ji}
+     * \f]
      *
      * The resulting matrix has a number of columns equal to 'this' matrix
      * rows and vice versa.
@@ -1078,7 +1088,9 @@ std::cerr << "this " << f_rows << "x" << f_columns
      * This function adds the specified scalar to the matrix. This adds
      * the specified amount to all the elements of the matrix.
      *
-     * $$[A]_{ij} \leftarrow [A]_{ij} + scalar$$
+     * \f[
+     * [A]_{ij} \leftarrow [A]_{ij} + scalar
+     * \f]
      *
      * \param[in] scalar  The scalar to add to this matrix.
      */
@@ -1240,18 +1252,18 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *
      * The scale matrix looks like:
      *
-     * $$
+     * \f[
      * \begin{bmatrix}
      *       brightness_r & 0 & 0 & 0
      *    \\ 0 & brightness_g & 0 & 0
      *    \\ 0 & 0 & brightness_b & 0
      *    \\ 0 & 0 & 0 & 1
      * \end{bmatrix}
-     * $$
+     * \f]
      *
      * The 'r', 'g', 'b' indices represent the RGB colors if one wants to
      * scale just one color at a time although this function only offers
-     * to set all of the fields to the same value \p s.
+     * to set all of the fields to the same value \p b.
      *
      * See:
      * http://www.graficaobscura.com/matrix/index.html
@@ -1290,14 +1302,15 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *
      * The saturation matrix:
      *
-     * $$
+     * \f[
+     * \small
      * \begin{bmatrix}
      *     L_r \times ( 1 - saturation) + saturation  & L_r \times ( 1 - saturation)               & L_r \times ( 1 - saturation)                & 0
      *  \\ L_g \times ( 1 - saturation)               & L_g \times ( 1 - saturation) + saturation  & L_g \times ( 1 - saturation)                & 0
      *  \\ L_b \times ( 1 - saturation)               & L_b \times ( 1 - saturation)               & L_b \times ( 1 - saturation) + saturation   & 0
      *  \\ 0                                          & 0                                          & 0                                           & 1
      * \end{bmatrix}
-     * $$
+     * \f]
      *
      * The weights used here come from the luma matrix. See the
      * get_luma_vector() function.
@@ -1353,49 +1366,49 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *
      * Rotation around the Red axis (Rr):
      *
-     * $$
+     * \f[
      * R_r =
      * \begin{bmatrix}
-     *       1 &  0                  & 0                  & 0
-     *    \\ 0 &  {1 \over \sqrt 2 } & {1 \over \sqrt 2 } & 0
-     *    \\ 0 & -{1 \over \sqrt 2 } & {1 \over \sqrt 2 } & 0
-     *    \\ 0 &  0                  & 0                  & 1
+     *       1 &  0                  & 0                   & 0
+     *    \\ 0 &  {frac{1}{\sqrt 2}} & {\frac{1}{\sqrt 2}} & 0
+     *    \\ 0 & -{frac{1}{\sqrt 2}} & {\frac{1}{\sqrt 2}} & 0
+     *    \\ 0 &  0                  & 0                   & 1
      * \end{bmatrix}
-     * $$
+     * \f]
      *
      * \note
-     * The $1 \over \sqrt 2$ is $sin ( \pi \over 4 )$ and
-     * $cos ( \pi \over 4 )$.
+     * The \f$\frac{1}{\sqrt 2}\f$ is \f$sin ( \frac{\pi}{4} )\f$ and
+     * \f$cos ( \frac{\pi}{4} )\f$.
      *
      * Rotation around the Green axis (Rg):
      *
-     * $$
+     * \f[
      * R_g =
      * \begin{bmatrix}
-     *        {\sqrt 2 \over \sqrt 3} & 0 & {1 \over \sqrt 3}       & 0
-     *    \\  0                       & 1 & 0                       & 0
-     *    \\ -{1 \over \sqrt 3}       & 0 & {\sqrt 2 \over \sqrt 3} & 0
-     *    \\  0                       & 0 & 0                       & 1
+     *        {\frac{\sqrt 2}{\sqrt 3}} & 0 & {\frac{1}{\sqrt 3}}       & 0
+     *    \\  0                         & 1 & 0                         & 0
+     *    \\ -{\frac{1}{\sqrt 3}}       & 0 & {\frac{\sqrt 2}{\sqrt 3}} & 0
+     *    \\  0                         & 0 & 0                         & 1
      * \end{bmatrix}
-     * $$
+     * \f]
      *
      * \note
-     * The $\sqrt 2 \over \sqrt 3$ and $1 \over \sqrt 3$ are sin and
-     * cos as well. These take the first rotation in account (i.e.
+     * The \f$\frac{\sqrt 2}{\sqrt 3}\f$ and \f$\frac{1}{\sqrt 3}\f$ are sin and
+     * cosine as well. These take the first rotation in account (i.e.
      * so it is again a 45° angle but applied after the 45° angle
-     * applied to the red axis.)
+     * applied to the red axis).
      *
      * Combine both rotations:
      *
-     * $$
+     * \f[
      * R_{rg} = R_r R_g
-     * $$
+     * \f]
      *
      * Since colors are linear but not at a similar angle, we want to
      * unskew them for which we need to use the luminance. So here we
      * compute the luminance of the color.
      *
-     * $$
+     * \f[
      * \begin{bmatrix}
      *        L_r
      *     \\ L_g
@@ -1410,13 +1423,13 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *     \\ W_b
      *     \\ 0
      * \end{bmatrix}
-     * $$
+     * \f]
      *
      * Now we define a rotation matrix for the blue axis. This one uses
      * a variable as the angle. This is the actual rotation angle which
-     * can go from 0 to $2 \pi$:
+     * can go from 0 to \f$2 \pi\f$:
      *
-     * $$
+     * \f[
      * R_b =
      * \begin{bmatrix}
      *       cos( \theta )  & sin( \theta ) & 0 & 0
@@ -1424,18 +1437,18 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *    \\ 0              & 0             & 1 & 0
      *    \\ 0              & 0             & 0 & 1
      * \end{bmatrix}
-     * $$
+     * \f]
      *
      * Now we have all the matrices to calculate the hue rotation
      * of all the components of an image:
      *
-     * $$
+     * \f[
      * H = R_{rg} S R_b S^{-1} R_{rg}^{-1}
-     * $$
+     * \f]
      *
-     * $H$ can then be used as in:
+     * \f$H\f$ can then be used as in:
      *
-     * $$
+     * \f[
      * \begin{bmatrix}
      *      R'
      *   \\ G'
@@ -1448,16 +1461,16 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *   \\ G
      *   \\ B
      * \end{bmatrix}
-     * $$
+     * \f]
      *
      * See:
      * http://www.graficaobscura.com/matrix/index.html
      *
      * We can also rewrite the hue matrix as follow:
      *
-     * $$
+     * \f[
      * H = cos ( \theta ) C + sin ( \theta ) S + T
-     * $$
+     * \f]
      *
      * Where C is the cosine matrix, S is the sine matrix and T is an
      * additional translation.
@@ -1465,9 +1478,9 @@ std::cerr << "this " << f_rows << "x" << f_columns
      * I found an example on Microsoft (see link below) which I suspect
      * does not include the color skewing. In other word, it completely
      * ignores the color luminance weights which gives invalid results
-     * (albeit in most cases relatively good.)
+     * (albeit in most cases relatively good).
      *
-     * $$
+     * \f[
      * H =
      * cos ( \theta )
      * \begin{bmatrix}
@@ -1488,7 +1501,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *   \\ 0.715 & 0.715 & 0.715
      *   \\ 0.072 & 0.072 & 0.072
      * \end{bmatrix}
-     * $$
+     * \f]
      *
      * The correct version is the one we actually use and it goes like this
      * with high precision (double floating points) and 4x4 matrices:
@@ -1498,8 +1511,9 @@ std::cerr << "this " << f_rows << "x" << f_columns
      * default, the algorithm falls back to the fully dynamic version
      * of the hue computation.
      *
-     * $$
-     * H =
+     * \f[
+     * \begin{aligned}
+     * H & =
      * cos ( \theta )
      * \begin{bmatrix}
      *       0.943571345820976240 & -0.056428654178995265 & -0.056428654178995265 & 0
@@ -1507,7 +1521,8 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *   \\ -0.754018762251120000 & -0.754018762251113000 &  0.245981237748847000 & 0
      *   \\  0                    &  0                    &  0                    & 0
      * \end{bmatrix}
-     * +
+     * \\
+     * & +
      * sin ( \theta )
      * \begin{bmatrix}
      *       0.32589470021007605 &  0.90324496939967125 & -0.25145556897954369 & 0
@@ -1515,14 +1530,16 @@ std::cerr << "this " << f_rows << "x" << f_columns
      *   \\  0.65420940565900000 & -0.50049113272020600 &  0.07685913646939400 & 0
      *   \\  0                   &  0                   &  0                   & 0
      * \end{bmatrix}
-     * +
+     * \\
+     * & +
      * \begin{bmatrix}
      *      0.056428654178995 & 0.056428654178995 & 0.056428654178995 & 0
      *   \\ 0.189552583569860 & 0.189552583569860 & 0.189552583569860 & 0
      *   \\ 0.754018762251160 & 0.754018762251160 & 0.754018762251160 & 0
      *   \\ 0                 & 0                 & 0                 & 1
      * \end{bmatrix}
-     * $$
+     * \end{aligned}
+     * \f]
      *
      * This is exactly the matrix we use below, although we directly apply the
      * matrix additions and multiplications to generate the matrix as quickly
@@ -1712,7 +1729,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
 // the full computation, it works, it's just slower than using
 // a pre-calculated matrix
 
-            // $R_r$ -- rotation around red axis (inverse rotation around X axis)
+            // \f$R_r\f$ -- rotation around red axis (inverse rotation around X axis)
             //
             matrix<T, SIZE> r_r(4, 4);
             value_type const inv_sqrt_2 = static_cast<value_type>(1) / std::sqrt(static_cast<value_type>(2));
@@ -1723,7 +1740,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
 
 //std::cerr << "R_r = " << r_r << "\n";
 
-            // $R_g$ -- rotation around green axis (inverse rotation around Y axis)
+            // \f$R_g\f$ -- rotation around green axis (inverse rotation around Y axis)
             //
             matrix<T, SIZE> r_g(4, 4);
             value_type const inv_sqrt_3 = static_cast<value_type>(1) / std::sqrt(static_cast<value_type>(3));
@@ -1735,7 +1752,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
 
 //std::cerr << "R_g = " << r_g << "\n";
 
-            // $R_{rg}$ -- the product or $R_r$ and $R_g$
+            // \f$R_{rg}\f$ -- the product or \f$R_r\f$ and \f$R_g\f$
             //
             matrix<T, SIZE> r_rg(r_r * r_g);
 
@@ -1789,7 +1806,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
 //    << "\np^-1 = " << (ident/p) << "\n"
 //    << "---------------------------------------\n";
 
-            // $H = R_r R_g S R_b S^{-1} R_g^{-1} R_r^{-1}$
+            // \f$H = R_r R_g S R_b S^{-1} R_g^{-1} R_r^{-1}\f$
             //
             return *this * p * r_b / p;
 
@@ -1863,7 +1880,7 @@ std::cerr << "this " << f_rows << "x" << f_columns
      * \li AVERAGE_RED_WEIGHT, AVERAGE_GREEN_WEIGHT, AVERAGE_BLUE_WEIGHT
      *
      * The HDTV weights are those used by default if you do not call the
-     * set_luminance_vector() with different or even your own weights.
+     * set_luma_vector() with different or even your own weights.
      *
      * \param[in] red_weight    The luma red weight.
      * \param[in] green_weight  The luma green weight.

@@ -41,7 +41,7 @@
  * an std::ostream object.
  *
  * \param[in] os  The output stream where the QByteArray gets written to.
- * \param[in] qarray  The QByteArray to output.
+ * \param[in] a  The QByteArray to output.
  *
  * \return A reference to the \p os stream.
  */
@@ -73,7 +73,7 @@ inline std::ostream & operator << (std::ostream & os, QString const & s)
  * an std::ostream object.
  *
  * \param[in] os  The output stream where the QStringRef gets written to.
- * \param[in] s  The QString to output.
+ * \param[in] sr  The QString to output.
  *
  * \return A reference to the \p os stream.
  */
@@ -198,7 +198,7 @@ inline std::string & operator += (std::string & str, QByteArray const & a)
  * and returns a reference to the standard string.
  *
  * \param[in] str  The standard string.
- * \param[in] a  The QString.
+ * \param[in] s  The QString.
  *
  * \return A reference to the input standard string \p str.
  */
