@@ -1,0 +1,8 @@
+/* additional stylesheet for snapdev doxygen documentation */
+
+img.formulaDsp
+{
+  width: auto;
+  height: auto;
+  max-width: 100%;
+}
