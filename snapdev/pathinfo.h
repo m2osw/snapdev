@@ -609,15 +609,15 @@ inline std::string relative_path(std::string const & base, std::string const & p
 
 /** \brief Canonicalize a path and filename.
  *
- * This function concatenate path and filename with a "/" in between and
- * then it canonicalize the result.
+ * This function concatenates \p path and \p filename with a "/" in between
+ * and then it canonicalize the result.
  *
  * The canonicalization means that the resulting path will:
  *
  * \li not include more than one "/" between two names,
  * \li not include any "." unless the result would otherwise be the empty
  *     string then "." is returned instead,
- * \li not include a ".." preceeded by a name other than ".."
+ * \li not include a ".." preceded by a name other than ".."
  *
  * The \p filename parameter can be the empty string.
  *
