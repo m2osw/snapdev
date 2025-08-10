@@ -154,7 +154,17 @@ public:
             {
                 if(errno != ENOENT)
                 {
-                    // TODO: what should we do here?!
+                    // snaplogger captures the std::clog output
+                    //
+                    int const e(errno);
+                    std::clog
+                        << "warning: file_contents() could not delete temporary file \""
+                        << f_filename
+                        << "\" ("
+                        << e
+                        << ", "
+                        << strerror(e)
+                        << ").\n";
                 }
             }
         }

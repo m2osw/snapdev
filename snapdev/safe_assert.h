@@ -21,9 +21,10 @@
  * \brief Safely assert.
  *
  * This function defines an assert which is safe, in that, any side effect
- * in the list of parameters at the call point. For example, if you have
- * a `++i` in the list of parameters, that `++` operation will not be lost
- * even when compiling in release mode.
+ * in the list of parameters at the call point stay in release mode.
+ *
+ * For example, if you have a `++i` in the list of parameters, that `++`
+ * operation will not be lost even when compiling in release mode.
  */
 
 // self
@@ -43,8 +44,8 @@ namespace snapdev
 /** \brief A debug/non-debug assert() which can include side effects.
  *
  * This function is safe to use without any special protection. The
- * expression to verify will be optimized out, except for any part which
- * may have side effects.
+ * expression to verify is optimized out when compiled in release mode,
+ * except for any part which may have side effects.
  *
  * \param[in] test_result  The value to be tested, if true, the assert passes.
  * \param[in] ... args  Arguments to pass to std::cerr for a user defined
