@@ -442,7 +442,14 @@ public:
      * If not, then no matching call() function is found and the compiler
      * fails.
      *
-     * \tparam F  The type of member functon.
+     * \warning
+     * If a parameter is expected to be passed as a reference, make sure
+     * to use the std::ref() function:
+     * \code
+     *     f_callbacks.call(std::ref(my_param));
+     * \endcode
+     *
+     * \tparam F  The type of member function.
      * \tparam ARGS  The type of each of the function arguments.
      * \tparam U  A copy of the callback type.
      * \param[in] func  The member function to be called.
@@ -479,6 +486,13 @@ public:
      * If not, then no matching call() function is found and the compiler
      * fails.
      *
+     * \warning
+     * If a parameter is expected to be passed as a reference, make sure
+     * to use the std::ref() function:
+     * \code
+     *     f_callbacks.call(std::ref(my_param));
+     * \endcode
+     *
      * \tparam F  The type of member function.
      * \tparam ARGS  The type of each of the function arguments.
      * \tparam U  A copy of the callback type.
@@ -508,6 +522,13 @@ public:
      *
      * We distinguish the first parameter in order to be able to test it
      * as a member function or not.
+     *
+     * \warning
+     * If a parameter is expected to be passed as a reference, make sure
+     * to use the std::ref() function:
+     * \code
+     *     f_callbacks.call(std::ref(my_param));
+     * \endcode
      *
      * \tparam ARGS  The type of each of the function arguments.
      * \tparam U  A copy of the callback type.
