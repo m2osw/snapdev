@@ -1,3 +1,11 @@
+snapdev (1.1.41.0~noble) noble; urgency=high
+
+  * Added `vector_streambuf` to stream from the data of a vector.
+  * Added a log using std::clog which we can capture in snaplogger.
+  * Fixed/enhanced the doxygen file and output.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 24 Aug 2025 16:52:57 -0700
+
 snapdev (1.1.40.0~noble) noble; urgency=high
 
   * Added is_absolute() and is_relative() functions in pathinfo.
