@@ -67,6 +67,7 @@ if(SnapCatch2_FOUND)
         catch_unique_number.cpp
         catch_user_groups.cpp
         catch_username.cpp
+        catch_vector_streambuf.cpp
         catch_version.cpp
     )
 

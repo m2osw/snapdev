@@ -98,6 +98,7 @@ install(
         unique_number.h
         user_groups.h
         username.h
+        vector_streambuf.h
         ${CMAKE_CURRENT_BINARY_DIR}/version.h
 
     DESTINATION
