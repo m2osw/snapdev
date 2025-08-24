@@ -162,6 +162,10 @@ CATCH_TEST_CASE("vector_streambuf", "[stream]")
         CATCH_REQUIRE(s.get() == 21);
         CATCH_REQUIRE(s.get() == 22);
         CATCH_REQUIRE(s.get() == 12);
+
+        CATCH_REQUIRE_FALSE(s.fail());
+        s.seekp(10, static_cast<std::ios_base::seekdir>(100));
+        CATCH_REQUIRE(s.fail());
     }
     CATCH_END_SECTION()
 
