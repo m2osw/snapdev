@@ -45,6 +45,7 @@ if(SnapCatch2_FOUND)
         catch_lockfile.cpp
         catch_log2.cpp
         catch_matrix.cpp
+        catch_memory_streambuf.cpp
         catch_memsearch.cpp
         catch_mkdir_p.cpp
         catch_not_reached.cpp

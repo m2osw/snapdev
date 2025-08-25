@@ -18,15 +18,16 @@
 #pragma once
 
 /** \file
- * \brief Capture the output to an output stream in a buffer.
+ * \brief Create a stream from a memory buffer.
  *
- * We often use this template in our tests when we expect a function to
- * generate output in a given stream. This allows us to capture that output
- * and verify it once the function being tested returns.
+ * At times we have a memory buffer that we need to pass as a stream.
+ * This template can be used to transform that buffer in a streambuf,
+ * which can then be passed to a stream on creation or through rdbuf().
  */
 
 // snapdev
 //
+#include    <snapdev/not_reached.h>
 #include    <snapdev/not_used.h>
 
 
@@ -44,24 +45,24 @@ namespace snapdev
 
 
 
-/** \brief Create a streambuf where the data comes from a vector.
+/** \brief Create a streambuf where the data comes from a memory buffer.
  *
- * This class is used to create a streambuf from the data of a vector.
+ * This class is used to create a streambuf from a memory buffer.
  * If you are looking at capturing the output of a stream, you may be
  * interested by the ostream_to_buf instead. That other implementation
  * allows you to save the output of a stream in a string and then verify
  * that string.
  *
  * This implementation was created for input rather than output, allowing
- * you to create a buffer from the data of a vector.
+ * you to create a buffer from a memory buffer.
  *
  * \code
  * {
  *     // Say you have a vector with data
- *     std::vector<char> data{ 1, 2, 3, 4, 5, 6, 7 };
+ *     char data[]{ 1, 2, 3, 4, 5, 6, 7 };
  *
  *     // you create a vector_streambuf this way
- *     snapdev::vector_streambuf buf(data);
+ *     snapdev::memory_streambuf buf(data, sizeof(data));
  *
  *     // and then an input stream this way
  *     std::istream in(&buf);
@@ -74,26 +75,20 @@ namespace snapdev
  * \endcode
  *
  * \note
- * The function expects the vector to only contain data that can be
- * read/written as such. This means no pointers, not classes with
+ * The function expects the memory buffer to only contain data that can
+ * be read/written as such. This means no pointers, not classes with
  * virtual functions, etc.
  *
  * \warning
- * The vector must remain available and not change in size outside
- * of this stream buffer implementation.
+ * The memory buffer must remain available and not change in size.
  *
- * \todo
- * Verify that VecT is only composed of basic types.
- *
- * \tparam VecT  The type of the vector used here.
  * \tparam CharT  The type of characters used by the stream.
  * \tparam Traits  The traits of the specified character type.
  */
 template<
-      typename VecT
-    , typename CharT = char
+      typename CharT = char
     , typename Traits = std::char_traits<CharT>
-> class vector_streambuf
+> class memory_streambuf
     : public std::basic_streambuf<CharT, Traits>
 {
 public:
@@ -105,7 +100,7 @@ public:
 
     typedef std::basic_streambuf<char_type, traits_type>    streambuf_type;
 
-    /** \brief Initialize the streambuf from \p vec.
+    /** \brief Initialize the streambuf from \p data.
      *
      * This function creates a streambuf that you can then use to initialize
      * an input or output stream with.
@@ -122,13 +117,14 @@ public:
      * the vector. If you attempt to write past the end, an exception
      * is generated.
      *
-     * \param[in] vec  The vector to use with the streambuf.
+     * \param[in] data  A pointer to a memory buffer.
+     * \param[in] size  The size of the data buffer in bytes.
      */
-    vector_streambuf(VecT & vec)
-        : f_vector(vec)
+    memory_streambuf(void * data, std::size_t size)
     {
-        char_type * begin(const_cast<char_type *>(reinterpret_cast<char_type const *>(vec.data())));
-        char_type * end(begin + vec.size() * sizeof(typename VecT::value_type));
+        char * ptr(reinterpret_cast<char *>(data));
+        char_type * begin(reinterpret_cast<char_type *>(ptr));
+        char_type * end(reinterpret_cast<char_type *>(ptr + size));
         this->setg(begin, begin, end);
         this->setp(begin, end);
     }
@@ -139,14 +135,15 @@ public:
      * to initialize an input stream with. Trying to write to that stream
      * generates an exception.
      *
-     * \param[in] vec  The vector to use with the streambuf.
+     * \param[in] data  A pointer to a memory buffer.
+     * \param[in] size  The size of the data buffer in bytes.
      */
-    vector_streambuf(VecT const & vec)
+    memory_streambuf(void const * data, std::size_t size)
         : f_read_only(true)
-        , f_vector(const_cast<VecT &>(vec))
     {
-        char_type * begin(const_cast<char_type *>(reinterpret_cast<char_type const *>(vec.data())));
-        char_type * end(begin + vec.size() * sizeof(typename VecT::value_type));
+        char * ptr(const_cast<char *>(reinterpret_cast<char const *>(data)));
+        char_type * begin(reinterpret_cast<char_type *>(ptr));
+        char_type * end(reinterpret_cast<char_type *>(ptr + size));
         this->setg(begin, begin, end);
 
         // a write calls overflow() if the start & end pointers are the same
@@ -155,17 +152,11 @@ public:
     }
 
 protected:
-    /** \brief Function called each time the output is read.
+    /** \brief Function called when an overflow on a put() happens.
      *
-     * This function is called to write one element to the vector.
-     * The function saves the input character to the vector.
-     *
-     * \exception std::ios_base::failure
-     * If the vector is read-only (const when creating the streambuf)
-     * then this exception is raised. At the moment, this function is
-     * not capable to grow the vector. If the end of the vector is
-     * reached and one more character is written, then this exception
-     * is raised.
+     * This function is called if a put() attempts to write past the
+     * end of the buffer. In that case, we throw an exception. It is
+     * not possible for us to grow the buffer.
      *
      * \param[in] c  The character to output.
      *
@@ -174,31 +165,8 @@ protected:
     int_type overflow(int_type c)
     {
         snapdev::NOT_USED(c);
-        //if(f_read_only)
-        {
-            throw std::ios_base::failure("this buffer is read-only, writing to the buffer is not available.");
-        }
-
-        // TODO: implement growth whenever possible
-
-        //if(traits_type::eq_int_type(c, Traits::eof()))
-        //{
-        //    return 0;
-        //}
-
-        //std::size_t const size(this->pptr() - this->pbase());
-        //if(size >= f_vector.size())
-        //{
-        //    // TODO: grow the buffer
-        //    //f_vector.push_back(c);
-        //    //return 0;
-        //    throw std::ios_base::failure("the buffer is full.");
-        //}
-
-        //*this->pptr() = c;
-        //this->pbump(1);
-
-        //return c;
+        throw std::ios_base::failure("this buffer is read-only, writing to the buffer is not available.");
+        snapdev::NOT_REACHED();
     }
 
     virtual pos_type seekoff(
@@ -259,7 +227,7 @@ protected:
                 break;
 
             default:
-                throw std::ios_base::failure("unknown direction in seekpos() -- out");
+                throw std::ios_base::failure("unknown direction in seekoff() -- out");
 
             }
             if(pos < this->pbase())
@@ -286,19 +254,11 @@ protected:
 private:
     /** \brief Whether the buffer is considered read-only or not.
      *
-     * When creating the streambuf with a constant vector, this parameter
-     * is set to true. This prevents writes to the file. In other words,
-     * the vector will never be updated.
+     * When creating the streambuf with a constant memory buffer, this
+     * parameter is set to true. This prevents writes to the file. In
+     * other words, the memory will never be updated.
      */
     bool                f_read_only = false;
-
-    /** \brief A reference back to the user's vector.
-     *
-     * This holds the reference to the vector. It is used in case you
-     * try to write more data than the existing vector supports. In that
-     * case, we need access to the vector to grow it.
-     */
-    VecT &              f_vector = VecT();
 };
 
 
