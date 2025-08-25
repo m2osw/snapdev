@@ -25,6 +25,11 @@
  * and verify it once the function being tested returns.
  */
 
+// snapdev
+//
+#include    <snapdev/not_used.h>
+
+
 // C++
 //
 #include    <iostream>
@@ -177,29 +182,32 @@ protected:
      */
     int_type overflow(int_type c)
     {
-        if(f_read_only)
+        snapdev::NOT_USED(c);
+        //if(f_read_only)
         {
             throw std::ios_base::failure("this buffer is read-only, writing to the buffer is not available.");
         }
 
-        if(traits_type::eq_int_type(c, Traits::eof()))
-        {
-            return 0;
-        }
+        // TODO: implement growth whenever possible
 
-        std::size_t const size(this->pptr() - this->pbase());
-        if(size >= f_vector.size())
-        {
-            // TODO: grow the buffer
-            //f_vector.push_back(c);
-            //return 0;
-            throw std::ios_base::failure("the buffer is full.");
-        }
+        //if(traits_type::eq_int_type(c, Traits::eof()))
+        //{
+        //    return 0;
+        //}
 
-        *this->pptr() = c;
-        this->pbump(1);
+        //std::size_t const size(this->pptr() - this->pbase());
+        //if(size >= f_vector.size())
+        //{
+        //    // TODO: grow the buffer
+        //    //f_vector.push_back(c);
+        //    //return 0;
+        //    throw std::ios_base::failure("the buffer is full.");
+        //}
 
-        return c;
+        //*this->pptr() = c;
+        //this->pbump(1);
+
+        //return c;
     }
 
     virtual pos_type seekoff(
@@ -227,7 +235,7 @@ protected:
                 break;
 
             default:
-                throw std::ios_base::failure("unknown direction in seekpos().");
+                throw std::ios_base::failure("unknown direction in seekoff() -- in");
 
             }
             if(pos < this->eback())
@@ -260,7 +268,7 @@ protected:
                 break;
 
             default:
-                throw std::ios_base::failure("unknown direction in seekpos().");
+                throw std::ios_base::failure("unknown direction in seekpos() -- out");
 
             }
             if(pos < this->pbase())

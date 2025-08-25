@@ -164,8 +164,12 @@ CATCH_TEST_CASE("vector_streambuf", "[stream]")
         CATCH_REQUIRE(s.get() == 12);
 
         CATCH_REQUIRE_FALSE(s.fail());
-        s.seekp(10, static_cast<std::ios_base::seekdir>(100));
-        CATCH_REQUIRE(s.fail());
+        CATCH_REQUIRE_THROWS_MATCHES(
+                  s.seekp(10, static_cast<std::ios_base::seekdir>(100))
+                , std::ios_base::failure
+                , Catch::Matchers::ExceptionMessage(
+                          "unknown direction in seekpos() -- out: iostream error"));
+        //CATCH_REQUIRE(s.fail()); -- that doesn't change, just the exception
     }
     CATCH_END_SECTION()
 
