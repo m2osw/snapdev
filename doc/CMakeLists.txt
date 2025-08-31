@@ -20,12 +20,14 @@
 ##
 ## Documentation
 ##
-find_package(SnapDoxygen QUIET)
-AddDoxygenTarget(snapdev
+project(snapdev-documentation)
+
+find_package(SnapDoxygen)
+AddDoxygenTarget(
+    snapdev
     ${SNAPDEV_VERSION_MAJOR}
     ${SNAPDEV_VERSION_MINOR}
     ${SNAPDEV_VERSION_PATCH}
-    QUIET
 )
 
 # vim: ts=4 sw=4 et

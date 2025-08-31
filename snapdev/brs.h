@@ -29,16 +29,16 @@
  * them as an integer).
  */
 
-// libexcept
-//
-#include    <libexcept/exception.h>
-
-
 // snapdev
 //
 #include    <snapdev/is_vector.h>
 #include    <snapdev/not_used.h>
 #include    <snapdev/sizeof_bitfield.h>
+
+
+// libexcept
+//
+#include    <libexcept/exception.h>
 
 
 // C++
@@ -50,6 +50,11 @@
 #include    <map>
 #include    <memory>
 #include    <vector>
+
+
+// C
+//
+#include    <time.h>
 
 
 
@@ -69,6 +74,7 @@ DECLARE_EXCEPTION(brs_error, brs_magic_missing);
 DECLARE_EXCEPTION(brs_error, brs_magic_unsupported);
 DECLARE_EXCEPTION(brs_error, brs_map_name_cannot_be_empty);
 DECLARE_EXCEPTION(brs_error, brs_unknown_type);
+DECLARE_EXCEPTION(brs_error, brs_invalid_value);
 
 
 typedef std::uint32_t               magic_t;
@@ -222,22 +228,19 @@ public:
     {
         if(name.length() == 0)
         {
-            throw brs_cannot_be_empty("name cannot be an empty string");
+            throw brs_cannot_be_empty("name cannot be an empty string.");
         }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
         hunk_sizes_t const hunk_sizes = {
             .f_type = TYPE_FIELD,
             .f_name = static_cast<std::uint8_t>(name.length()),
             .f_hunk = static_cast<std::uint32_t>(size & ((1 << SIZEOF_BITFIELD(hunk_sizes_t, f_hunk)) - 1)),
         };
-#pragma GCC diagnostic pop
 
         if(hunk_sizes.f_name != name.length()
         || hunk_sizes.f_hunk != size)
         {
-            throw brs_out_of_range("name or hunk too large");
+            throw brs_out_of_range("name or hunk too large.");
         }
 
         f_output.write(
@@ -259,24 +262,21 @@ public:
     {
         if(name.length() == 0)
         {
-            throw brs_cannot_be_empty("name cannot be an empty string");
+            throw brs_cannot_be_empty("name cannot be an empty string.");
         }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
         hunk_sizes_t const hunk_sizes = {
             .f_type = TYPE_ARRAY,
             .f_name = static_cast<std::uint8_t>(name.length()),
             .f_hunk = static_cast<std::uint32_t>(size & ((1 << SIZEOF_BITFIELD(hunk_sizes_t, f_hunk)) - 1)),
         };
-#pragma GCC diagnostic pop
         std::uint16_t const idx(static_cast<std::uint16_t>(index));
 
         if(hunk_sizes.f_name != name.length()
         || hunk_sizes.f_hunk != size
         || index != idx)
         {
-            throw brs_out_of_range("name, index, or hunk too large");
+            throw brs_out_of_range("name, index, or hunk too large.");
         }
 
         f_output.write(
@@ -301,29 +301,26 @@ public:
     {
         if(name.empty())
         {
-            throw brs_cannot_be_empty("name cannot be an empty string");
+            throw brs_cannot_be_empty("name cannot be an empty string.");
         }
 
         if(sub_name.empty())
         {
-            throw brs_cannot_be_empty("sub-name cannot be an empty string");
+            throw brs_cannot_be_empty("sub-name cannot be an empty string.");
         }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
         hunk_sizes_t const hunk_sizes = {
             .f_type = TYPE_MAP,
             .f_name = static_cast<std::uint8_t>(name.length()),
             .f_hunk = static_cast<std::uint32_t>(size & ((1 << SIZEOF_BITFIELD(hunk_sizes_t, f_hunk)) - 1)),
         };
-#pragma GCC diagnostic pop
         std::uint8_t const len(static_cast<std::uint8_t>(sub_name.length()));
 
         if(hunk_sizes.f_name != name.length()
         || hunk_sizes.f_hunk != size
         || sub_name.length() != len)
         {
-            throw brs_out_of_range("name, sub-name, or hunk too large");
+            throw brs_out_of_range("name, sub-name, or hunk too large.");
         }
 
         f_output.write(
@@ -405,6 +402,52 @@ public:
     }
 
 
+    void add_value(name_t const & name, timespec const & ts)
+    {
+        if(name.length() == 0)
+        {
+            throw brs_cannot_be_empty("name cannot be an empty string.");
+        }
+        if(ts.tv_nsec >= 1'000'000'000)
+        {
+            throw brs_invalid_value(
+                  "nanoseconds are out of range: "
+                + std::to_string(ts.tv_nsec)
+                + '.');
+        }
+
+        constexpr std::size_t const size(sizeof(ts.tv_sec) + sizeof(std::uint32_t));
+        static_assert(size < (1 << SIZEOF_BITFIELD(snapdev::hunk_sizes_t, f_hunk)), "size must fit in f_hunk field");
+
+        hunk_sizes_t const hunk_sizes = {
+            .f_type = TYPE_FIELD,
+            .f_name = static_cast<std::uint8_t>(name.length()),
+            .f_hunk = size,
+        };
+
+        if(hunk_sizes.f_name != name.length())
+        {
+            throw brs_out_of_range("name too large.");
+        }
+
+        f_output.write(
+                  reinterpret_cast<typename S::char_type const *>(&hunk_sizes)
+                , sizeof(hunk_sizes));
+
+        f_output.write(
+                  reinterpret_cast<typename S::char_type const *>(name.c_str())
+                , hunk_sizes.f_name);
+
+        f_output.write(
+                  reinterpret_cast<typename S::char_type const *>(&ts.tv_sec)
+                , sizeof(ts.tv_sec));
+
+        std::uint32_t const nsec(ts.tv_nsec);
+        f_output.write(
+                  reinterpret_cast<typename S::char_type const *>(&nsec)
+                , sizeof(nsec));
+    }
+
 // *** INDEXES ***
     template<typename T>
     typename std::enable_if_t<!snapdev::is_vector_v<T>
@@ -474,21 +517,18 @@ public:
     {
         if(name.empty())
         {
-            throw brs_cannot_be_empty("name cannot be an empty string");
+            throw brs_cannot_be_empty("name cannot be an empty string.");
         }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
         hunk_sizes_t const hunk_sizes = {
             .f_type = TYPE_FIELD,
             .f_name = static_cast<std::uint8_t>(name.length()),
             .f_hunk = 0,
         };
-#pragma GCC diagnostic pop
 
         if(hunk_sizes.f_name != name.length())
         {
-            throw brs_out_of_range("name too large");
+            throw brs_out_of_range("name too large.");
         }
 
         f_output.write(
@@ -503,14 +543,11 @@ public:
 
     void end_subfield()
     {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
         hunk_sizes_t const hunk_sizes = {
             .f_type = TYPE_FIELD,
             .f_name = 0,
             .f_hunk = 0,
         };
-#pragma GCC diagnostic pop
 
         f_output.write(
                   reinterpret_cast<typename S::char_type const *>(&hunk_sizes)
@@ -713,7 +750,10 @@ public:
                 return false;
             }
 
-            callback(*this, f_field);
+            if(!callback(*this, f_field))
+            {
+                return false;
+            }
         }
     }
 
@@ -757,6 +797,41 @@ public:
         data.resize(f_field.f_size / sizeof(T));
         f_input.read(reinterpret_cast<typename S::char_type *>(data.data()), f_field.f_size);
         return verify_size(f_field.f_size);
+    }
+
+    bool read_data(timespec & data)
+    {
+        if(f_field.f_size != sizeof(std::int64_t) + sizeof(std::uint32_t))
+        {
+            throw brs_logic_error(
+                      "hunk size is "
+                    + std::to_string(f_field.f_size)
+                    + ", but you are trying to read "
+                    + std::to_string(sizeof(std::int64_t) + sizeof(std::uint32_t))
+                    + '.');
+        }
+
+        f_input.read(reinterpret_cast<typename S::char_type *>(&data.tv_sec), sizeof(data.tv_sec));
+        if(!verify_size(sizeof(data.tv_sec)))
+        {
+            return false;
+        }
+
+        // we use 32 bits to read the nanoseconds since the maximum is
+        // 999,999,999 and that fits in such a variable
+        //
+        std::uint32_t nsec(0);
+        f_input.read(reinterpret_cast<typename S::char_type *>(&nsec), sizeof(nsec));
+        if(nsec >= 1'000'000'000)
+        {
+            throw brs_invalid_value(
+                  "nanoseconds are out of range: "
+                + std::to_string(nsec)
+                + '.');
+        }
+        data.tv_nsec = nsec;
+
+        return verify_size(sizeof(nsec));
     }
 
 private:

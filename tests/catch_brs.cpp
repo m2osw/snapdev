@@ -23,14 +23,16 @@
  * they are expected to do.
  */
 
-// self
-//
-#include    "catch_main.h"
-
-
 // snapdev
 //
 #include    <snapdev/brs.h>
+
+#include    <snapdev/timespec_ex.h>
+
+
+// self
+//
+#include    "catch_main.h"
 
 
 // C++
@@ -40,9 +42,9 @@
 
 
 
-CATCH_TEST_CASE("bitfield_size", "[serialization][math]")
+CATCH_TEST_CASE("brs_bitfield_size", "[serialization][math]")
 {
-    CATCH_START_SECTION("brs: push/restore char")
+    CATCH_START_SECTION("brs_bitfield_size: bitfield_size")
     {
         constexpr std::size_t const sizeof_type(SIZEOF_BITFIELD(snapdev::hunk_sizes_t, f_type));
         CATCH_REQUIRE(sizeof_type == 2);
@@ -57,9 +59,9 @@ CATCH_TEST_CASE("bitfield_size", "[serialization][math]")
 }
 
 
-CATCH_TEST_CASE("basic_types", "[serialization]")
+CATCH_TEST_CASE("brs_basic_types", "[serialization]")
 {
-    CATCH_START_SECTION("brs: push/restore char")
+    CATCH_START_SECTION("brs_basic_types: push/restore char")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -79,7 +81,7 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
                   out.add_value(std::string(), &value, sizeof(value))
                 , snapdev::brs_cannot_be_empty
                 , Catch::Matchers::ExceptionMessage(
-                          "brs_error: name cannot be an empty string"));
+                          "brs_error: name cannot be an empty string."));
 
         // make sure it did not get smashed
         data = buffer.str();
@@ -138,7 +140,7 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: push/restore signed char")
+    CATCH_START_SECTION("brs_basic_types: push/restore signed char")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -211,7 +213,7 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: push/restore unsigned char")
+    CATCH_START_SECTION("brs_basic_types: push/restore unsigned char")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -284,7 +286,7 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: push/restore shorts (16 bits)")
+    CATCH_START_SECTION("brs_basic_types: push/restore shorts (16 bits)")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -380,7 +382,7 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: push/restore ints (32 bits)")
+    CATCH_START_SECTION("brs_basic_types: push/restore ints (32 bits)")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -481,7 +483,7 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: push/restore ints (64 bits)")
+    CATCH_START_SECTION("brs_basic_types: push/restore ints (64 bits)")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -570,7 +572,7 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: push/restore floats")
+    CATCH_START_SECTION("brs_basic_types: push/restore floats")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -678,7 +680,7 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: push/restore string")
+    CATCH_START_SECTION("brs_basic_types: push/restore string")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -691,8 +693,8 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
         CATCH_REQUIRE(data[2] == 'L');
         CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
 
-        std::string message("this is the message we are going to serialize");
-        out.add_value("message",  message);
+        std::string const message("this is the message we are going to serialize");
+        out.add_value("message", message);
 
         // make sure it did not get smashed
         data = buffer.str();
@@ -754,7 +756,329 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: push/restore array (varying name)")
+    CATCH_START_SECTION("brs_basic_types: push/restore timespec")
+    {
+        std::stringstream buffer;
+        snapdev::serializer out(buffer);
+
+        timespec const now(snapdev::now());
+        std::string data(buffer.str());
+        CATCH_REQUIRE(data.length() == sizeof(snapdev::magic_t));
+
+        CATCH_REQUIRE(data[0] == 'B');
+        CATCH_REQUIRE(data[1] == 'R');
+        CATCH_REQUIRE(data[2] == 'L');
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
+
+        timespec bad_time(now);
+        while(bad_time.tv_nsec < 1'000'000'000)
+        {
+            SNAP_CATCH2_NAMESPACE::random(bad_time.tv_nsec);
+        }
+        CATCH_REQUIRE_THROWS_MATCHES(
+                  out.add_value("now", bad_time)
+                , snapdev::brs_invalid_value
+                , Catch::Matchers::ExceptionMessage(
+                          "brs_error: nanoseconds are out of range: "
+                        + std::to_string(bad_time.tv_nsec)
+                        + "."));
+
+        out.add_value("now", now);
+
+        // make sure the header did not get smashed
+        //
+        data = buffer.str();
+        CATCH_REQUIRE(data[0] == 'B');
+        CATCH_REQUIRE(data[1] == 'R');
+        CATCH_REQUIRE(data[2] == 'L');
+        CATCH_REQUIRE(data[3] == snapdev::BRS_VERSION);
+
+        CATCH_REQUIRE(data[4] == 3 << 2);  // hunk_sizes_t
+        CATCH_REQUIRE(data[5] == (sizeof(now.tv_sec) + sizeof(std::uint32_t)) << 1);
+        CATCH_REQUIRE(data[6] == 0);
+        CATCH_REQUIRE(data[7] == 0);
+
+        CATCH_REQUIRE(data[8] == 'n');    // name
+        CATCH_REQUIRE(data[9] == 'o');
+        CATCH_REQUIRE(data[10] == 'w');
+
+        struct processor
+        {
+            static bool process_hunk(
+                          snapdev::deserializer<std::stringstream> & in
+                        , snapdev::field_t const & field
+                        , timespec const & now
+                        , bool & called_flag)
+            {
+                CATCH_REQUIRE(field.f_name == "now");
+                CATCH_REQUIRE(field.f_sub_name.empty());
+                CATCH_REQUIRE(field.f_index == -1);
+                CATCH_REQUIRE(field.f_size == sizeof(now.tv_sec) + sizeof(std::uint32_t));
+
+                timespec value;
+                CATCH_REQUIRE(in.read_data(value));
+                bool const result(memcmp(&value, &now, sizeof(now)) == 0);
+                if(!result)
+                {
+                    std::cerr << "timespecs not equal: "
+                        << value
+                        << " (read back) != "
+                        << now
+                        << " (expected)\n";
+                }
+                CATCH_REQUIRE(result);
+
+                called_flag = true;
+
+                return true;
+            }
+        };
+
+        for(int count(0); count < 5; ++count)
+        {
+            // Note: you don't usually end up re-using the serializer buffer
+            //       but here it's practical; warning: this works because in
+            //       a C++ stream the seek position is distinct between the
+            //       write() and read() functions (tellp() vs tellg())
+            //
+            buffer.clear();
+            if(count != 0)
+            {
+                // the second time and further need a seek
+                //
+                buffer.seekg(0, std::ios_base::beg);
+            }
+
+            snapdev::deserializer in(buffer);
+
+            // WARNING: we want to use CATCH_...() macros inside the callback
+            //          so make sure not to use one around unserialize_buffer().
+            //
+            bool process_hunk_called(false);
+            snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+                          &processor::process_hunk
+                        , std::placeholders::_1
+                        , std::placeholders::_2
+                        , now
+                        , std::ref(process_hunk_called)));
+            bool const r(in.deserialize(func));
+            CATCH_REQUIRE(r);
+            CATCH_REQUIRE(process_hunk_called);
+        }
+
+        {
+            struct any_size_processor
+            {
+                static bool any_size_process_hunk(
+                              snapdev::deserializer<std::stringstream> & in
+                            , snapdev::field_t const & field
+                            , timespec const & now
+                            , bool & called_flag)
+                {
+                    CATCH_REQUIRE(field.f_name == "now");
+                    CATCH_REQUIRE(field.f_sub_name.empty());
+                    CATCH_REQUIRE(field.f_index == -1);
+                    //CATCH_REQUIRE(field.f_size == sizeof(now.tv_sec) + sizeof(std::uint32_t));
+
+                    timespec value;
+                    in.read_data(value); // no CATCH_...() here we're expecting a throw;
+                    bool const result(memcmp(&value, &now, sizeof(now)) == 0);
+                    if(!result)
+                    {
+                        std::cerr << "timespecs not equal: "
+                            << value
+                            << " (read back) != "
+                            << now
+                            << " (expected)\n";
+                    }
+                    CATCH_REQUIRE(result);
+
+                    called_flag = true;
+
+                    return true;
+                }
+            };
+
+            // re-re-using
+            //
+            buffer.clear();
+            buffer.seekg(0, std::ios_base::beg);
+
+            snapdev::deserializer in(buffer);
+
+            // the buffer should not be modified while deserializing,
+            // but this is a test and we want to see that destroying
+            // something in the buffer makes the deserialization fail
+            //
+            buffer.seekp(5, std::ios_base::beg);
+            char const v((sizeof(now.tv_sec) + sizeof(std::uint32_t) - 1) << 1);
+            buffer.write(&v, 1);
+
+            // WARNING: we want to use CATCH_...() macros inside the callback
+            //          so make sure not to use one around deserialize().
+            //
+            bool process_hunk_called(false);
+            snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+                          &any_size_processor::any_size_process_hunk
+                        , std::placeholders::_1
+                        , std::placeholders::_2
+                        , now
+                        , std::ref(process_hunk_called)));
+
+            CATCH_REQUIRE_THROWS_MATCHES(
+                      in.deserialize(func)
+                    , snapdev::brs_logic_error
+                    , Catch::Matchers::ExceptionMessage(
+                              "brs_logic_error: hunk size is 11, but you are trying to read 12."));
+
+            // the read must happened before we set this variable to
+            // true so if it all works as expected, this is still false
+            //
+            CATCH_REQUIRE_FALSE(process_hunk_called);
+
+            // test passed, fix the size for the next tests
+            //
+            buffer.seekp(5, std::ios_base::beg);
+            char const c((sizeof(now.tv_sec) + sizeof(std::uint32_t)) << 1);
+            buffer.write(&c, 1);
+        }
+
+        {
+            struct any_size_processor
+            {
+                static bool any_size_process_hunk(
+                              snapdev::deserializer<std::stringstream> & in
+                            , snapdev::field_t const & field
+                            , timespec const & now
+                            , bool & called_flag)
+                {
+                    CATCH_REQUIRE(field.f_name == "now");
+                    CATCH_REQUIRE(field.f_sub_name.empty());
+                    CATCH_REQUIRE(field.f_index == -1);
+                    //CATCH_REQUIRE(field.f_size == sizeof(now.tv_sec) + sizeof(std::uint32_t));
+
+                    timespec value;
+                    in.read_data(value); // no CATCH_...() here we're expecting a throw;
+                    bool const result(memcmp(&value, &now, sizeof(now)) == 0);
+                    if(!result)
+                    {
+                        std::cerr << "timespecs not equal: "
+                            << value
+                            << " (read back) != "
+                            << now
+                            << " (expected)\n";
+                    }
+                    CATCH_REQUIRE(result);
+
+                    called_flag = true;
+
+                    return true;
+                }
+            };
+
+            // re-re-using
+            //
+            buffer.clear();
+            buffer.seekg(0, std::ios_base::beg);
+
+            snapdev::deserializer in(buffer);
+
+            // the buffer should not be modified while deserializing,
+            // but this is a test and we want to see that destroying
+            // something in the buffer makes the deserialization fail
+            //
+            std::uint32_t bad_nsec(0);
+            while(bad_nsec < 1'000'000'000)
+            {
+                SNAP_CATCH2_NAMESPACE::random(bad_nsec);
+            }
+            buffer.seekp(19, std::ios_base::beg);
+            buffer.write(reinterpret_cast<char const *>(&bad_nsec), sizeof(std::uint32_t));
+
+            // WARNING: we want to use CATCH_...() macros inside the callback
+            //          so make sure not to use one around deserialize().
+            //
+            bool process_hunk_called(false);
+            snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+                          &any_size_processor::any_size_process_hunk
+                        , std::placeholders::_1
+                        , std::placeholders::_2
+                        , now
+                        , std::ref(process_hunk_called)));
+
+            CATCH_REQUIRE_THROWS_MATCHES(
+                      in.deserialize(func)
+                    , snapdev::brs_invalid_value
+                    , Catch::Matchers::ExceptionMessage(
+                              "brs_error: nanoseconds are out of range: "
+                            + std::to_string(bad_nsec)
+                            + "."));
+
+            // the read must happened before we set this variable to
+            // true so if it all works as expected, this is still false
+            //
+            CATCH_REQUIRE_FALSE(process_hunk_called);
+
+            // test passed, fix tv_nsec for the next tests
+            //
+            buffer.seekp(19, std::ios_base::beg);
+            std::uint32_t const good_nsec(now.tv_nsec);
+            buffer.write(reinterpret_cast<char const *>(&good_nsec), sizeof(std::uint32_t));
+        }
+
+        std::string short_value(data);
+        for(std::size_t size(data.length() - 1); size >= data.length() - sizeof(now.tv_sec) - sizeof(std::uint32_t); --size)
+        {
+            struct short_processor
+            {
+                static bool short_process_hunk(
+                              snapdev::deserializer<std::stringstream> & in
+                            , snapdev::field_t const & field
+                            , bool & called_flag)
+                {
+                    CATCH_REQUIRE(field.f_name == "now");
+                    CATCH_REQUIRE(field.f_sub_name.empty());
+                    CATCH_REQUIRE(field.f_index == -1);
+                    //CATCH_REQUIRE(field.f_size == sizeof(now.tv_sec) + sizeof(std::uint32_t));
+
+                    timespec value;
+                    CATCH_REQUIRE_FALSE(in.read_data(value));
+
+                    called_flag = true;
+
+                    return false;
+                }
+            };
+
+            // re-re-using
+            //
+            short_value.resize(size);
+            buffer.str(short_value);
+            buffer.clear();
+            buffer.seekg(0, std::ios_base::beg);
+
+            snapdev::deserializer in(buffer);
+
+            // WARNING: we want to use CATCH_...() macros inside the callback
+            //          so make sure not to use one around deserialize().
+            //
+            bool process_hunk_called(false);
+            snapdev::deserializer<std::stringstream>::process_hunk_t func(std::bind(
+                          &short_processor::short_process_hunk
+                        , std::placeholders::_1
+                        , std::placeholders::_2
+                        , std::ref(process_hunk_called)));
+
+            CATCH_REQUIRE_FALSE(in.deserialize(func));
+
+            // even if we return false, we processed the hunk
+            //
+            CATCH_REQUIRE(process_hunk_called);
+        }
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("brs_basic_types: push/restore array (varying name)")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -824,7 +1148,9 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
         };
 
         // Note: you don't usually end up re-using the serializer buffer
-        //       but here it's practical
+        //       but here it's practical; warning: this works because in
+        //       a C++ stream the seek position is distinct between the
+        //       write() and read() functions (tellp() vs tellg())
         //
         buffer.clear();
 
@@ -843,7 +1169,7 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: push/restore array (same name)")
+    CATCH_START_SECTION("brs_basic_types: push/restore array (same name)")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -927,7 +1253,9 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
         };
 
         // Note: you don't usually end up re-using the serializer buffer
-        //       but here it's practical
+        //       but here it's practical; warning: this works because in
+        //       a C++ stream the seek position is distinct between the
+        //       write() and read() functions (tellp() vs tellg())
         //
         buffer.clear();
 
@@ -946,7 +1274,7 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: push/restore map of strings")
+    CATCH_START_SECTION("brs_basic_types: push/restore map of strings")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -1056,7 +1384,9 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
         };
 
         // Note: you don't usually end up re-using the serializer buffer
-        //       but here it's practical
+        //       but here it's practical; warning: this works because in
+        //       a C++ stream the seek position is distinct between the
+        //       write() and read() functions (tellp() vs tellg())
         //
         buffer.clear();
 
@@ -1075,7 +1405,7 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: push/restore map of struct")
+    CATCH_START_SECTION("brs_basic_types: push/restore map of struct")
     {
         struct data_t
         {
@@ -1179,7 +1509,9 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
         };
 
         // Note: you don't usually end up re-using the serializer buffer
-        //       but here it's practical
+        //       but here it's practical; warning: this works because in
+        //       a C++ stream the seek position is distinct between the
+        //       write() and read() functions (tellp() vs tellg())
         //
         buffer.clear();
 
@@ -1198,7 +1530,7 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: push/restore recursive")
+    CATCH_START_SECTION("brs_basic_types: push/restore recursive")
     {
         class t1
         {
@@ -1486,7 +1818,9 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
         o.serialize(out);
 
         // Note: you don't usually end up re-using the serializer buffer
-        //       but here it's practical
+        //       but here it's practical; warning: this works because in
+        //       a C++ stream the seek position is distinct between the
+        //       write() and read() functions (tellp() vs tellg())
         //
         buffer.clear();
 
@@ -1509,7 +1843,7 @@ CATCH_TEST_CASE("basic_types", "[serialization]")
 
 CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
 {
-    CATCH_START_SECTION("brs: name missing")
+    CATCH_START_SECTION("brs_invalid: name missing")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -1529,39 +1863,47 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
                   out.add_value(std::string(), &value, sizeof(value))
                 , snapdev::brs_cannot_be_empty
                 , Catch::Matchers::ExceptionMessage(
-                          "brs_error: name cannot be an empty string"));
+                          "brs_error: name cannot be an empty string."));
+
+        // FIELD: timespec
+        struct timespec ts;
+        CATCH_REQUIRE_THROWS_MATCHES(
+                  out.add_value(std::string(), ts)
+                , snapdev::brs_cannot_be_empty
+                , Catch::Matchers::ExceptionMessage(
+                          "brs_error: name cannot be an empty string."));
 
         // ARRAY
         CATCH_REQUIRE_THROWS_MATCHES(
                   out.add_value(std::string(), 5, &value, sizeof(value))
                 , snapdev::brs_cannot_be_empty
                 , Catch::Matchers::ExceptionMessage(
-                          "brs_error: name cannot be an empty string"));
+                          "brs_error: name cannot be an empty string."));
 
         // MAP (main name)
         CATCH_REQUIRE_THROWS_MATCHES(
                   out.add_value(std::string(), std::string(), &value, sizeof(value))
                 , snapdev::brs_cannot_be_empty
                 , Catch::Matchers::ExceptionMessage(
-                          "brs_error: name cannot be an empty string"));
+                          "brs_error: name cannot be an empty string."));
 
         // MAP (sub-name)
         CATCH_REQUIRE_THROWS_MATCHES(
                   out.add_value("good-name", std::string(), &value, sizeof(value))
                 , snapdev::brs_cannot_be_empty
                 , Catch::Matchers::ExceptionMessage(
-                          "brs_error: sub-name cannot be an empty string"));
+                          "brs_error: sub-name cannot be an empty string."));
 
         // SUB-FIELD
         CATCH_REQUIRE_THROWS_MATCHES(
                   out.start_subfield(std::string())
                 , snapdev::brs_cannot_be_empty
                 , Catch::Matchers::ExceptionMessage(
-                          "brs_error: name cannot be an empty string"));
+                          "brs_error: name cannot be an empty string."));
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: name too long")
+    CATCH_START_SECTION("brs_invalid: name too long")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -1589,21 +1931,29 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
                   out.add_value(name, &value, sizeof(value))
                 , snapdev::brs_out_of_range
                 , Catch::Matchers::ExceptionMessage(
-                          "brs_out_of_range: name or hunk too large"));
+                          "brs_out_of_range: name or hunk too large."));
+
+        // FIELD: timespec
+        struct timespec ts;
+        CATCH_REQUIRE_THROWS_MATCHES(
+                  out.add_value(name, ts)
+                , snapdev::brs_out_of_range
+                , Catch::Matchers::ExceptionMessage(
+                          "brs_out_of_range: name too large."));
 
         // ARRAY
         CATCH_REQUIRE_THROWS_MATCHES(
                   out.add_value(name, 17, &value, sizeof(value))
                 , snapdev::brs_out_of_range
                 , Catch::Matchers::ExceptionMessage(
-                          "brs_out_of_range: name, index, or hunk too large"));
+                          "brs_out_of_range: name, index, or hunk too large."));
 
         // MAP (main name)
         CATCH_REQUIRE_THROWS_MATCHES(
                   out.add_value(name, "name-too-long", &value, sizeof(value))
                 , snapdev::brs_out_of_range
                 , Catch::Matchers::ExceptionMessage(
-                          "brs_out_of_range: name, sub-name, or hunk too large"));
+                          "brs_out_of_range: name, sub-name, or hunk too large."));
 
         // MAP (sub-name)
         //
@@ -1620,18 +1970,18 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
                   out.add_value("sub-name-too-long", sub_name, &value, sizeof(value))
                 , snapdev::brs_out_of_range
                 , Catch::Matchers::ExceptionMessage(
-                          "brs_out_of_range: name, sub-name, or hunk too large"));
+                          "brs_out_of_range: name, sub-name, or hunk too large."));
 
         // SUB-FIELD
         CATCH_REQUIRE_THROWS_MATCHES(
                   out.start_subfield(name)
                 , snapdev::brs_out_of_range
                 , Catch::Matchers::ExceptionMessage(
-                          "brs_out_of_range: name too large"));
+                          "brs_out_of_range: name too large."));
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: hunk too long")
+    CATCH_START_SECTION("brs_invalid: hunk too long")
     {
         std::stringstream buffer;
         snapdev::serializer out(buffer);
@@ -1651,24 +2001,24 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
                       out.add_value("large-hunk", &value, (1 << SIZEOF_BITFIELD(snapdev::hunk_sizes_t, f_hunk)) + extra)
                     , snapdev::brs_out_of_range
                     , Catch::Matchers::ExceptionMessage(
-                              "brs_out_of_range: name or hunk too large"));
+                              "brs_out_of_range: name or hunk too large."));
 
             CATCH_REQUIRE_THROWS_MATCHES(
                       out.add_value("large-hunk", 33, &value, (1 << SIZEOF_BITFIELD(snapdev::hunk_sizes_t, f_hunk)) + extra)
                     , snapdev::brs_out_of_range
                     , Catch::Matchers::ExceptionMessage(
-                              "brs_out_of_range: name, index, or hunk too large"));
+                              "brs_out_of_range: name, index, or hunk too large."));
 
             CATCH_REQUIRE_THROWS_MATCHES(
                       out.add_value("large-hunk", "sub-name", &value, (1 << SIZEOF_BITFIELD(snapdev::hunk_sizes_t, f_hunk)) + extra)
                     , snapdev::brs_out_of_range
                     , Catch::Matchers::ExceptionMessage(
-                              "brs_out_of_range: name, sub-name, or hunk too large"));
+                              "brs_out_of_range: name, sub-name, or hunk too large."));
         }
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: empty input")
+    CATCH_START_SECTION("brs_invalid: empty input")
     {
         std::stringstream buffer;
 
@@ -1680,7 +2030,7 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: magic unrecognized")
+    CATCH_START_SECTION("brs_invalid: magic unrecognized")
     {
         std::stringstream buffer;
 
@@ -1699,7 +2049,7 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: unknown hunk type")
+    CATCH_START_SECTION("brs_invalid: unknown hunk type")
     {
         std::stringstream buffer;
 
@@ -1739,7 +2089,7 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: field missing name")
+    CATCH_START_SECTION("brs_invalid: field missing name")
     {
         std::stringstream buffer;
 
@@ -1776,7 +2126,7 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: field data mismatch reading")
+    CATCH_START_SECTION("brs_invalid: field data mismatch reading")
     {
         std::stringstream buffer;
 
@@ -1900,7 +2250,7 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: missing array index")
+    CATCH_START_SECTION("brs_invalid: missing array index")
     {
         std::stringstream buffer;
 
@@ -1937,7 +2287,7 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: missing array field name")
+    CATCH_START_SECTION("brs_invalid: missing array field name")
     {
         std::stringstream buffer;
 
@@ -1976,7 +2326,7 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: missing map sub-name length")
+    CATCH_START_SECTION("brs_invalid: missing map sub-name length")
     {
         std::stringstream buffer;
 
@@ -2013,7 +2363,7 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: map sub-name length is zero")
+    CATCH_START_SECTION("brs_invalid: map sub-name length is zero")
     {
         std::stringstream buffer;
 
@@ -2055,7 +2405,7 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: missing map sub-name")
+    CATCH_START_SECTION("brs_invalid: missing map sub-name")
     {
         std::stringstream buffer;
 
@@ -2094,7 +2444,7 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("brs: missing map name")
+    CATCH_START_SECTION("brs_invalid: missing map name")
     {
         std::stringstream buffer;
 

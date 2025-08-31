@@ -168,7 +168,7 @@ CATCH_TEST_CASE("memory_streambuf", "[stream]")
                   s.seekp(10, static_cast<std::ios_base::seekdir>(100))
                 , std::ios_base::failure
                 , Catch::Matchers::ExceptionMessage(
-                          "unknown direction in seekpos() -- out: iostream error"));
+                          "unknown direction in seekoff() -- out: iostream error"));
         //CATCH_REQUIRE(s.fail()); -- that doesn't change, just the exception
     }
     CATCH_END_SECTION()

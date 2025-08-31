@@ -534,7 +534,7 @@ CATCH_TEST_CASE("timespec_ex_math", "[time][math]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("timespec_ex_math: system time")
+    CATCH_START_SECTION("timespec_ex_math: system time (gettime() function)")
     {
         snapdev::timespec_ex now;
         timespec verify = {};
@@ -549,7 +549,7 @@ CATCH_TEST_CASE("timespec_ex_math", "[time][math]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("timespec_ex_math: system time")
+    CATCH_START_SECTION("timespec_ex_math: system time (snapdev::now() function)")
     {
         timespec verify = {};
 

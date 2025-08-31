@@ -83,29 +83,6 @@ DECLARE_EXCEPTION(timespec_ex_exception, syntax_error);
 DECLARE_EXCEPTION(timespec_ex_exception, overflow);
 
 
-/** \brief Internal declarations.
- *
- * The ostream system makes use of a few internal variables and functions
- * which are defined here.
- */
-namespace
-{
-
-
-
-/** \brief Set of flags attached to an ostream for a timespec_ex object.
- *
- * This structure holds data used to output a timespec_ex object in an ostream.
- *
- * The f_remove_trailing_zeroes parameter is used to call the to_timestamp()
- * member function.
- */
-struct _ostream_info
-{
-    bool                f_remove_trailing_zeroes = true;
-};
-
-
 /** \brief Mutex used to allocate the ostream index.
  *
  * When getting the ostream index, it requires multiple instructions and
@@ -130,6 +107,16 @@ inline bool g_ostream_index_allocated = false;
  * This flag is recorded in the ostream concerned using this index.
  */
 inline int g_ostream_index = 0;
+
+
+/** \brief Internal declarations.
+ *
+ * The ostream system makes use of a few internal variables and functions
+ * which are defined here.
+ */
+namespace
+{
+
 
 
 /** \brief Retrieve the ios_base index for the timespec_ex class.
@@ -1286,8 +1273,7 @@ public:
      * \return The sum of the inputs in a new timespec_ex object.
      */
     template<typename T>
-    std::enable_if_t<std::is_integral_v<T>
-        || std::is_floating_point_v<T>, timespec_ex> operator + (T rhs) const
+    std::enable_if_t<std::is_arithmetic_v<T>, timespec_ex> operator + (T rhs) const
     {
         timespec_ex result(*this);
         result += rhs;
@@ -1390,8 +1376,7 @@ public:
      * \return The subtraction of the inputs in a new timespec_ex object.
      */
     template<typename T>
-    std::enable_if_t<std::is_integral_v<T>
-        || std::is_floating_point_v<T>, timespec_ex> operator - (T rhs) const
+    std::enable_if_t<std::is_arithmetic_v<T>, timespec_ex> operator - (T rhs) const
     {
         timespec_ex result(*this);
         result -= rhs;
@@ -1669,7 +1654,17 @@ inline timespec_ex now(clockid_t clk_id)
 
 
 
-
+/** \brief Set of flags attached to an ostream for a timespec_ex object.
+ *
+ * This structure holds data used to output a timespec_ex object in an ostream.
+ *
+ * The f_remove_trailing_zeroes parameter is used to call the to_timestamp()
+ * member function.
+ */
+struct _ostream_info
+{
+    bool                f_remove_trailing_zeroes = true;
+};
 
 
 /** \brief Callback for ostream extension handling.
@@ -1762,6 +1757,10 @@ inline _setremovetrailingzeroes setremovetrailingzeroes(bool remove_trailing_zer
 }
 
 
+
+} // namespace snapdev
+
+
 /** \brief Change the current remove trailing zeroes flag.
  *
  * The value of the timespec_ex object can be printed with an ostream. This
@@ -1777,15 +1776,15 @@ inline _setremovetrailingzeroes setremovetrailingzeroes(bool remove_trailing_zer
  */
 template<typename _CharT, typename _Traits>
 inline std::basic_ostream<_CharT, _Traits> &
-operator << (std::basic_ostream<_CharT, _Traits> & os, _setremovetrailingzeroes removetrailingzeroes)
+operator << (std::basic_ostream<_CharT, _Traits> & os, snapdev::_setremovetrailingzeroes removetrailingzeroes)
 {
-    int const index(get_ostream_index());
-    _ostream_info * info(static_cast<_ostream_info *>(os.pword(index)));
+    int const index(snapdev::get_ostream_index());
+    snapdev::_ostream_info * info(static_cast<snapdev::_ostream_info *>(os.pword(index)));
     if(info == nullptr)
     {
-        info = new _ostream_info;
+        info = new snapdev::_ostream_info;
         os.pword(index) = info;
-        os.register_callback(basic_stream_event_callback, index);
+        os.register_callback(snapdev::basic_stream_event_callback, index);
     }
     info->f_remove_trailing_zeroes = removetrailingzeroes.f_remove_trailing_zeroes;
     return os;
@@ -1824,17 +1823,16 @@ template<typename _CharT, typename _Traits>
 std::basic_ostream<_CharT, _Traits> & operator << (std::basic_ostream<_CharT, _Traits> & os, timespec const & t)
 {
     bool remove_trailing_zeroes(true);
-    int const index(get_ostream_index());
-    _ostream_info * info(static_cast<_ostream_info *>(os.pword(index)));
+    int const index(snapdev::get_ostream_index());
+    snapdev::_ostream_info * info(static_cast<snapdev::_ostream_info *>(os.pword(index)));
     if(info != nullptr)
     {
         remove_trailing_zeroes = info->f_remove_trailing_zeroes;
     }
 
-    timespec_ex u(t);
+    snapdev::timespec_ex u(t);
     return os << u.to_timestamp(remove_trailing_zeroes);
 }
 
 
-} // namespace snapdev
 // vim: ts=4 sw=4 et
