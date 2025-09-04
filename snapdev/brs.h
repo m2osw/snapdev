@@ -679,7 +679,7 @@ public:
      *
      * \return true if the unserialization succeeded, false otherwise.
      */
-    bool deserialize(process_hunk_t & callback)
+    bool deserialize(process_hunk_t const & callback)
     {
         for(;;)
         {

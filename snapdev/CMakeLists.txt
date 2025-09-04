@@ -60,6 +60,7 @@ install(
         map_keyset.h
         math.h
         matrix.h
+        memory_streambuf.h
         mkdir_p.h
         mounts.h
         not_reached.h
