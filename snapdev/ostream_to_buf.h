@@ -50,7 +50,7 @@ namespace snapdev
  * \code
  * {
  *     // save the existing cout and start capturing
- *     snap::ostream_to_buf<char> capture(std::cout);
+ *     snapdev::ostream_to_buf<char> capture(std::cout);
  *
  *     ...run test sending data to std::cout...
  *
