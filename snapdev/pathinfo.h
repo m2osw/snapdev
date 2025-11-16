@@ -426,12 +426,12 @@ inline std::string getcwd(std::string & error_msg)
  * * removing any "/../"
  * * replacing softlinks with the target path
  *
- * The resulting path is likely going to be a full path.
+ * The resulting path is likely going to be an absolute path.
  *
  * \note
  * If the input path is an empty string (equivalent to ".") then the
  * result may also be the empty string even though no errors happened.
- * You can distinghuish both cases by checking `error_msg.empty()` first.
+ * You can distinguish both cases by checking `error_msg.empty()` first.
  * If true, then the function did not generate an error.
  *
  * \todo
@@ -442,11 +442,11 @@ inline std::string getcwd(std::string & error_msg)
  * to be taken or not and completely replace the input or not.
  *
  * \exception bad_alloc
- * If the command cannot allocation a buffer to save the current working
+ * If the command cannot allocate a buffer to save the current working
  * directory the function throws this exception.
  *
  * \param[in] path  The path to canonicalize.
- * \param[out] error_msg  A variable where we save the error message.
+ * \param[out] error_msg  A variable where the function saves an error message.
  *
  * \return The canonicalized version of \p path or an error and errno set
  * to whatever error realpath(3) returned.
