@@ -75,6 +75,32 @@ inline uid_t getuid(std::string const & user_name)
 }
 
 
+/** \brief Get the name of a Unix user.
+ *
+ * This function retrieves the name of a Unix user given its uid. By
+ * default, it uses the uid of the current user.
+ *
+ * \note
+ * The current maximum size of the getpwuid_r() buffer is 1Kb. It may
+ * grow with time. See sysconf(_SC_GETGR_R_SIZE_MAX).
+ *
+ * \param[in] uid  The user identifier which name is being retrieved.
+ *
+ * \return The name of the user.
+ */
+inline std::string get_user_name(uid_t uid = ::getuid())
+{
+    passwd p, *ptr = nullptr;
+    char buf[1024];
+    int const r(getpwuid_r(uid, &p, buf, sizeof(buf), &ptr));
+    if(r == -1 || ptr == nullptr)
+    {
+        return std::string();
+    }
+    return p.pw_name;
+}
+
+
 /** \brief Convert a group name in a gid_t.
  *
  * This function searches for the named group in /etc/group and return the
@@ -96,6 +122,28 @@ inline gid_t getgid(std::string const & group_name)
     }
 
     return NO_GID;
+}
+
+
+/** \brief Get the name of a Unix group.
+ *
+ * This function retrieves the name of a Unix group given its gid. By
+ * default, it uses the main gid of the current user.
+ *
+ * \param[in] gid  The group identifier which name is being retrieved.
+ *
+ * \return The name of the group or an empty string if not available.
+ */
+inline std::string get_group_name(gid_t gid = ::getgid())
+{
+    group g, *ptr = nullptr;
+    char buf[1024];
+    int const r(getgrgid_r(gid, &g, buf, sizeof(buf), &ptr));
+    if(r == -1 || ptr == nullptr)
+    {
+        return std::string();
+    }
+    return g.gr_name;
 }
 
 
