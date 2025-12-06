@@ -80,23 +80,17 @@
  *     template<class ...ARGS>
  *     constexpr foo define_foo(ARGS ...args)
  *     {
- *     // until we get C++20, we need this warning off
- *     #pragma GCC diagnostic push
- *     #pragma GCC diagnostic ignored "-Wpedantic"
  *         foo s =
  *         {
  *             .f_name = snapdev::find_field<FieldName>(args...),                // no default, mandatory
  *             .f_size = snapdev::find_field<FieldSize>(args..., FieldSize()),   // include a default
  *         };
- *     #pragma GCC diagnostic pop
- *
- *         // TODO: once possible (C++17/20?) add verification tests here
  *
  *         // size must be positive or null
- *         //if(f_size < 0)
- *         //{
- *         //    throw std::logic_error("you can't have a negative size");
- *         //}
+ *         if(f_size < 0)
+ *         {
+ *             throw std::logic_error("you cannot have a negative size.");
+ *         }
  *
  *         return s;
  *     }
@@ -129,12 +123,12 @@
  * To end your arrays, we suggest an `end_foo()` function. But you are also
  * welcome to use the `std::size(g_my_foos)` to get the number of entries in
  * your arrays (with templates you can also access the counter but I won't
- * talk about this).
+ * talk about that).
  *
  * Here is an example of an `end_foo()` function. The main idea is to
  * setup one of the fields to a value which means this is the end of
  * your array. Here we set the name to `nullptr`. Remember that the
- * `FieldName()` is a required field. This is why it has to appear in
+ * `FieldName()` is a mandatory field. This is why it has to appear in
  * the end_foo() function.
  *
  * \code
@@ -147,7 +141,7 @@
  * \endcode
  *
  * At this time, you can find examples of usage of these structures in
- * the advgetopt and snapdatabase projects.
+ * the advgetopt and prinbee projects.
  *
  * \note
  * At time of writing, the example above compiled. It should still do.
@@ -205,7 +199,6 @@ private:
 };
 
 
-
 /** \brief Found a matching option.
  *
  * The list of `ARGS` is the list of `Field<...>` classes you defined in your
@@ -231,7 +224,6 @@ constexpr typename std::enable_if<std::is_same<T, F>::value, typename T::value_t
     NOT_USED(args...);
     return first.get();
 }
-
 
 
 /** \brief Look for an option.
