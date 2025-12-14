@@ -18,29 +18,17 @@
 #pragma once
 
 /** \file
- * \brief Create a list of files using glob().
+ * \brief Transform a floating point to a string.
  *
- * This template allows you to insert filenames from the output of a glob()
- * call to an STL container.
+ * The default std::to_string() function includes a large number of digits
+ * after the decimal point, whether they are all zeroes or not. This
+ * function can be used to remove those zeroes.
  */
-
-// snapdev
-//
-//#include    "snapdev/pathinfo.h"
-//#include    "snapdev/raii_generic_deleter.h"
-
 
 // C++
 //
 #include    <cmath>
-//#include    <memory>
 #include    <string>
-
-
-// C
-//
-//#include    <limits.h>
-//#include    <stdlib.h>
 
 
 

@@ -136,14 +136,14 @@ typename ContainerT::value_type::size_type string_predicate(
  * tokenize_string() function.
  *
  * \note
- * If the tokens vector is not empty, the items of the string
- * being tokenized will be appended to the existing vector.
+ * If the tokens container is not empty, the items of the string
+ * being tokenized are appended to the existing container.
  *
  * \todo
  * Add support for quotation. Quoted sections may include delimiters.
  *
  * \todo
- * Add a version that uses string_view as input & output?.
+ * Add a version that uses string_view as input & output?
  *
  * \tparam ContainterT  The type of container used to output the tokens.
  * \tparam PredicateT  The type of the predicate function.

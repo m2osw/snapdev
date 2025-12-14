@@ -340,6 +340,100 @@ inline unsigned __int128 bswap_128(unsigned __int128 n)
 #pragma GCC diagnostic pop
 
 
+/** \brief Compare two floating point numbers for equality.
+ *
+ * This function quietly compares two floating point numbers for equality.
+ * This means you can do:
+ *
+ * \code
+ *     if(snapdev::quiet_floating_point_equal(a, b))
+ *     {
+ *         ...
+ *     }
+ * \endcode
+ *
+ * as an equivalent to:
+ *
+ * \code
+ * #pragma GCC diagnostic push
+ * #pragma GCC diagnostic ignored "-Wfloat-equal"
+ *     if(a == b)
+ *     {
+ *         ...
+ *     }
+ * #pragma GCC diagnostic pop
+ * \endcode
+ *
+ * \note
+ * The function prevents comparing a floating point number with an integer.
+ *
+ * \tparam L  The type of the left hand side floating point number
+ * \tparam R  The type of the right hand side floating point number
+ * \param[in] a  The left hand side floating point number to compare
+ * \param[in] b  The right hand side floating point number to compare
+ *
+ * \return true if a is exactly equal to b.
+ */
+template<
+      typename L
+    , typename R>
+constexpr std::enable_if_t<std::is_floating_point_v<L>
+        && std::is_floating_point_v<R>, bool> quiet_floating_point_equal(L a, R b) noexcept
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+    return a == b;
+#pragma GCC diagnostic pop
+}
+
+
+/** \brief Compare two floating point numbers for inequality.
+ *
+ * This function quietly compares two floating point numbers for inequality.
+ * This means you can do:
+ *
+ * \code
+ *     if(snapdev::quiet_floating_point_not_equal(a, b))
+ *     {
+ *         ...
+ *     }
+ * \endcode
+ *
+ * as an equivalent to:
+ *
+ * \code
+ * #pragma GCC diagnostic push
+ * #pragma GCC diagnostic ignored "-Wfloat-equal"
+ *     if(a != b)
+ *     {
+ *         ...
+ *     }
+ * #pragma GCC diagnostic pop
+ * \endcode
+ *
+ * \note
+ * The function prevents comparing a floating point number with an integer.
+ *
+ * \tparam L  The type of the left hand side floating point number
+ * \tparam R  The type of the right hand side floating point number
+ * \param[in] a  The left hand side floating point number to compare
+ * \param[in] b  The right hand side floating point number to compare
+ *
+ * \return true if a is not exactly equal to b.
+ */
+template<
+      typename L
+    , typename R>
+constexpr std::enable_if_t<std::is_floating_point_v<L>
+        && std::is_floating_point_v<R>, bool> quiet_floating_point_not_equal(L a, R b) noexcept
+{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+    return a != b;
+#pragma GCC diagnostic pop
+}
+
+
 
 } // namespace snapdev
 // vim: ts=4 sw=4 et
