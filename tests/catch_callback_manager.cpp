@@ -282,6 +282,81 @@ CATCH_TEST_CASE("callback_manager", "[callback]")
         CATCH_REQUIRE(m.empty());
     }
     CATCH_END_SECTION()
+
+    CATCH_START_SECTION("callback manager: verify priority and lambda functions")
+    {
+        std::vector<snapdev::callback_manager<std::function<void()>>::priority_t> order;
+
+        auto f1 = [&order]()
+        {
+            order.push_back(1);
+        };
+        auto f2 = [&order]()
+        {
+            order.push_back(2);
+        };
+        auto f3 = [&order]()
+        {
+            order.push_back(3);
+        };
+        auto f4 = [&order]()
+        {
+            order.push_back(4);
+        };
+        auto f5 = [&order]()
+        {
+            order.push_back(5);
+        };
+
+        struct func_t
+        {
+            std::function<void()>   f_func = nullptr;
+            int                     f_priority = 0;
+
+            bool operator < (func_t b) const
+            {
+                return f_priority < b.f_priority;
+            }
+        };
+
+        std::vector<func_t> functions;
+        functions.push_back({f1, 1});
+        functions.push_back({f2, 2});
+        functions.push_back({f3, 3});
+        functions.push_back({f4, 4});
+        functions.push_back({f5, 5});
+        std::sort(functions.begin(), functions.end());
+
+        // we have 5! = 120 permutations to test
+        //
+        do
+        {
+            snapdev::callback_manager<std::function<void()>> m;
+            for(auto const & f : functions)
+            {
+                // the order in which these get added changes on each loop
+                // but the priority remains the same so the functions get
+                // called in the expected order (largest priority first)
+                //
+                m.add_callback(f.f_func, f.f_priority);
+            }
+            order.clear();
+            m.call();
+            CATCH_REQUIRE(m.size() == 5);
+            CATCH_REQUIRE_FALSE(m.empty());
+            CATCH_REQUIRE(order.size() == 5);
+            CATCH_REQUIRE(order[0] == 5);
+            CATCH_REQUIRE(order[1] == 4);
+            CATCH_REQUIRE(order[2] == 3);
+            CATCH_REQUIRE(order[3] == 2);
+            CATCH_REQUIRE(order[4] == 1);
+            m.clear();
+            CATCH_REQUIRE(m.size() == 0);
+            CATCH_REQUIRE(m.empty());
+        }
+        while(std::next_permutation(functions.begin(), functions.end()));
+    }
+    CATCH_END_SECTION()
 }
 
 

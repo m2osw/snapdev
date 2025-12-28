@@ -27,6 +27,35 @@
  *
  * This implementation allows you to generate an event and safely add or
  * remove listeners from the list while the event is being processed.
+ *
+ * The types of function that can be used as callbacks are:
+ *
+ * \li return_type (*)(args) -- a static C function
+ * \li std::function<return_type(args)> -- a standard C++ function
+ * \li &class_name::member_function -- a member function of a C++ class
+ *
+ * The member function pointer to call is specified at the time of the
+ * call (contrary to the static or C++ functions). In case of the
+ * member function, the type T may be a class name or a shared pointer.
+ *
+ * One thing to keep in mind when using shared pointers: the callback
+ * manager holds a copy so the reference count is increased and that
+ * means destruction of the objects only happen if the callback is
+ * removed. One way to go around that issue is to create a lambda
+ * that accepts a weak pointer. Within the lambda you can then lock
+ * the pointer and if not nullptr, use it as expected:
+ *
+ * \code
+ * [w](t1 p1, t2 p2, ...)
+ * {
+ *     auto p = w.lock();
+ *     if(p != nullptr)
+ *     {
+ *         return p->member_function(p1, p2, ...);
+ *     }
+ *     return true;
+ * }
+ * \endcode
  */
 
 // self
@@ -47,6 +76,8 @@
 
 namespace snapdev
 {
+
+
 
 /** \brief Manage a set of callbacks.
  *
@@ -82,14 +113,15 @@ namespace snapdev
  *
  * If you instead want to add direct function calls, you can use a function
  * type and directly add functions. This works with objects as well when used
- * with std::bind() but you can only call those functions (opposed to any one
- * member function in the previous example).
+ * with std::bind() or a lambda but you can only call those functions (opposed
+ * to any one member function in the previous example).
  *
  * \code
  *     // note that the function MUST return `bool`
  *     //
  *     typedef std::function<bool(int, float, std::string const &)> F;
  *     snapdev::callback_manager<F> callbacks;
+ *     // here `callbacks::value_type == F` is true
  *
  *     snapdev::callback_manager::callback_id_t save1(callbacks.add_callback(std::bind(&T::member_function, obj1, std::placeholders::_1, std::placeholders::_2, ...)));
  *     snapdev::callback_manager::callback_id_t save2(callbacks.add_callback(my_func));
@@ -103,7 +135,7 @@ namespace snapdev
  *
  * Note that to be able to remove a callback, you must save the identifier
  * returned by the add_callback(). This works whatever the type of callback
- * you add (shared pointer, direct function, std::function, std::bind).
+ * you add (shared pointer, direct function, std::function, std::bind, lambda).
  *
  * \code
  *     auto c = std::bind(...);
@@ -116,6 +148,12 @@ namespace snapdev
  *
  * Of course, you may use the clear() function as well. However, that is not
  * always what you want.
+ *
+ * The function being called must return either void or bool. If void, then
+ * all the functions always get called. If bool (or an integral type that is
+ * automatically converted to bool), then the calls stop if one of the
+ * functions return false (or 0). In that case, the order may be important.
+ * You can change the order by using the priority feature.
  *
  * \tparam T  The type of function or object to manage.
  */
@@ -172,7 +210,7 @@ private:
      * \param[in] func  The member function that gets called.
      * \param[in] args  The arguments to pass to the member function.
      *
-     * \return true if all the callbacks returned true, false otherwise.
+     * \return true if all the callbacks returned true or void.
      */
     template<typename F, typename ... ARGS>
     bool call_member_pointer(F func, ARGS ... args)
@@ -180,7 +218,11 @@ private:
         auto callbacks(f_callbacks);
         for(auto & c : callbacks)
         {
-            if(!(c.f_callback.get()->*func)(args...))
+            if constexpr (std::is_same_v<decltype((c.f_callback.get()->*func)(args...)), void>)
+            {
+                (c.f_callback.*func)(args...);
+            }
+            else if(!(c.f_callback.get()->*func)(args...))
             {
                 return false;
             }
@@ -208,7 +250,7 @@ private:
      * \param[in] func  The member function that gets called.
      * \param[in] args  The arguments to pass to the member function.
      *
-     * \return true if all the callbacks returned true, false otherwise.
+     * \return true if all the callbacks returned true or void.
      */
     template<typename F, typename ... ARGS>
     bool call_member(F func, ARGS ... args)
@@ -216,7 +258,11 @@ private:
         auto callbacks(f_callbacks);
         for(auto & c : callbacks)
         {
-            if(!(c.f_callback.*func)(args...))
+            if constexpr (std::is_same_v<decltype((c.f_callback.*func)(args...)), void>)
+            {
+                (c.f_callback.*func)(args...);
+            }
+            else if(!(c.f_callback.*func)(args...))
             {
                 return false;
             }
@@ -234,12 +280,14 @@ private:
      * If one of the functions returns `false`, then the loop stops
      * immediately and this function returns `false`. If all the
      * callback functions returns `true`, then all get called and
-     * call_function() returns `true`.
+     * call_function() returns `true`. If the callback function returns
+     * void, then all the functions get called and this function always
+     * returns `true`.
      *
      * \tparam ARGS  The types of the arguments to pass to the callbacks.
      * \param[in] args  The arguments to pass to the callbacks.
      *
-     * \return true if all the callbacks return true.
+     * \return true if all the callbacks return true or void.
      */
     template<typename ... ARGS>
     bool call_function(ARGS ... args)
@@ -247,7 +295,11 @@ private:
         auto callbacks(f_callbacks);
         for(auto & c : callbacks)
         {
-            if(!std::invoke(c.f_callback, args...))
+            if constexpr (std::is_same_v<decltype(c.f_callback(args...)), void>)
+            {
+                std::invoke(c.f_callback, args...);
+            }
+            else if(!std::invoke(c.f_callback, args...))
             {
                 return false;
             }
@@ -268,21 +320,21 @@ public:
      * The number of callbacks is not limited.
      *
      * It is possible to add a callback while within a callback function.
-     * However, the new callback will not be seen until the next time an
-     * event occurs and the call() function gets called.
+     * However, the new callback is not seen until the next time that
+     * event occurs and the call() function gets called again.
      *
      * \note
-     * If the callback type is an object share pointer, then you will be
+     * If the callback type is an object share pointer, then you are
      * able to call any member function of that object with the call()
      * function. On the other hand, for direct functions, only that one
      * specific function is called. Direct functions can use an std::bind()
-     * in order to attach the function to an object at runtime.
+     * or a lambda in order to attach the function to an object at runtime.
      *
      * \note
      * It is possible to add the same callback any number of time. It
-     * will get called a number of time equal to the number of times
+     * gets called a number of time equal to the number of times
      * you added it to the callback manager. Duplicity is not easy to
-     * test for objects such as std::function and std::bind.
+     * test for objects such as std::function and std::bind or lambda.
      *
      * \note
      * The identifier is allowed to wrap around, although you need to
