@@ -88,6 +88,7 @@ install(
         stream_fd.h
         stringize.h
         string_replace_many.h
+        string_replace_variables.h
         timespec_ex.h
         timestamp.h
         tokenize_format.h
