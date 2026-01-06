@@ -75,6 +75,7 @@ install(
         qstring_extensions.h
         raii_generic_deleter.h
         remove_duplicates.h
+        returns_nonnull.h
         reverse_cstring.h
         rm_r.h
         safe_assert.h
