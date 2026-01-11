@@ -40,8 +40,8 @@ namespace
 {
 
 
-constexpr char const hello[] = "hello ";
-constexpr char const world[] = "world!";
+constexpr char const g_hello[] = "hello ";
+constexpr char const g_world[] = "world!";
 
 
 } // no name namespace
@@ -50,9 +50,9 @@ CATCH_TEST_CASE("concat_strings", "[string]")
 {
     CATCH_START_SECTION("concat_strings: concatenate two strings at compile time")
     {
-        char const * const r = snapdev::concat<hello, world>::value;
+        char const * const r = snapdev::concat<g_hello, g_world>::value;
         CATCH_REQUIRE(strcmp(r, "hello world!") == 0);
-        CATCH_REQUIRE(snapdev::is_string_literal(snapdev::concat<hello, world>::value));
+        CATCH_REQUIRE(snapdev::is_a_string_literal(snapdev::concat<g_hello, g_world>::value));
     }
     CATCH_END_SECTION()
 }

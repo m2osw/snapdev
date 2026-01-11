@@ -17,7 +17,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-// snapdev
+// libexcept
+//
+#include    <libexcept/exception.h>
+
+
+// C++
 //
 #include    <algorithm>
 #include    <functional>
@@ -31,9 +36,9 @@ namespace snapdev
 
 
 
-DECLARE_MAIN_EXCEPTION(returns_nonnull_exception);
+DECLARE_MAIN_EXCEPTION(is_nonnull_exception);
 
-DECLARE_EXCEPTION(returns_nonnull_exception, found_nullptr);
+DECLARE_EXCEPTION(is_nonnull_exception, found_nullptr);
 
 
 

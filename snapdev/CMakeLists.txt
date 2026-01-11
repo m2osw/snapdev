@@ -50,6 +50,7 @@ install(
         init_structure.h
         int128_literal.h
         isatty.h
+        is_nonnull.h
         is_smart_pointer.h
         is_string_literal.h
         is_vector.h
@@ -75,7 +76,6 @@ install(
         qstring_extensions.h
         raii_generic_deleter.h
         remove_duplicates.h
-        returns_nonnull.h
         reverse_cstring.h
         rm_r.h
         safe_assert.h
@@ -88,6 +88,7 @@ install(
         static_to_dynamic_buffer.h
         stream_fd.h
         stringize.h
+        string_literal_length.h
         string_replace_many.h
         string_replace_variables.h
         timespec_ex.h

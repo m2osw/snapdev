@@ -41,6 +41,7 @@ if(SnapCatch2_FOUND)
         catch_hexadecimal_string.cpp
         catch_int128.cpp
         catch_isatty.cpp
+        catch_is_string_literal.cpp
         catch_join_strings.cpp
         catch_lockfile.cpp
         catch_log2.cpp
@@ -59,6 +60,7 @@ if(SnapCatch2_FOUND)
         catch_saturated_add.cpp
         catch_saturated_subtract.cpp
         catch_stringize.cpp
+        catch_string_literal_length.cpp
         catch_string_replace_many.cpp
         catch_string_replace_variables.cpp
         catch_timespec_ex.cpp

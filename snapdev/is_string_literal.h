@@ -44,36 +44,91 @@
  * The `char8_t` type is only available since C++20.
  */
 
+
+// C++
+//
 #include    <cstdint>
+#include    <functional>
+
 
 
 namespace snapdev
 {
 
 
+
+/** \brief No a string literal.
+ *
+ * This template is used as the negative case when testing for a string
+ * literal. It is the template used in the false case if the literal is
+ * not even an array.
+ *
+ * \tparam T  A type which is not an array.
+ */
+template<typename T>
+class is_string_literal
+    : public std::false_type
+{
+};
+
+
+/** \brief Check whether the array represents a string literal.
+ *
+ * This template is used in conditional templates to verify that
+ * the input is a string literal. This means that the type of a value
+ * is an array and that the type of each element is one of the character
+ * types (char, wchar_t, char8_t, char16_t, or char32_t).
+ *
+ * \warning
+ * Note that any character buffer is viewed as a "string literal".
+ * So a definition as follow will return true even though you may
+ * see it as a buffer rather than a string literal:
+ * \warning
+ * \code
+ *     constexpr std::uint8_t const g_buffer[5] = { 1, 2, 3, 4, 5 };
+ * \endcode
+ *
+ * \tparam T  The type of the array element.
+ * \tparam N  The size of the array.
+ */
+template<typename T, std::size_t N>
+class is_string_literal<T[N]>
+    : public std::disjunction<
+              std::is_same<T, char>
+            , std::is_same<T, wchar_t>
+            , std::is_same<T, char8_t>
+            , std::is_same<T, char16_t>
+            , std::is_same<T, char32_t>>
+{
+};
+
+
+
+
+
 template<std::size_t N>
-bool is_string_literal(char const (&)[N])
+bool is_a_string_literal(char const (&)[N])
 {
     return true;
 }
 
 
 template<std::size_t N>
-bool is_string_literal(char (&)[N])
+bool is_a_string_literal(char (&)[N])
 {
     return false;
 }
 
 
 template<std::size_t N>
-bool is_string_literal(wchar_t const (&)[N])
+bool is_a_string_literal(wchar_t const (&)[N])
 {
     return true;
 }
 
 
 template<std::size_t N>
-bool is_string_literal(wchar_t (&)[N])
+bool is_a_string_literal(wchar_t (&)[N])
 {
     return false;
 }
@@ -81,14 +136,14 @@ bool is_string_literal(wchar_t (&)[N])
 
 #ifdef __cpp_char8_t
 template<std::size_t N>
-bool is_string_literal(char8_t const (&)[N])
+bool is_a_string_literal(char8_t const (&)[N])
 {
     return true;
 }
 
 
 template<std::size_t N>
-bool is_string_literal(char8_t (&)[N])
+bool is_a_string_literal(char8_t (&)[N])
 {
     return false;
 }
@@ -96,39 +151,38 @@ bool is_string_literal(char8_t (&)[N])
 
 
 template<std::size_t N>
-bool is_string_literal(char16_t const (&)[N])
+bool is_a_string_literal(char16_t const (&)[N])
 {
     return true;
 }
 
 
 template<std::size_t N>
-bool is_string_literal(char16_t (&)[N])
+bool is_a_string_literal(char16_t (&)[N])
 {
     return false;
 }
 
 
 template<std::size_t N>
-bool is_string_literal(char32_t const (&)[N])
+bool is_a_string_literal(char32_t const (&)[N])
 {
     return true;
 }
 
 
 template<std::size_t N>
-bool is_string_literal(char32_t (&)[N])
+bool is_a_string_literal(char32_t (&)[N])
 {
     return false;
 }
 
 
 template<typename T>
-bool is_string_literal(T &)
+bool is_a_string_literal(T &)
 {
     return false;
 }
-
 
 
 

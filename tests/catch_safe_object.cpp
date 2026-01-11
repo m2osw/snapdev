@@ -208,4 +208,3 @@ CATCH_TEST_CASE("safe_object", "[raii]")
 
 
 // vim: ts=4 sw=4 et
-
