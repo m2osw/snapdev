@@ -29,6 +29,7 @@
 //
 #include    <cstring>
 #include    <limits>
+#include    <stdexcept>
 
 
 namespace snapdev

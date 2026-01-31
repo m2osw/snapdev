@@ -1866,7 +1866,7 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
                           "brs_error: name cannot be an empty string."));
 
         // FIELD: timespec
-        struct timespec ts;
+        struct timespec ts(snapdev::random_time());
         CATCH_REQUIRE_THROWS_MATCHES(
                   out.add_value(std::string(), ts)
                 , snapdev::brs_cannot_be_empty
@@ -1934,7 +1934,7 @@ CATCH_TEST_CASE("brs_invalid", "[serialization][error]")
                           "brs_out_of_range: name or hunk too large."));
 
         // FIELD: timespec
-        struct timespec ts;
+        struct timespec ts(snapdev::random_time());
         CATCH_REQUIRE_THROWS_MATCHES(
                   out.add_value(name, ts)
                 , snapdev::brs_out_of_range

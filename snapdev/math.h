@@ -31,6 +31,11 @@
 #include    <snapdev/not_reached.h>
 
 
+// C++
+//
+#include    <random>
+
+
 // C
 //
 #include    <byteswap.h>
@@ -320,7 +325,7 @@ constexpr T rotl(T x, int r)
  * flipping the bytes between big endian and little endian.
  *
  * \note
- * See also bwap_64(), bswap_32(), bswap_16().
+ * See also bswap_64(), bswap_32(), bswap_16().
  *
  * \param[in] n  The 128 bit number to byte swap.
  *
@@ -431,6 +436,86 @@ constexpr std::enable_if_t<std::is_floating_point_v<L>
 #pragma GCC diagnostic ignored "-Wfloat-equal"
     return a != b;
 #pragma GCC diagnostic pop
+}
+
+
+/** \brief Initialize a Mersenne random generator.
+ *
+ * This function initializes a Mersenne random generator and returns a
+ * reference to it. You should always use this function to avoid having
+ * new sequences started each time.
+ *
+ * See the random() functions to generate floating point or integral
+ * numbers.
+ *
+ * The seeding of the pseudo random generator is done using a random_device,
+ * meaning that it is expected to be different on each run of your
+ * application (seeded from a hardware device).
+ *
+ * \warning
+ * It is possible to copy the generator. Just keep in mind that if you
+ * call this function and make a copy each time, you reset the state each
+ * time. Instead, you want to keep a copy of the generator in your object
+ * and reuse that copy over and over again or just don't make a copy and
+ * call this function each time you need the reference.
+ *
+ * \return A reference to a statically initialized Mersenne pseudo random
+ * number generator.
+ */
+inline std::mt19937_64 & get_random_generator()
+{
+    // static variables to initialize the random number generator only once
+    //
+    static std::random_device rd;       // random "device" such as /dev/random
+    static std::mt19937_64 gen(rd());   // a Mersenne generator seeded from the random device
+    return gen;
+}
+
+
+/** \brief Generate a floating point random number.
+ *
+ * This function generates a floating point number of type T using the
+ * C++ random number generator (mt19937).
+ *
+ * By default, the generator uses the range [0.0, 1.0). You may specify
+ * other numbers as the minimum and maximum.
+ *
+ * \tparam T  The type of floating point (float, double, or long double).
+ * \param[in] min  The minimum value to return, inclusive.
+ * \param[in] max  The maximum value to return, exclusive.
+ *
+ * \return The randomly generated floating point.
+ */
+template<typename T>
+std::enable_if_t<std::is_floating_point_v<T>, T> random(
+      T min = 0.0
+    , T max = 1.0)
+{
+    std::uniform_real_distribution<T> dis(min, max);
+    return dis(get_random_generator());
+}
+
+
+/** \brief Generate a pseudo integral random number.
+ *
+ * This function generates an integer of type T using the C++ random
+ * number generator (mt19937).
+ *
+ * By default the generator uses the range 0 to maximum value of that
+ * integer type. If you do not specify the range, you must specify the
+ * type when using the function (`random<int>()`).
+ *
+ * \tparam T  The type of the integral number to generate.
+ * \param[in] min  The minimum value, inclusive.
+ * \param[in] max  The maximum value, inclusive.
+ */
+template<typename T>
+std::enable_if_t<std::is_integral_v<T>, T> random(
+      T min = 0
+    , T max = std::numeric_limits<T>::max())
+{
+    std::uniform_int_distribution<T> dis(min, max);
+    return dis(get_random_generator());
 }
 
 

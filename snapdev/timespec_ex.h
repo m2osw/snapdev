@@ -31,6 +31,7 @@
 // self
 //
 #include    <snapdev/join_strings.h>
+#include    <snapdev/math.h>
 #include    <snapdev/tokenize_format.h>
 
 
@@ -1650,6 +1651,14 @@ inline timespec_ex now(clockid_t clk_id)
         // LCOV_EXCL_STOP
     }
     return n;
+}
+
+
+inline timespec_ex random_time()
+{
+    return timespec_ex(
+        snapdev::random<decltype(timespec::tv_sec)>(std::numeric_limits<decltype(timespec::tv_sec)>::min()),
+        snapdev::random<decltype(timespec::tv_nsec)>(0, 999'999'999));
 }
 
 
