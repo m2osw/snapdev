@@ -106,6 +106,7 @@ bool is_relative(T const & path)
  *
  * \code
  *     // the following returns true
+ *     //
  *     snapdev::pathinfo::basename(
  *                "/usr/share/snapwebsites/in.basename.txt"
  *              , ".txt"

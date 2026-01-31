@@ -299,7 +299,7 @@ public:
             do
             {
                 in.read(buf, sizeof(buf));
-                ssize_t sz(in.gcount());
+                ssize_t const sz(in.gcount());
                 if(sz <= 0)
                 {
                     break; // LCOV_EXCL_LINE
