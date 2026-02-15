@@ -51,9 +51,10 @@ namespace detail
  * octal, hexadecimal, binary, and any other base from 2 up to 36.
  *
  * \note
- * This class is overfully complete and can be used to traverse the resulting
- * string. I've kept it that way although we don't generally use it for more
- * than a simple conversion so at the moment it will stay as a detail.
+ * This class is overkill and can be used to traverse the resulting
+ * string. I've kept it that way although we don't generally use it
+ * for more than a simple conversion so at the moment it stays
+ * as a detail.
  *
  * \tparam value  The number to convert.
  * \tparam base  Desired base.
@@ -70,6 +71,19 @@ template<
 class integer_to_string_literal_impl
 {
 public:
+    /** \brief The type of the value.
+     *
+     * This typedef captures the exact type of the value being passed to
+     * this template.
+     */
+    typedef decltype(value)     value_type;
+
+    /** \brief The type of character.
+     *
+     * This typedef captures the type of character used in the output string.
+     */
+    typedef CharT               char_type;
+
     /** \brief Computed size of the string array.
      *
      * To hold the string, we need an array of CharT characters. This is
@@ -138,6 +152,13 @@ public:
             --ptr;
             *ptr = '0';
         }
+
+#ifdef _DEBUG
+        if(ptr != begin())
+        {
+            std::terminate(); // wrong number of characters added.
+        }
+#endif
     }
 
     /** \brief Cast to CharT *
@@ -339,236 +360,251 @@ public:
 
 
 
-// the following requires C++20 to work properly
-// old templates do not accept a parameter of a type other than a basic
-// type (int, pointer, reference)
-//
-///** \brief A warpper for the double value to convert.
-// *
-// * Templates do not directly accept floating point values as parameters.
-// * It accepts types, but not values.
-// *
-// * This class is used to pass the floating point value to the
-// * floating_point_to_string_literal_impl template.
-// *
-// * \tparam F  The type of floating point concerned.
-// */
-//struct double_wrapper
-//{
-//public:
-//    /** \brief Initialize the double_wrapper object.
-//     *
-//     * This constructor saves the double as two integers, one representing
-//     * the whole part and the other representing the fraction.
-//     *
-//     * \param[in] v  The floating point value to save here.
-//     * \param[in] p  The precision (number of digits after the decimal point).
-//     */
-//    //template<
-//    //      typename F
-//    //    , std::enable_if_t<std::is_floating_point_v<F>, int> = 0>
-//    constexpr double_wrapper(double v, int p = std::numeric_limits<double>::digits10)
-//    {
-//        if(p <= 0
-//        || p > std::numeric_limits<double>::digits10)
-//        {
-//            throw std::range_error("precision is either too small or too large for this type of floating point");
-//        }
-//
-//        f_whole = static_cast<long long int>(v);
-//
-//        v -= static_cast<double>(f_whole);
-//        v *= pow(10.0, static_cast<double>(p));
-//
-//        f_frac = static_cast<long long int>(v);
-//    }
-//
-//    constexpr long long int whole() const
-//    {
-//        return f_whole;
-//    }
-//
-//    constexpr long long int frac() const
-//    {
-//        return f_frac;
-//    }
-//
-//private:
-//    long long int   f_whole = 0;
-//    long long int   f_frac = 0;
-//};
-//
-//
-//
-///** \brief Convert a floating pointer number to a string literal
-// *
-// * This class provides the ability to convert a floating point number to a
-// * string at compile-time.
-// *
-// * \tparam value  Number to convert
-// * \tparam CharT  Type of characters in the returned string.
-// */
-//template<
-//      double_wrapper const & value
-//    , typename CharT>
-//class floating_point_to_string_literal_impl
-//{
-//public:
-//    static constexpr std::size_t BUFFER_SIZE = []() constexpr noexcept
-//                {
-//                    std::size_t len(2);
-//                    if(value.whole() <= 0)
-//                    {
-//                        ++len;
-//                    }
-//                    for(auto v(value.whole()); v != 0; ++len, v /= 10);
-//                    if(value.frac() == 0
-//                    || (value.whole() == 0 && value.frac() < 0))
-//                    {
-//                        ++len;
-//                    }
-//                    for(auto v(value.frac()); v != 0; ++len, v /= 10);
-//                    return len;
-//                }();
-//
-//private:
-//    CharT   f_buf[BUFFER_SIZE] = {};
-//
-//public:
-//    /**
-//     * Constructs the object, filling `buf` with the string representation of `value`.
-//     */
-//    constexpr floating_point_to_string_literal_impl() noexcept
-//    {
-//        auto append = [](long long int n, CharT & ptr)
-//        {
-//            if(n != 0)
-//            {
-//                for(long long int v(n); v != 0; v /= 10)
-//                {
-//                    --ptr;
-//                    *ptr = '0' + (n < 0 ? -1 : 1) * (v % 10);
-//                }
-//            }
-//            else
-//            {
-//                --ptr;
-//                *ptr = '0';
-//            }
-//        };
-//
-//        CharT * ptr = end();
-//
-//        --ptr;
-//        *ptr = '\0';
-//
-//        append(value.frac(), ptr);
-//
-//        --ptr;
-//        *ptr = '.';
-//
-//        append(value.whole(), ptr);
-//
-//        if(value.frac() < 0 || value.whole() < 0)
-//        {
-//            --ptr;
-//            *ptr = '-';
-//        }
-//    }
-//
-//    // Support implicit casting to `char *` or `const char *`.
-//    constexpr operator CharT * () noexcept
-//    {
-//        return f_buf;
-//    }
-//
-//    constexpr operator const CharT * () const noexcept
-//    {
-//        return f_buf;
-//    }
-//
-//    constexpr std::size_t length() const noexcept
-//    {
-//        return BUFFER_SIZE - 1;
-//    }
-//
-//    constexpr std::size_t size() const noexcept
-//    {
-//        return BUFFER_SIZE;
-//    }
-//
-//    // Element access
-//    constexpr CharT * data() noexcept
-//    {
-//        return f_buf;
-//    }
-//
-//    constexpr const CharT * data() const noexcept
-//    {
-//        return f_buf;
-//    }
-//
-//    constexpr CharT & operator [] (unsigned int i)
-//    {
-//        if(static_cast<std::size_t>(i) >= size())
-//        {
-//            throw std::range_error("index out of range");
-//        }
-//
-//        return f_buf[i];
-//    }
-//
-//    constexpr const CharT & operator [] (unsigned int i) const
-//    {
-//        if(static_cast<std::size_t>(i) >= size())
-//        {
-//            throw std::range_error("index out of range");
-//        }
-//
-//        return f_buf[i];
-//    }
-//
-//    constexpr CharT & front() noexcept
-//    {
-//        return f_buf[0];
-//    }
-//
-//    constexpr const CharT & front() const noexcept
-//    {
-//        return f_buf[0];
-//    }
-//
-//    constexpr CharT & back() noexcept
-//    {
-//        return f_buf[length()];
-//    }
-//
-//    constexpr const CharT & back() const noexcept
-//    {
-//        return f_buf[length()];
-//    }
-//
-//    // Iterators
-//    constexpr CharT * begin() noexcept
-//    {
-//        return f_buf;
-//    }
-//
-//    constexpr const CharT * begin() const noexcept
-//    {
-//        return f_buf;
-//    }
-//
-//    constexpr CharT * end() noexcept
-//    {
-//        return f_buf + size();
-//    }
-//
-//    constexpr const CharT * end() const noexcept
-//    {
-//        return f_buf + size();
-//    }
-//};
+
+/** \brief Convert a floating pointer number to a string literal.
+ *
+ * This class provides the ability to convert a floating point number to a
+ * string at compile-time.
+ *
+ * Here is an example of usage of the simplified template:
+ *
+ * \code
+ * constexpr float const       CONSTANT_ROOT_TWO = 1.414213562373095048801688724209698078;
+ * constexpr char const *      g_root_two_view = snapdev::floating_point_to_string_literal<CONSTANT_ROOT_TWO>.data();
+ * ...
+ * // example using that value as an advgetopt default value:
+ * DefaultValue(g_root_two_view)
+ * \endcode
+ *
+ * The type of floating point used determines the number of digits after
+ * the decimal point. This is 6 for a float, 15 for a double, and
+ * 18 for a long double.
+ *
+ * \warning
+ * The input numbers are currently limited to values that can fit in a
+ * `long long int`. The function does not add an exponent (`e+123` notation).
+ * Very small numbers result in zero. Numbers that are too large generate
+ * a compile time `range_error`.
+ *
+ * \todo
+ * avoid the zeroes at the end of the number (after the decimal point,
+ * except for one 3.0 but not 3.000000).
+ *
+ * \note
+ * This class is overkill and can be used to traverse the resulting
+ * string. I've kept it that way although we don't generally use it
+ * for more than a simple conversion so at the moment it stays
+ * as a detail.
+ *
+ * \tparam value  Number to convert
+ * \tparam CharT  Type of characters in the returned string.
+ */
+template<
+      auto value
+    , typename CharT
+    , std::enable_if_t<std::is_floating_point_v<decltype(value)>, int> = 0>
+class floating_point_to_string_literal_impl
+{
+public:
+    typedef decltype(value)     value_type;
+    typedef CharT               char_type;
+
+    static constexpr long long int whole()
+    {
+        long long int const r(static_cast<long long int>(value));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+        if(r != std::trunc(r))
+        {
+            throw std::range_error("floating point is too large for compile time conversion to string.");
+        }
+#pragma GCC diagnostic pop
+        return r;
+    }
+
+    static constexpr int fractional_length()
+    {
+        return std::numeric_limits<value_type>::digits10;
+    }
+
+    static constexpr long long int frac()
+    {
+        value_type const v(value - static_cast<value_type>(whole()));
+        constexpr value_type const exponent(fractional_length() + 1);
+
+        // the following takes the next digit in account to properly round the value up or down
+        //
+        return static_cast<long long int>(std::round(v * pow(10.0, exponent) / 10.0));
+    }
+
+    static constexpr std::size_t BUFFER_SIZE = []() constexpr noexcept
+                {
+                    std::size_t len(2);
+                    if(value <= 0.0)
+                    {
+                        ++len; // for the '-' or prefix '0'
+                    }
+
+                    for(auto v(whole()); v != 0; ++len, v /= 10);
+
+                    // at the moment the fractional length is hard coded
+                    // but we should not count the ending zeroes (and not
+                    // insert them later)
+                    //
+                    //for(auto v(frac()); v != 0; ++len, v /= 10);
+                    len += fractional_length();
+
+                    return len;
+                }();
+
+private:
+    CharT   f_buf[BUFFER_SIZE] = {};
+
+public:
+    /**
+     * Constructs the object, filling `f_buf` with the string
+     * representation of `value`.
+     */
+    constexpr floating_point_to_string_literal_impl() noexcept
+    {
+        CharT * ptr = end();
+
+        --ptr;
+        *ptr = '\0';
+
+        // adding the fraction requires a specific count
+        // (which means at the moment we add ending zeroes...)
+        //
+        int count(fractional_length());
+        for(long long int v(frac()); count > 0; v /= 10, --count)
+        {
+            --ptr;
+            *ptr = '0' + (value < 0.0 ? -1 : 1) * (v % 10);
+        }
+
+        --ptr;
+        *ptr = '.';
+
+        long long int n(whole());
+        if(n != 0)
+        {
+            for(long long int v(n); v != 0; v /= 10)
+            {
+                --ptr;
+                *ptr = '0' + (n < 0 ? -1 : 1) * (v % 10);
+            }
+        }
+        else
+        {
+            --ptr;
+            *ptr = '0';
+        }
+
+        if(value < 0.0)
+        {
+            --ptr;
+            *ptr = '-';
+        }
+
+#ifdef _DEBUG
+        if(ptr != begin())
+        {
+            std::terminate(); // wrong number of characters added.
+        }
+#endif
+    }
+
+    constexpr operator CharT * () noexcept
+    {
+        return f_buf;
+    }
+
+    constexpr operator CharT const * () const noexcept
+    {
+        return f_buf;
+    }
+
+    constexpr std::size_t length() const noexcept
+    {
+        return BUFFER_SIZE - 1;
+    }
+
+    constexpr std::size_t size() const noexcept
+    {
+        return BUFFER_SIZE;
+    }
+
+    constexpr CharT * data() noexcept
+    {
+        return f_buf;
+    }
+
+    constexpr CharT const * data() const noexcept
+    {
+        return f_buf;
+    }
+
+    constexpr CharT & operator [] (unsigned int i)
+    {
+        if(static_cast<std::size_t>(i) >= size())
+        {
+            throw std::range_error("index out of range");
+        }
+
+        return f_buf[i];
+    }
+
+    constexpr CharT const & operator [] (unsigned int i) const
+    {
+        if(static_cast<std::size_t>(i) >= size())
+        {
+            throw std::range_error("index out of range");
+        }
+
+        return f_buf[i];
+    }
+
+    constexpr CharT & front() noexcept
+    {
+        return f_buf[0];
+    }
+
+    constexpr CharT const & front() const noexcept
+    {
+        return f_buf[0];
+    }
+
+    constexpr CharT & back() noexcept
+    {
+        return f_buf[length()];
+    }
+
+    constexpr CharT const & back() const noexcept
+    {
+        return f_buf[length()];
+    }
+
+    // Iterators
+    constexpr CharT * begin() noexcept
+    {
+        return f_buf;
+    }
+
+    constexpr CharT const * begin() const noexcept
+    {
+        return f_buf;
+    }
+
+    constexpr CharT * end() noexcept
+    {
+        return f_buf + size();
+    }
+
+    constexpr CharT const * end() const noexcept
+    {
+        return f_buf + size();
+    }
+};
 
 
 } // namespace detail
@@ -576,8 +612,13 @@ public:
 /** \brief Convert an integer to a string at compile time.
  *
  * This template simplifies the conversion of an integer to a string at
- * compile time. It supports three parameters: the value to convert, the
- * base, and the type of characters you want in the output.
+ * compile time. It supports four parameters: the value to convert, the
+ * base, whether to use uppercase or lowercase, and the type of characters
+ * you want in the output.
+ *
+ * Any basic integral type is accepted: `char`, `short`, `int`, `long`,
+ * `long long`, `__int128`, and their unsigned counterparts and other
+ * extensions offered by your compiler (a.k.a. `size_t`).
  *
  * By default the base is set to 10. Any base from 2 to 36 is supported.
  * No introducer is added. If you would like an introducer, you may be
@@ -591,7 +632,7 @@ public:
  * If you want to avoid the std::string_view use, you can check out the
  * numeric_string.h instead. That other one only deals with `const char`.
  *
- * \tparam value  The value to convert to a string.
+ * \tparam value  The integer to convert to a string.
  * \tparam base  The base used to convert the value (2 to 36).
  * \tparam uppercase  Whether to use uppercase (true) or lowercase (false).
  * \tparam CharT  The character type of the output string.
@@ -605,15 +646,19 @@ template<
 constexpr detail::integer_to_string_literal_impl<value, base, uppercase, CharT> integer_to_string_literal;
 
 
-// this requires C++20, so commenting out for now
-///**
-// * Simplifies use of `to_string_literal` for floating points from
-// * `to_string_literal<N>()` to `to_string_literal<N>`.
-// */
-//template<
-//      detail::double_wrapper const * value
-//    , typename CharT = char>
-//constexpr detail::floating_point_to_string_literal_impl<*value, CharT> floating_point_to_string_literal;
+/** \brief Convert a floating point to a string at compile time.
+ *
+ * Simplifies use of `floating_point_to_string_literal_impl` for floating
+ * points from `floating_point_to_string_literal_impl<N>()` to
+ * `floating_point_to_string_literal<N>`.
+ *
+ * \tparam value  The floating point to convert to a string.
+ * \tparam CharT  The character type of the output string.
+ */
+template<
+      auto value
+    , typename CharT = char>
+constexpr detail::floating_point_to_string_literal_impl<value, CharT> floating_point_to_string_literal;
 
 
 } // namespace snapdev
