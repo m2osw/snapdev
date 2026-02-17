@@ -46,6 +46,12 @@ constexpr char8_t const         g_char8_literal[] = u8"it is!";
 constexpr char16_t const        g_char16_literal[] = u"it is!";
 constexpr char32_t const        g_char32_literal[] = U"it is!";
 
+constexpr char const *          g_char_pointer = "another string";
+constexpr wchar_t const *       g_wchar_pointer = L"another string";
+constexpr char8_t const *       g_char8_pointer = u8"another string";
+constexpr char16_t const *      g_char16_pointer = u"another string";
+constexpr char32_t const *      g_char32_pointer = U"another string";
+
 
 } // no name namespace
 
@@ -53,7 +59,7 @@ constexpr char32_t const        g_char32_literal[] = U"it is!";
 
 CATCH_TEST_CASE("string_literal_length", "[string]")
 {
-    CATCH_START_SECTION("string_literal_length: check all inline string literals types")
+    CATCH_START_SECTION("string_literal_length: check all inline string literal types")
     {
         CATCH_REQUIRE(snapdev::string_literal_length("it is!") == 6);           // char
         CATCH_REQUIRE(snapdev::string_literal_length(L"it is!") == 6);          // wchar_t
@@ -67,13 +73,33 @@ CATCH_TEST_CASE("string_literal_length", "[string]")
     }
     CATCH_END_SECTION()
 
-    CATCH_START_SECTION("string_literal_length: check all constexpr string literals")
+    CATCH_START_SECTION("string_literal_length: check all constexpr string literal lengths")
     {
         CATCH_REQUIRE(snapdev::string_literal_length(g_char_literal) == 6);     // char
         CATCH_REQUIRE(snapdev::string_literal_length(g_wchar_literal) == 6);    // wchar_t
         CATCH_REQUIRE(snapdev::string_literal_length(g_char8_literal) == 6);    // char8_t
         CATCH_REQUIRE(snapdev::string_literal_length(g_char16_literal) == 6);   // char16_t
         CATCH_REQUIRE(snapdev::string_literal_length(g_char32_literal) == 6);   // char32_t
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("string_literal_length: check all constexpr string lengths")
+    {
+        CATCH_REQUIRE(snapdev::string_length(g_char_literal) == 6);     // char
+        CATCH_REQUIRE(snapdev::string_length(g_wchar_literal) == 6);    // wchar_t
+        CATCH_REQUIRE(snapdev::string_length(g_char8_literal) == 6);    // char8_t
+        CATCH_REQUIRE(snapdev::string_length(g_char16_literal) == 6);   // char16_t
+        CATCH_REQUIRE(snapdev::string_length(g_char32_literal) == 6);   // char32_t
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("string_literal_length: check all constexpr string pointers")
+    {
+        CATCH_REQUIRE(snapdev::string_length(g_char_pointer) == 14);     // char
+        CATCH_REQUIRE(snapdev::string_length(g_wchar_pointer) == 14);    // wchar_t
+        CATCH_REQUIRE(snapdev::string_length(g_char8_pointer) == 14);    // char8_t
+        CATCH_REQUIRE(snapdev::string_length(g_char16_pointer) == 14);   // char16_t
+        CATCH_REQUIRE(snapdev::string_length(g_char32_pointer) == 14);   // char32_t
     }
     CATCH_END_SECTION()
 }
