@@ -155,8 +155,8 @@ public:
      * This function sets an environment variable. By default, the value
      * of the variable gets overwritten even if it is already set.
      *
-     * On destruction, the variable gets unset (i.e. old values are
-     * not restored.)
+     * On destruction, the variable gets restored to the previous value.
+     * If it was not set before, it gets deleted.
      *
      * \param[in] name  The name of the variable being set.
      * \param[in] value  The value of the variable.
