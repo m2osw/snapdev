@@ -57,12 +57,14 @@ if(SnapCatch2_FOUND)
         catch_rm_r.cpp
         catch_safe_object.cpp
         catch_safe_stream.cpp
+        catch_safe_tcattr.cpp
         catch_saturated_add.cpp
         catch_saturated_subtract.cpp
         catch_stringize.cpp
         catch_string_literal_length.cpp
         catch_string_replace_many.cpp
         catch_string_replace_variables.cpp
+        catch_timed_getchar.cpp
         catch_timespec_ex.cpp
         catch_tokenize_format.cpp
         catch_tokenize_string.cpp

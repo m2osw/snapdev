@@ -116,6 +116,9 @@ enum class operation_t
  */
 class lockfile
 {
+public:
+    typedef std::shared_ptr<lockfile>   pointer_t;
+
 private:
     class lock_t
     {

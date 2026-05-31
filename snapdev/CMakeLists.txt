@@ -83,6 +83,7 @@ install(
         safe_object.h
         safe_setenv.h
         safe_stream.h
+        safe_tcattr.h
         safe_variable.h
         sizeof_bitfield.h
         static_to_dynamic_buffer.h
@@ -91,6 +92,7 @@ install(
         string_literal_length.h
         string_replace_many.h
         string_replace_variables.h
+        timed_getchar.h
         timespec_ex.h
         timestamp.h
         tokenize_format.h
