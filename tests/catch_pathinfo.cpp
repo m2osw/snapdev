@@ -208,7 +208,7 @@ CATCH_TEST_CASE("pathinfo_replace_suffix", "[filename][pathinfo]")
 
 CATCH_TEST_CASE("pathinfo_canonicalize", "[filename][pathinfo]")
 {
-    CATCH_START_SECTION("pathinfo_canonicalize: canonicalize paths")
+    CATCH_START_SECTION("pathinfo_canonicalize: canonicalize 2-segment paths")
     {
         char const * to_canonicalize[] =
         {
@@ -218,6 +218,8 @@ CATCH_TEST_CASE("pathinfo_canonicalize", "[filename][pathinfo]")
 
             "/full/path", "", "/full/path",
             "///full//path/", "", "/full/path",
+            "///full//path/", "and/more", "/full/path/and/more",
+            "///full//path/", "/and/much/more/", "/full/path/and/much/more",
 
             "relative///path", "and.this", "relative/path/and.this",
             "relative///path/", "and.this", "relative/path/and.this",
@@ -231,6 +233,36 @@ CATCH_TEST_CASE("pathinfo_canonicalize", "[filename][pathinfo]")
             CATCH_REQUIRE(snapdev::pathinfo::canonicalize(
                       to_canonicalize[idx + 0]
                     , to_canonicalize[idx + 1]) == to_canonicalize[idx + 2]);
+        }
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("pathinfo_canonicalize: canonicalize 3-segment paths")
+    {
+        char const * to_canonicalize[] =
+        {
+            "", "", "", ".",
+
+            "/", "/", "/", "/",
+
+            "/full/path", "", "*.txt", "/full/path/*.txt",
+            "///full//path/", "", "", "/full/path",
+            "///full//path/", "and", "more", "/full/path/and/more",
+            "///full//path/", "", "/and/much/more/", "/full/path/and/much/more",
+
+            "relative///path", "and.this", "or.that", "relative/path/and.this/or.that",
+            "relative///path/", "and.this", "///or.that", "relative/path/and.this/or.that",
+            "relative///path", "/and.this", "or.that///", "relative/path/and.this/or.that",
+
+            "relative///with///", "///more-path///", "and/a/pattern/*.mp3", "relative/with/more-path/and/a/pattern/*.mp3",
+        };
+
+        for(std::size_t idx(0); idx < std::size(to_canonicalize) / 4; idx += 4)
+        {
+            CATCH_REQUIRE(snapdev::pathinfo::canonicalize(
+                      to_canonicalize[idx + 0]
+                    , to_canonicalize[idx + 1]
+                    , to_canonicalize[idx + 2]) == to_canonicalize[idx + 3]);
         }
     }
     CATCH_END_SECTION()

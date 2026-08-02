@@ -422,7 +422,9 @@ private:
  * not work correctly and your mutex may get initialized after you hit
  * your `cppthread::guard` statement (i.e. your g_mutex must be a pointer
  * that you allocate the first time you use it and to make that thread
- * safe you need to first lock the `g_system_mutex`).
+ * safe you need to first lock the `g_system_mutex`). Note: a static
+ * variable is also safe and will automatically be released when exiting
+ * the application.
  *
  * \code
  *     cppthread::mutex g_mutex;
@@ -498,7 +500,6 @@ enum class glob_to_list_flag_t
  * support (environment variables, ~user, arithmetic, splitting, unquoting).
  *
  * \tparam C  The type of the container where to add the filenames.
- * \tparam T  The type used for the filenames (C<T>).
  */
 template<typename C>
 class glob_to_list
@@ -548,16 +549,53 @@ public:
         //
         std::string pattern;
         std::string directory;
-        std::string::size_type const pos(path.rfind('/'));
-        if(pos == std::string::npos)
+
+        std::vector<std::string> segments;
+        snapdev::tokenize_string(segments, path, "/", true);
+        bool found_pattern(false);
+        for(std::size_t i(0); i < segments.size() - 1; ++i)
         {
-            directory = ".";
-            pattern = path;
+            if(found_pattern || pathinfo::has_pattern(segments[i]))
+            {
+                found_pattern = true;
+                if(!pattern.empty())
+                {
+                    pattern += '/';
+                }
+                pattern += segments[i];
+            }
+            else
+            {
+                if(!directory.empty())
+                {
+                    directory += '/';
+                }
+                directory += segments[i];
+            }
         }
-        else
+        if(!segments.empty())
         {
-            directory = path.substr(0, pos);
-            pattern = path.substr(pos + 1);
+            if(!pattern.empty())
+            {
+                pattern += '/';
+            }
+            pattern += segments.back();
+        }
+        bool const is_root(pathinfo::is_absolute(path));
+        if(directory.empty())
+        {
+            if(is_root)
+            {
+                directory = "/";
+            }
+            else
+            {
+                directory = ".";
+            }
+        }
+        else if(is_root)
+        {
+            directory = '/' + directory;
         }
 
         if(pattern == "...")

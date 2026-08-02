@@ -71,7 +71,7 @@ namespace pathinfo
  *
  * \return true if \p path start with a '/'.
  */
-inline bool is_absolute(char const * path)
+inline bool is_absolute(char const * path) [[gnu::nonnull(1)]]
 {
     return *path == '/';
 }
@@ -608,46 +608,57 @@ inline std::string relative_path(std::string const & base, std::string const & p
 }
 
 
-/** \brief Canonicalize a path and filename.
+/** \brief Canonicalize a set of segments.
  *
- * This function concatenates \p path and \p filename with a "/" in between
- * and then it canonicalize the result.
+ * This function concatenates each \p segments "/" in between and then it
+ * canonicalize the result.
  *
  * The canonicalization means that the resulting path will:
  *
- * \li not include more than one "/" between two names,
+ * \li not include more than one "/" between two segments,
  * \li not include any "." unless the result would otherwise be the empty
- *     string then "." is returned instead,
- * \li not include a ".." preceded by a name other than ".."
+ *     string then "." by itself is returned,
+ * \li not include a ".." preceded by a name other than "..".
  *
- * The \p filename parameter can be the empty string.
+ * Any of the \p segments parameters can be an empty string in which case
+ * it is ignored.
+ *
+ * If the first non-empty \p segments starts with a "/", then the path is
+ * considered an absolute path. That means the result will be an
+ * absolute path.
  *
  * \note
  * The removal of the ".." is not verifying whether the path is valid on
  * the current file system. If you want to do such a verification, use the
- * system realpath() function instead.
+ * realpath() function instead. Note that realpath() can fail for very
+ * long paths. This canonicalization function does not have a length limit.
  *
- * \param[in] path  The introducer path.
- * \param[in] filename  A filename to happen to the path.
+ * \param[in] paths  Various paths and an optional filename to append together.
  *
- * \return The path and filename canonicalized.
+ * \return The concatenated segments canonicalized.
  */
-inline std::string canonicalize(
-      std::string const & path
-    , std::string const & filename)
+template<typename... T>
+std::string canonicalize(T const & ... paths)
 {
-    bool const is_root(
-        path.empty()
-            ? (filename.empty()
-                ? false
-                : is_absolute(filename))
-            : is_absolute(path));
+    std::vector<std::string> const inputs{ std::string(paths)... };
+
+    bool is_root(false);
+    for(auto const & p : inputs)
+    {
+        if(!p.empty())
+        {
+            is_root = is_absolute(p);
+            break;
+        }
+    }
 
     // break up the path & filename as segments
     //
     std::vector<std::string> segments;
-    snapdev::tokenize_string(segments, path, "/", true);
-    snapdev::tokenize_string(segments, filename, "/", true);
+    for(auto const & p : inputs)
+    {
+        snapdev::tokenize_string(segments, p, "/", true);
+    }
 
     // remove ".", they are not useful
     //
@@ -711,7 +722,7 @@ inline std::string canonicalize(
  * \param[in] braces  Whether the braces (`{`) are accepted. This is a
  * GNU extension so by default we do not accept braces.
  * \param[in] extended  Whether the extended patterns are supported. GNU
- * supports `#(pattern-list)` where `#` is one of `?*+@!`.
+ * supports `#(pattern-list)` where `#` is one of `+@!`.
  *
  * \return true if \p path includes one of the glob() metacharacters.
  */
