@@ -395,6 +395,14 @@ constexpr bool compare_switch_string(char const * s)
 }
 
 
+template<detail::static_switch_string S>
+constexpr bool compare_switch_string(std::string const & s)
+{
+    // Deduct size minus 1 to avoid the '\0'
+    return detail::compare_switch_string_impl<S>(s.c_str(), std::make_index_sequence<sizeof(S.data) - 1>{});
+}
+
+
 /** \brief This is the same as the compare_switch_string() function in uppercase.
  *
  * Assuming your input string may be upper or lower case, this function
@@ -415,6 +423,13 @@ constexpr bool compare_upper_switch_string(char const * s)
 {
     // Deduct size minus 1 to avoid the '\0'
     return detail::compare_upper_switch_string_impl<S>(s, std::make_index_sequence<sizeof(S.data) - 1>{});
+}
+
+
+template<detail::static_upper_switch_string S>
+constexpr bool compare_upper_switch_string(std::string const & s)
+{
+    return detail::compare_upper_switch_string_impl<S>(s.c_str(), std::make_index_sequence<sizeof(S.data) - 1>{});
 }
 
 

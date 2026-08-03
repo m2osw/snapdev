@@ -36,7 +36,7 @@ install(
         case_insensitive_string.h
         chownnm.h
         clocale.h
-        compare_switch_strings.h
+        compare_switch_string.h
         concat_strings.h
         empty_set_intersection.h
         enumerate.h
