@@ -91,9 +91,15 @@ public:
     void run()
     {
         snapdev::lockfile lock(f_filename, f_operation);
-        CATCH_REQUIRE_FALSE(lock.is_locked());
+        if(lock.is_locked())
+        {
+            throw std::runtime_error("file is locked on creation.");
+        }
         lock.lock();
-        CATCH_REQUIRE(lock.is_locked());
+        if(!lock.is_locked())
+        {
+            throw std::runtime_error("file could not be locked.");
+        }
 
         std::lock_guard<std::mutex> guard(f_mutex);
         f_running = false;
@@ -102,15 +108,24 @@ public:
     void run_try_lock(int try_lock)
     {
         snapdev::lockfile lock(f_filename, f_operation);
-        CATCH_REQUIRE_FALSE(lock.is_locked());
+        if(lock.is_locked())
+        {
+            throw std::runtime_error("file is locked on creation.");
+        }
         lock.try_lock();
         if(try_lock == 1)
         {
-            CATCH_REQUIRE(lock.is_locked());
+            if(!lock.is_locked())
+            {
+                throw std::runtime_error("file did not get locked on first try.");
+            }
         }
         else
         {
-            CATCH_REQUIRE_FALSE(lock.is_locked());
+            if(lock.is_locked())
+            {
+                throw std::runtime_error("file did get locked on further tries.");
+            }
         }
 
         std::lock_guard<std::mutex> guard(f_mutex);
