@@ -1,3 +1,9 @@
+snapdev (1.1.41.2~noble) noble; urgency=high
+
+  * Add missing #include for jammy.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 09 Aug 2026 11:00:05 -0700
+
 snapdev (1.1.41.1~noble) noble; urgency=high
 
   * Fixed the unused parameter error (only happens in release mode).
