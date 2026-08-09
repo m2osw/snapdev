@@ -1,3 +1,9 @@
+snapdev (1.1.41.3~noble) noble; urgency=high
+
+  * Bumped build version to rebuild on Launchpad.
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 09 Aug 2026 12:59:34 -0700
+
 snapdev (1.1.41.2~noble) noble; urgency=high
 
   * Add missing #include for jammy.
