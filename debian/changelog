@@ -1,8 +1,34 @@
+snapdev (1.1.41.1~noble) noble; urgency=high
+
+  * Fixed the unused parameter error (only happens in release mode).
+
+ -- Alexis Wilke <alexis@m2osw.com>  Sun, 24 Aug 2025 16:52:57 -0700
+
 snapdev (1.1.41.0~noble) noble; urgency=high
 
   * Added `vector_streambuf` to stream from the data of a vector.
   * Added a log using std::clog which we can capture in snaplogger.
   * Fixed/enhanced the doxygen file and output.
+  * Added `compare_switch_string`.
+  * Enhance the glob: supports patterns anywhere in the path.
+  * Enhance path info: the canonicalization supports any number of segments.
+  * Fixed a bug in the lockfile test and added a pointer_t.
+  * Made the getchar() work with a timeout.
+  * Added the to_string_literal for floats since we are at C++23 now.
+  * Added support for timespec in brs.
+  * Fixed bsr test using nanoseconds between 0 and 1M.
+  * Added random functions to the math library.
+  * Added quiet equal/not-equal compare of floating points.
+  * Added a string_literal_length function.
+  * Changed the is_string_literal to a conditional template.
+  * Added the is_nonnull() function.
+  * Added function that replaces variables within a string.
+  * Allow callback functions to return void.
+  * Added test to verify the priority of callback functions.
+  * Function to get user/group names from IDs.
+  * Added a memory streambuf.
+  * Added ability to read std::clog in snaplogger so here I write errors there.
+  * Various clean ups / documentation fixes.
 
  -- Alexis Wilke <alexis@m2osw.com>  Sun, 24 Aug 2025 16:52:57 -0700
 

@@ -56,26 +56,12 @@
 
 // self
 //
-//#include    "snapdev/join_strings.h"
-//#include    "snapdev/not_reached.h"
-//#include    "snapdev/raii_generic_deleter.h"
-//#include    "snapdev/reverse_cstring.h"
-//#include    "snapdev/tokenize_string.h"
+#include    "snapdev/not_used.h"
 
 
 // C++
 //
 #include    <stdexcept>
-//#include    <string>
-//#include    <vector>
-
-
-// C
-//
-//#include    <limits.h>
-//#include    <stdlib.h>
-//#include    <string.h>
-//#include    <unistd.h>
 
 
 
@@ -160,6 +146,8 @@ constexpr bool compare_switch_skip_one(char const * s, char c, ARGS ...args)
     {
         throw std::runtime_error("first letter invalid.");
     }
+#else
+    NOT_USED(c);
 #endif
     return compare_switch_chars(s + 1, args...);
 }
@@ -287,6 +275,8 @@ constexpr bool compare_upper_switch_skip_one(char const * s, char c, ARGS ...arg
     {
         throw std::runtime_error("first letter invalid.");
     }
+#else
+    NOT_USED(c);
 #endif
     return compare_upper_switch_chars(s + 1, args...);
 }
