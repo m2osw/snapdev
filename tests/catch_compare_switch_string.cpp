@@ -165,12 +165,12 @@ CATCH_TEST_CASE("compare_switch_string_errors", "[string][error]")
         CATCH_REQUIRE_THROWS_MATCHES(
                   snapdev::compare_switch_string<"QUIT">("KUIT")
                 , std::runtime_error
-                , Catch::Matchers::ExceptionMessage("first letter invalid."));
+                , Catch::Matchers::ExceptionMessage("first letter invalid: Q <-> KUIT."));
 
         CATCH_REQUIRE_THROWS_MATCHES(
                   snapdev::compare_upper_switch_string<"QUIT">("KUIT")
                 , std::runtime_error
-                , Catch::Matchers::ExceptionMessage("first letter invalid."));
+                , Catch::Matchers::ExceptionMessage("first letter invalid: Q <-> KUIT."));
 #else
       // in release, it thinks the strings are equal (not a bug)
       //

@@ -61,6 +61,7 @@
 
 // C++
 //
+#include    <sstream>
 #include    <stdexcept>
 #include    <utility>
 
@@ -145,7 +146,13 @@ constexpr bool compare_switch_skip_one(char const * s, char c, ARGS ...args)
 #ifdef _DEBUG
     if(*s != c)
     {
-        throw std::runtime_error("first letter invalid.");
+        std::stringstream ss;
+        ss << "first letter invalid: "
+           << c
+           << " <-> "
+           << s
+           << '.';
+        throw std::runtime_error(ss.str());
     }
 #else
     NOT_USED(c);
@@ -274,7 +281,13 @@ constexpr bool compare_upper_switch_skip_one(char const * s, char c, ARGS ...arg
 #ifdef _DEBUG
     if(*s != c)
     {
-        throw std::runtime_error("first letter invalid.");
+        std::stringstream ss;
+        ss << "first letter invalid: "
+           << c
+           << " <-> "
+           << s
+           << '.';
+        throw std::runtime_error(ss.str());
     }
 #else
     NOT_USED(c);
