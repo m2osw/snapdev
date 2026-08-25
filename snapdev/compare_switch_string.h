@@ -206,6 +206,13 @@ constexpr bool compare_switch_string_impl(char const * s, std::index_sequence<I.
 }
 
 
+template<static_switch_string S, std::size_t... I>
+constexpr bool compare_full_string_impl(char const * s, std::index_sequence<I...>)
+{
+    return compare_switch_chars(s, S.data[I]...);
+}
+
+
 
 /** \brief Compare the last character of input.
  *
@@ -353,6 +360,13 @@ constexpr bool compare_upper_switch_string_impl(char const * s, std::index_seque
 }
 
 
+template<static_upper_switch_string S, std::size_t... I>
+constexpr bool compare_upper_full_string_impl(char const * s, std::index_sequence<I...>)
+{
+    return compare_upper_switch_chars(s, S.data[I]...);
+}
+
+
 
 } // namespace detail
 
@@ -407,6 +421,22 @@ constexpr bool compare_switch_string(std::string const & s)
 }
 
 
+template<detail::static_switch_string S>
+constexpr bool compare_full_string(char const * s)
+{
+    // Deduct size minus 1 to avoid the '\0'
+    return detail::compare_full_string_impl<S>(s, std::make_index_sequence<sizeof(S.data) - 1>{});
+}
+
+
+template<detail::static_switch_string S>
+constexpr bool compare_full_string(std::string const & s)
+{
+    // Deduct size minus 1 to avoid the '\0'
+    return detail::compare_full_string_impl<S>(s.c_str(), std::make_index_sequence<sizeof(S.data) - 1>{});
+}
+
+
 /** \brief This is the same as the compare_switch_string() function in uppercase.
  *
  * Assuming your input string may be upper or lower case, this function
@@ -434,6 +464,21 @@ template<detail::static_upper_switch_string S>
 constexpr bool compare_upper_switch_string(std::string const & s)
 {
     return detail::compare_upper_switch_string_impl<S>(s.c_str(), std::make_index_sequence<sizeof(S.data) - 1>{});
+}
+
+
+template<detail::static_upper_switch_string S>
+constexpr bool compare_upper_full_string(char const * s)
+{
+    // Deduct size minus 1 to avoid the '\0'
+    return detail::compare_upper_full_string_impl<S>(s, std::make_index_sequence<sizeof(S.data) - 1>{});
+}
+
+
+template<detail::static_upper_switch_string S>
+constexpr bool compare_upper_full_string(std::string const & s)
+{
+    return detail::compare_upper_full_string_impl<S>(s.c_str(), std::make_index_sequence<sizeof(S.data) - 1>{});
 }
 
 
