@@ -115,6 +115,39 @@ char * wrap_nl_langinfo(nl_item item)
 
 
 
+CATCH_TEST_CASE("timespec_ex_basics", "[time]")
+{
+    CATCH_START_SECTION("timespec_ex_basics: minimum")
+    {
+        snapdev::timespec_ex a(snapdev::timespec_ex::min());
+
+        CATCH_REQUIRE(a.tv_sec == std::numeric_limits<decltype(a.tv_sec)>::min());
+        CATCH_REQUIRE(a.tv_nsec == 0);
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_basics: maximum")
+    {
+        snapdev::timespec_ex a(snapdev::timespec_ex::max());
+
+        CATCH_REQUIRE(a.tv_sec == std::numeric_limits<decltype(a.tv_sec)>::max());
+        CATCH_REQUIRE(a.tv_nsec == 999'999'999);
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_basics: time is in the future")
+    {
+        snapdev::timespec_ex a(snapdev::now());
+
+        CATCH_REQUIRE_FALSE(a.is_in_the_future());
+
+        a += static_cast<std::int64_t>(10'000'000'000); // +10s
+        CATCH_REQUIRE(a.is_in_the_future());
+    }
+    CATCH_END_SECTION()
+}
+
+
 CATCH_TEST_CASE("timespec_ex_math", "[time][math]")
 {
     CATCH_START_SECTION("timespec_ex_math: simple add")
@@ -560,6 +593,413 @@ CATCH_TEST_CASE("timespec_ex_math", "[time][math]")
         snapdev::timespec_ex const max_diff(0, 100L);
 
         CATCH_REQUIRE(diff < max_diff);
+    }
+    CATCH_END_SECTION()
+}
+
+
+CATCH_TEST_CASE("timespec_ex_tm", "[time]")
+{
+    CATCH_START_SECTION("timespec_ex_tm: tm is canonical")
+    {
+        for(int count(0); count < 1'000; ++count)
+        {
+            time_t const org(snapdev::random(-1'000'000LL, 2'000'000'000LL));
+
+            struct tm t;
+            gmtime_r(&org, &t);
+
+            // a brand new tm is always canonical
+            //
+            CATCH_REQUIRE(snapdev::is_canonical_tm(t));
+
+            // tweak second
+            //
+            struct tm sec(t);
+            sec.tm_sec += 100;
+            CATCH_REQUIRE_FALSE(snapdev::is_canonical_tm(sec));
+
+            // tweak minute
+            //
+            struct tm min(t);
+            min.tm_min += 100;
+            CATCH_REQUIRE_FALSE(snapdev::is_canonical_tm(min));
+
+            // tweak hour
+            //
+            struct tm hour(t);
+            hour.tm_hour += 100;
+            CATCH_REQUIRE_FALSE(snapdev::is_canonical_tm(hour));
+
+            // tweak mday
+            //
+            struct tm mday(t);
+            mday.tm_mday += 100;
+            CATCH_REQUIRE_FALSE(snapdev::is_canonical_tm(mday));
+
+            // tweak month
+            //
+            struct tm mon(t);
+            mon.tm_mon += 100;
+            CATCH_REQUIRE_FALSE(snapdev::is_canonical_tm(mon));
+
+            // tweak years, no effect
+            //
+            struct tm year(t);
+            year.tm_year += 100;
+            CATCH_REQUIRE(snapdev::is_canonical_tm(year));
+
+            // tweak wday, no effect
+            //
+            struct tm wday(t);
+            wday.tm_wday += 100;
+            CATCH_REQUIRE(snapdev::is_canonical_tm(wday));
+
+            // tweak yday, no effect
+            //
+            struct tm yday(t);
+            yday.tm_yday += 100;
+            CATCH_REQUIRE(snapdev::is_canonical_tm(yday));
+        }
+    }
+    CATCH_END_SECTION()
+
+    CATCH_START_SECTION("timespec_ex_tm: compare tm")
+    {
+        for(int count(0); count < 1'000; ++count)
+        {
+            time_t const a(snapdev::random(-1'000'000LL, 2'000'000'000LL));
+            time_t const b(snapdev::random(-1'000'000LL, 2'000'000'000LL));
+
+            // canonical values
+            //
+            struct tm ta = {};
+            struct tm tb = {};
+
+            gmtime_r(&a, &ta);
+            gmtime_r(&b, &tb);
+
+            // tweak second
+            //
+            struct tm ta_sec(ta);
+            ta_sec.tm_sec += 100;
+            struct tm tb_sec(tb);
+            tb_sec.tm_sec += 100;
+
+            // tweak minute
+            //
+            struct tm ta_min(ta);
+            ta_min.tm_min += 100;
+            struct tm tb_min(tb);
+            tb_min.tm_min += 100;
+
+            // tweak hour
+            //
+            struct tm ta_hour(ta);
+            ta_hour.tm_hour += 100;
+            struct tm tb_hour(tb);
+            tb_hour.tm_hour += 100;
+
+            // tweak mday
+            //
+            struct tm ta_mday(ta);
+            ta_mday.tm_mday += 100;
+            struct tm tb_mday(tb);
+            tb_mday.tm_mday += 100;
+
+            // tweak month
+            //
+            struct tm ta_mon(ta);
+            ta_mon.tm_mon += 100;
+            struct tm tb_mon(tb);
+            tb_mon.tm_mon += 100;
+
+            if(a < b)
+            {
+                CATCH_REQUIRE(snapdev::compare_tm(ta, tb) == -1);
+                CATCH_REQUIRE(snapdev::compare_tm(ta_sec, tb_sec) == -1);
+                CATCH_REQUIRE(snapdev::compare_tm(ta_min, tb_min) == -1);
+                CATCH_REQUIRE(snapdev::compare_tm(ta_hour, tb_hour) == -1);
+                CATCH_REQUIRE(snapdev::compare_tm(ta_mday, tb_mday) == -1);
+                CATCH_REQUIRE(snapdev::compare_tm(ta_mon, tb_mon) == -1);
+
+                CATCH_REQUIRE(ta < tb);
+                CATCH_REQUIRE(ta <= tb);
+                CATCH_REQUIRE_FALSE(ta > tb);
+                CATCH_REQUIRE_FALSE(ta >= tb);
+                CATCH_REQUIRE_FALSE(ta == tb);
+                CATCH_REQUIRE(ta != tb);
+            }
+            else if(a > b)
+            {
+                CATCH_REQUIRE(snapdev::compare_tm(ta, tb) == 1);
+                CATCH_REQUIRE(snapdev::compare_tm(ta_sec, tb_sec) == 1);
+                CATCH_REQUIRE(snapdev::compare_tm(ta_min, tb_min) == 1);
+                CATCH_REQUIRE(snapdev::compare_tm(ta_hour, tb_hour) == 1);
+                CATCH_REQUIRE(snapdev::compare_tm(ta_mday, tb_mday) == 1);
+                CATCH_REQUIRE(snapdev::compare_tm(ta_mon, tb_mon) == 1);
+
+                CATCH_REQUIRE_FALSE(ta < tb);
+                CATCH_REQUIRE_FALSE(ta <= tb);
+                CATCH_REQUIRE(ta > tb);
+                CATCH_REQUIRE(ta >= tb);
+                CATCH_REQUIRE_FALSE(ta == tb);
+                CATCH_REQUIRE(ta != tb);
+            }
+            // else -- we handle equality below anyway...
+
+            // verify equality
+            //
+            CATCH_REQUIRE(snapdev::compare_tm(ta, ta) == 0);
+            CATCH_REQUIRE(snapdev::compare_tm(ta_sec, ta_sec) == 0);
+            CATCH_REQUIRE(snapdev::compare_tm(ta_min, ta_min) == 0);
+            CATCH_REQUIRE(snapdev::compare_tm(ta_hour, ta_hour) == 0);
+            CATCH_REQUIRE(snapdev::compare_tm(ta_mday, ta_mday) == 0);
+            CATCH_REQUIRE(snapdev::compare_tm(ta_mon, ta_mon) == 0);
+
+            CATCH_REQUIRE_FALSE(ta < ta);
+            CATCH_REQUIRE(ta <= ta);
+            CATCH_REQUIRE_FALSE(ta > ta);
+            CATCH_REQUIRE(ta >= ta);
+            CATCH_REQUIRE(ta == ta);
+            CATCH_REQUIRE_FALSE(ta != ta);
+
+            CATCH_REQUIRE(snapdev::compare_tm(tb, tb) == 0);
+            CATCH_REQUIRE(snapdev::compare_tm(tb_sec, tb_sec) == 0);
+            CATCH_REQUIRE(snapdev::compare_tm(tb_min, tb_min) == 0);
+            CATCH_REQUIRE(snapdev::compare_tm(tb_hour, tb_hour) == 0);
+            CATCH_REQUIRE(snapdev::compare_tm(tb_mday, tb_mday) == 0);
+            CATCH_REQUIRE(snapdev::compare_tm(tb_mon, tb_mon) == 0);
+
+            CATCH_REQUIRE_FALSE(tb < tb);
+            CATCH_REQUIRE(tb <= tb);
+            CATCH_REQUIRE_FALSE(tb > tb);
+            CATCH_REQUIRE(tb >= tb);
+            CATCH_REQUIRE(tb == tb);
+            CATCH_REQUIRE_FALSE(tb != tb);
+
+            // to get full coverage, we need to also make sure the
+            // seconds, minutes, hours, etc. are equal on both sides
+            //
+            {
+                tm tb_same(tb);
+
+                auto compare = [a, ta, &tb_same]()
+                {
+                    tm cb(tb_same);
+                    time_t const b_same(timegm(&cb));
+                    if(a < b_same)
+                    {
+                        CATCH_REQUIRE(snapdev::compare_tm(ta, tb_same, false) == -1);
+
+                        CATCH_REQUIRE(ta < tb_same);
+                        CATCH_REQUIRE(a < tb_same);
+                        CATCH_REQUIRE(ta < b_same);
+                        CATCH_REQUIRE(snapdev::timespec_ex(ta) < tb_same);
+                        CATCH_REQUIRE(ta < snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE(ta <= tb_same);
+                        CATCH_REQUIRE(a <= tb_same);
+                        CATCH_REQUIRE(ta <= b_same);
+                        CATCH_REQUIRE(snapdev::timespec_ex(ta) <= tb_same);
+                        CATCH_REQUIRE(ta <= snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE_FALSE(ta > tb_same);
+                        CATCH_REQUIRE_FALSE(a > tb_same);
+                        CATCH_REQUIRE_FALSE(ta > b_same);
+                        CATCH_REQUIRE_FALSE(snapdev::timespec_ex(ta) > tb_same);
+                        CATCH_REQUIRE_FALSE(ta > snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE_FALSE(ta >= tb_same);
+                        CATCH_REQUIRE_FALSE(a >= tb_same);
+                        CATCH_REQUIRE_FALSE(ta >= b_same);
+                        CATCH_REQUIRE_FALSE(snapdev::timespec_ex(ta) >= tb_same);
+                        CATCH_REQUIRE_FALSE(ta >= snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE_FALSE(ta == tb_same);
+                        CATCH_REQUIRE_FALSE(a == tb_same);
+                        CATCH_REQUIRE_FALSE(ta == b_same);
+                        CATCH_REQUIRE_FALSE(snapdev::timespec_ex(ta) == tb_same);
+                        CATCH_REQUIRE_FALSE(ta == snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE(ta != tb_same);
+                        CATCH_REQUIRE(a != tb_same);
+                        CATCH_REQUIRE(ta != b_same);
+                        CATCH_REQUIRE(snapdev::timespec_ex(ta) != tb_same);
+                        CATCH_REQUIRE(ta != snapdev::timespec_ex(tb_same));
+                    }
+                    else if(a > b_same)
+                    {
+                        CATCH_REQUIRE(snapdev::compare_tm(ta, tb_same, false) == 1);
+
+                        CATCH_REQUIRE_FALSE(ta < tb_same);
+                        CATCH_REQUIRE_FALSE(a < tb_same);
+                        CATCH_REQUIRE_FALSE(ta < b_same);
+                        CATCH_REQUIRE_FALSE(snapdev::timespec_ex(ta) < tb_same);
+                        CATCH_REQUIRE_FALSE(ta < snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE_FALSE(ta <= tb_same);
+                        CATCH_REQUIRE_FALSE(a <= tb_same);
+                        CATCH_REQUIRE_FALSE(ta <= b_same);
+                        CATCH_REQUIRE_FALSE(snapdev::timespec_ex(ta) <= tb_same);
+                        CATCH_REQUIRE_FALSE(ta <= snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE(ta > tb_same);
+                        CATCH_REQUIRE(a > tb_same);
+                        CATCH_REQUIRE(ta > b_same);
+                        CATCH_REQUIRE(snapdev::timespec_ex(ta) > tb_same);
+                        CATCH_REQUIRE(ta > snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE(ta >= tb_same);
+                        CATCH_REQUIRE(a >= tb_same);
+                        CATCH_REQUIRE(ta >= b_same);
+                        CATCH_REQUIRE(snapdev::timespec_ex(ta) >= tb_same);
+                        CATCH_REQUIRE(ta >= snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE_FALSE(ta == tb_same);
+                        CATCH_REQUIRE_FALSE(a == tb_same);
+                        CATCH_REQUIRE_FALSE(ta == b_same);
+                        CATCH_REQUIRE_FALSE(snapdev::timespec_ex(ta) == tb_same);
+                        CATCH_REQUIRE_FALSE(ta == snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE(ta != tb_same);
+                        CATCH_REQUIRE(a != tb_same);
+                        CATCH_REQUIRE(ta != b_same);
+                        CATCH_REQUIRE(snapdev::timespec_ex(ta) != tb_same);
+                        CATCH_REQUIRE(ta != snapdev::timespec_ex(tb_same));
+                    }
+                    else
+                    {
+                        CATCH_REQUIRE(snapdev::compare_tm(ta, tb_same, false) == 0);
+
+                        CATCH_REQUIRE_FALSE(ta < tb_same);
+                        CATCH_REQUIRE_FALSE(a < tb_same);
+                        CATCH_REQUIRE_FALSE(ta < b_same);
+                        CATCH_REQUIRE_FALSE(snapdev::timespec_ex(ta) < tb_same);
+                        CATCH_REQUIRE_FALSE(ta < snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE(ta <= tb_same);
+                        CATCH_REQUIRE(a <= tb_same);
+                        CATCH_REQUIRE(ta <= b_same);
+                        CATCH_REQUIRE(snapdev::timespec_ex(ta) <= tb_same);
+                        CATCH_REQUIRE(ta <= snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE_FALSE(ta > tb_same);
+                        CATCH_REQUIRE_FALSE(a > tb_same);
+                        CATCH_REQUIRE_FALSE(ta > b_same);
+                        CATCH_REQUIRE_FALSE(snapdev::timespec_ex(ta) > tb_same);
+                        CATCH_REQUIRE_FALSE(ta > snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE(ta >= tb_same);
+                        CATCH_REQUIRE(a >= tb_same);
+                        CATCH_REQUIRE(ta >= b_same);
+                        CATCH_REQUIRE(snapdev::timespec_ex(ta) >= tb_same);
+                        CATCH_REQUIRE(ta >= snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE(ta == tb_same);
+                        CATCH_REQUIRE(a == tb_same);
+                        CATCH_REQUIRE(ta == b_same);
+                        CATCH_REQUIRE(snapdev::timespec_ex(ta) == tb_same);
+                        CATCH_REQUIRE(ta == snapdev::timespec_ex(tb_same));
+
+                        CATCH_REQUIRE_FALSE(ta != tb_same);
+                        CATCH_REQUIRE_FALSE(a != tb_same);
+                        CATCH_REQUIRE_FALSE(ta != b_same);
+                        CATCH_REQUIRE_FALSE(snapdev::timespec_ex(ta) != tb_same);
+                        CATCH_REQUIRE_FALSE(ta != snapdev::timespec_ex(tb_same));
+                    }
+                };
+
+                tb_same.tm_sec = ta.tm_sec;
+                compare();
+                tb_same.tm_min = ta.tm_min;
+                compare();
+                tb_same.tm_hour = ta.tm_hour;
+                compare();
+                tb_same.tm_mday = ta.tm_mday;
+                compare();
+                tb_same.tm_mon = ta.tm_mon;
+                compare();
+                tb_same.tm_year = ta.tm_year;
+                compare();
+            }
+
+            // same with the largest value equal first
+            //
+            // note that we have to make sure mday is not too large because
+            // here we first change the month, then mday so it could go over
+            // (as far as canonicalization is concerned and its important
+            // to make sure the test is a full coverage test)
+            {
+                tm ta_same(ta);
+                tm tb_same(tb);
+
+                if(ta_same.tm_mday > 28 || tb_same.tm_mday > 28)
+                {
+                    ta_same.tm_mday = 15;
+                    tb_same.tm_mday = 15;
+                }
+
+                time_t const a_same(timegm(&ta_same));
+
+                auto compare = [a_same, ta_same, &tb_same]()
+                {
+                    CATCH_REQUIRE(snapdev::is_canonical_tm(ta_same));
+                    CATCH_REQUIRE(snapdev::is_canonical_tm(tb_same));
+
+                    tm cb(tb_same);
+                    time_t const b_same(timegm(&cb));
+
+                    if(a_same < b_same)
+                    {
+                        CATCH_REQUIRE(snapdev::compare_tm(ta_same, tb_same, false) == -1);
+
+                        CATCH_REQUIRE(ta_same < tb_same);
+                        CATCH_REQUIRE(ta_same <= tb_same);
+                        CATCH_REQUIRE_FALSE(ta_same > tb_same);
+                        CATCH_REQUIRE_FALSE(ta_same >= tb_same);
+                        CATCH_REQUIRE_FALSE(ta_same == tb_same);
+                        CATCH_REQUIRE(ta_same != tb_same);
+                    }
+                    else if(a_same > b_same)
+                    {
+                        CATCH_REQUIRE(snapdev::compare_tm(ta_same, tb_same, false) == 1);
+
+                        CATCH_REQUIRE_FALSE(ta_same < tb_same);
+                        CATCH_REQUIRE_FALSE(ta_same <= tb_same);
+                        CATCH_REQUIRE(ta_same > tb_same);
+                        CATCH_REQUIRE(ta_same >= tb_same);
+                        CATCH_REQUIRE_FALSE(ta_same == tb_same);
+                        CATCH_REQUIRE(ta_same != tb_same);
+                    }
+                    else
+                    {
+                        CATCH_REQUIRE(snapdev::compare_tm(ta_same, tb_same, false) == 0);
+
+                        CATCH_REQUIRE_FALSE(ta_same < tb_same);
+                        CATCH_REQUIRE(ta_same <= tb_same);
+                        CATCH_REQUIRE_FALSE(ta_same > tb_same);
+                        CATCH_REQUIRE(ta_same >= tb_same);
+                        CATCH_REQUIRE(ta_same == tb_same);
+                        CATCH_REQUIRE_FALSE(ta_same != tb_same);
+                    }
+                };
+
+                tb_same.tm_year = ta_same.tm_year;
+                compare();
+                tb_same.tm_mon = ta_same.tm_mon;
+                compare();
+                tb_same.tm_mday = ta_same.tm_mday;
+                compare();
+                tb_same.tm_hour = ta_same.tm_hour;
+                compare();
+                tb_same.tm_min = ta_same.tm_min;
+                compare();
+                tb_same.tm_sec = ta_same.tm_sec;
+                compare();
+            }
+
+        }
     }
     CATCH_END_SECTION()
 }

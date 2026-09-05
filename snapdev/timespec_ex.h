@@ -32,6 +32,7 @@
 //
 #include    <snapdev/join_strings.h>
 #include    <snapdev/math.h>
+#include    <snapdev/timestamp.h>
 #include    <snapdev/tokenize_format.h>
 
 
@@ -77,11 +78,13 @@ typedef char *(nl_langinfo_func_t)(nl_item item);
 namespace snapdev
 {
 
+DECLARE_LOGIC_ERROR(timespec_ex_logic_error); // LCOV_EXCL_LINE
+
 DECLARE_MAIN_EXCEPTION(timespec_ex_exception);
 
 DECLARE_EXCEPTION(timespec_ex_exception, clock_error); // LCOV_EXCL_LINE
-DECLARE_EXCEPTION(timespec_ex_exception, syntax_error);
 DECLARE_EXCEPTION(timespec_ex_exception, overflow);
+DECLARE_EXCEPTION(timespec_ex_exception, syntax_error);
 
 
 /** \brief Mutex used to allocate the ostream index.
@@ -294,7 +297,7 @@ public:
      *
      * \param[in] t  The tm structure to convert to this timespec_ex.
      */
-    timespec_ex(tm const & t)
+    timespec_ex(std::tm const & t)
     {
         from_tm(t);
     }
@@ -401,7 +404,7 @@ public:
      *
      * \return A reference to this object.
      */
-    timespec_ex & operator = (tm const & t)
+    timespec_ex & operator = (std::tm const & t)
     {
         from_tm(t);
         return *this;
@@ -790,8 +793,8 @@ public:
     template<nl_langinfo_func_t nl_langinfo_wrapper = nl_langinfo>
     std::string to_string(std::string const & format = std::string(), bool use_localtime = false) const
     {
-        struct tm date_and_time = {};
-        struct tm * ptr(nullptr);
+        std::tm date_and_time = {};
+        std::tm * ptr(nullptr);
         if(use_localtime)
         {
             ptr = localtime_r(&tv_sec, &date_and_time);
@@ -1029,7 +1032,7 @@ public:
             throw libexcept::fixme("the from_string() %N extension is not yet implemented.");
         }
 
-        struct tm t;
+        std::tm t;
         strptime(s.c_str(), format.c_str(), &t);
         from_tm(t);
     }
@@ -1043,9 +1046,9 @@ public:
      *
      * \param[in] t  The tm to convert to this timespec_ex.
      */
-    void from_tm(tm const & t)
+    void from_tm(std::tm const & t)
     {
-        tm copy(t);
+        std::tm copy(t);
         tv_sec = timegm(&copy);
         tv_nsec = 0;
     }
@@ -1156,14 +1159,11 @@ public:
      *
      * \return negative, 0, or positive depending on the order between
      *         \p lhs and \p rhs.
+     *
+     * \sa operator <=> ()
      */
     int compare(timespec_ex const & rhs) const
     {
-        // see operator <=> ... catch2 seems to not accept these just yet
-        //return tv_sec == rhs.tv_sec
-        //            ? tv_nsec <=> rhs.tv_nsec
-        //            : tv_sec <=> rhs.tv_sec;
-
         if(tv_sec == rhs.tv_sec)
         {
             return tv_nsec == rhs.tv_nsec
@@ -1385,13 +1385,33 @@ public:
     }
 
 
-#if 0
-    // it looks like catch is not quite ready for this one
-    auto operator <=> (timespec_ex const & t) const
+    /** \brief The compare operator.
+     *
+     * This operator allows you to get a strong ordering instead of a bool
+     * from one of the other six comparison operators.
+     *
+     * \param[in] t  The other timespec_ex to compare against
+     *
+     * \return equal, less, or greater as a strong ordering.
+     */
+    std::strong_ordering operator <=> (timespec_ex const & t) const
     {
-        return compare(t);
+        switch(compare(t))
+        {
+        case 0:
+            return std::strong_ordering::equal;
+
+        case -1:
+            return std::strong_ordering::less;
+
+        case 1:
+            return std::strong_ordering::greater;
+
+        default:                                                                                                  // LCOV_EXCL_LINE
+            throw snapdev::timespec_ex_logic_error("snapdev::timespec_ex::compare() return an unexpected value"); // LCOV_EXCL_LINE
+
+        }
     }
-#endif
 
     /** \brief Compare whether the two timespec_ex are equal.
      *
@@ -1766,6 +1786,118 @@ inline _setremovetrailingzeroes setremovetrailingzeroes(bool remove_trailing_zer
 }
 
 
+/** \brief Check whether a tm structure is canonical.
+ *
+ * A tm structure may or may not be 100% canonical. To compare two tm
+ * structures and determine whether they represent the same time, they
+ * need to be canonical.
+ *
+ * \warning
+ * The `tm_wday` and `tm_yday` fields are ignored.
+ *
+ * \param[in] t  The tm structure to check.
+ *
+ * \return true if the structure is considered canonical.
+ */
+inline bool is_canonical_tm(std::tm const & t)
+{
+    return static_cast<unsigned int>(t.tm_sec) < 61    // when we add a second, we may have a day with one hour of 60 seconds...
+        && static_cast<unsigned int>(t.tm_min) < 60
+        && static_cast<unsigned int>(t.tm_hour) < 24
+        && static_cast<unsigned int>(t.tm_mon) < 12
+        && t.tm_mday >= 1
+        && t.tm_mday <= unix_timestamp_month_days(t.tm_year + 1900, t.tm_mon + 1);
+}
+
+
+/** \brief Compare two struct tm against each other.
+ *
+ * The function compares the two time structures and quickly determine
+ * which one is the largest or whether the two are equal.
+ *
+ * By default, the function compares the `tm_isdst` field. You can ignore
+ * that field using the \p compare_isdst parameter and setting it to false.
+ * Note that in most likelihood you probably do not want to compare that
+ * field since in itself it is not useful. However, if you have a date
+ * which ignores standard time and one that does not, they may not be
+ * comparable as is.
+ *
+ * \exception not_canonical
+ * The function verifies that the structure is canonical. In other words,
+ * that the values were not modified. For example, `a.tm_hour += 24` is
+ * considered valid and represents the following day, but the function
+ * does not want to do additional conversions.
+ *
+ * \return 0 if the two structures are equal,
+ *         +1 if a is larger than b,
+ *         -1 if a is smaller than b
+ */
+inline int compare_tm(std::tm const & a, tm const & b, bool compare_isdst = true)
+{
+    if(!is_canonical_tm(a)
+    || !is_canonical_tm(b))
+    {
+        // make copies and canonicalize first
+        //
+        struct tm ca(a);
+        struct tm cb(b);
+
+        time_t const l(timegm(&ca));
+        time_t const r(timegm(&cb));
+        int diff(l - r);
+        if(diff != 0)
+        {
+            return diff < 0 ? -1 : 1;
+        }
+    }
+    else
+    {
+        int diff(a.tm_year - b.tm_year);
+        if(diff != 0)
+        {
+            return diff < 0 ? -1 : 1;
+        }
+        diff = a.tm_mon - b.tm_mon;
+        if(diff != 0)
+        {
+            return diff < 0 ? -1 : 1;
+        }
+        diff = a.tm_mday - b.tm_mday;
+        if(diff != 0)
+        {
+            return diff < 0 ? -1 : 1;
+        }
+        diff = a.tm_hour - b.tm_hour;
+        if(diff != 0)
+        {
+            return diff < 0 ? -1 : 1;
+        }
+        diff = a.tm_min - b.tm_min;
+        if(diff != 0)
+        {
+            return diff < 0 ? -1 : 1;
+        }
+        diff = a.tm_sec - b.tm_sec;
+        if(diff != 0)
+        {
+            return diff < 0 ? -1 : 1;
+        }
+    }
+
+    if(!compare_isdst)
+    {
+        return 0;
+    }
+
+    // the tm_isdst should be 0 or 1, here we canonicalize the value
+    // since 0 means off and any other value means on
+    //
+    int const ld(a.tm_isdst == 0 ? 0 : 1);
+    int const rd(b.tm_isdst == 0 ? 0 : 1);
+    return ld - rd;
+}
+
+
 
 } // namespace snapdev
 
@@ -1842,6 +1974,93 @@ std::basic_ostream<_CharT, _Traits> & operator << (std::basic_ostream<_CharT, _T
     snapdev::timespec_ex u(t);
     return os << u.to_timestamp(remove_trailing_zeroes);
 }
+
+
+inline bool operator == (std::tm const & a, std::tm const & b)
+{
+    return snapdev::compare_tm(a, b) == 0;
+}
+
+
+inline bool operator == (std::tm const & a, time_t b)
+{
+    std::tm tb = {};
+    gmtime_r(&b, &tb);
+    return snapdev::compare_tm(a, tb) == 0;
+}
+
+
+inline bool operator == (time_t a, std::tm const & b)
+{
+    std::tm ta = {};
+    gmtime_r(&a, &ta);
+    return snapdev::compare_tm(ta, b) == 0;
+}
+
+
+inline bool operator == (std::tm const & a, snapdev::timespec_ex const & b)
+{
+    snapdev::timespec_ex ta(a);
+    return ta == b;
+}
+
+
+inline bool operator == (snapdev::timespec_ex const & a, std::tm const & b)
+{
+    snapdev::timespec_ex tb(b);
+    return a == tb;
+}
+
+
+inline std::strong_ordering operator <=> (std::tm const & a, std::tm const & b)
+{
+    switch(snapdev::compare_tm(a, b))
+    {
+    case 0:
+        return std::strong_ordering::equal;
+
+    case -1:
+        return std::strong_ordering::less;
+
+    case 1:
+        return std::strong_ordering::greater;
+
+    default:                                                                                        // LCOV_EXCL_LINE
+        throw snapdev::timespec_ex_logic_error("snapdev::compare_tm() return an unexpected value"); // LCOV_EXCL_LINE
+
+    }
+}
+
+
+inline std::strong_ordering operator <=> (std::tm const & a, time_t b)
+{
+    std::tm tb = {};
+    gmtime_r(&b, &tb);
+    return a <=> tb;
+}
+
+
+inline std::strong_ordering operator <=> (time_t a, std::tm const & b)
+{
+    std::tm ta = {};
+    gmtime_r(&a, &ta);
+    return ta <=> b;
+}
+
+
+inline std::strong_ordering operator <=> (std::tm const & a, snapdev::timespec_ex const & b)
+{
+    snapdev::timespec_ex ta(a);
+    return ta <=> b;
+}
+
+
+inline std::strong_ordering operator <=> (snapdev::timespec_ex const & a, std::tm const & b)
+{
+    snapdev::timespec_ex tb(b);
+    return a <=> tb;
+}
+
 
 
 // vim: ts=4 sw=4 et

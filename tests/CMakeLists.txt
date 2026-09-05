@@ -67,6 +67,7 @@ if(SnapCatch2_FOUND)
         catch_string_replace_variables.cpp
         catch_timed_getchar.cpp
         catch_timespec_ex.cpp
+        catch_timestamp.cpp
         catch_tokenize_format.cpp
         catch_tokenize_string.cpp
         catch_to_string_literal.cpp

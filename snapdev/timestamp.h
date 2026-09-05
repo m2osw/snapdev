@@ -33,6 +33,12 @@
  * a number of seconds at compile time.
  */
 
+// C++
+//
+#include    <ctime>
+
+
+
 namespace snapdev
 {
 
@@ -51,7 +57,7 @@ namespace snapdev
  *
  * \return 28 or 29 depending on whether the year is a leap year
  */
-constexpr time_t unix_timestamp_february_days(int year)
+constexpr int unix_timestamp_february_days(int year)
 {
     if(year % 400 == 0)
     {
@@ -69,6 +75,33 @@ constexpr time_t unix_timestamp_february_days(int year)
     }
 
     return 28LL;
+}
+
+
+/** \brief Determine the number of days in a month.
+ *
+ * This function returns the number of days in the specified month of
+ * the specified year. The number of days changes for February. In all
+ * other cases, the number is invariant.
+ *
+ * \param[in] year  The 4 digits year concerned.
+ * \param[in] month  The month (1 to 12).
+ *
+ * \return The number of days in that month for the specified year.
+ */
+constexpr int unix_timestamp_month_days(int year, int month)
+{
+    if(month == 2)
+    {
+        return unix_timestamp_february_days(year);
+    }
+    else
+    {
+        static constexpr signed char const month_days[12] = {
+            31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+        };
+        return month_days[month - 1];
+    }
 }
 
 
@@ -125,8 +158,8 @@ constexpr time_t unix_timestamp_year_days(int year, int month, int day)
  * The year is expected to be written as a 4 digit number (1998, 2012, etc.)
  *
  * Each number is expected to represent a valid date. If a number is out of
- * range, then the date is still computed. It will just represent a valid
- * date, just not exactly what you wrote down.
+ * range, then the date is still computed. It still represents a valid Unix
+ * timestamp, just not exactly what you wrote down.
  *
  * The math used in this function comes from a FreeBSD implementation of
  * (mktime)[http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap04.html#tag_04_15].
