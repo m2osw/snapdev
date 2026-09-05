@@ -36,6 +36,8 @@
 // C++
 //
 #include    <ctime>
+#include    <stdexcept>
+#include    <string>
 
 
 
@@ -59,6 +61,19 @@ namespace snapdev
  */
 constexpr int unix_timestamp_february_days(int year)
 {
+    // this is not compatible with gmtime() or timegm() so ignore it
+    //
+    //if(year <= 1752 || 1582)
+    //{
+    //    // before the updated Gregorian calendar, the Julian calendar used
+    //    // a really simple algorithm -- however, the US/UK did it in 1752
+    //    // only while many of the European countries did it in 1582
+    //    // so this is a complicated matter -- our tests assume that the
+    //    // Gregorian calendar was used since 1582
+    //    //
+    //    return year % 4 == 0 ? 29 : 28;
+    //}
+
     if(year % 400 == 0)
     {
         return 29LL;
@@ -91,12 +106,42 @@ constexpr int unix_timestamp_february_days(int year)
  */
 constexpr int unix_timestamp_month_days(int year, int month)
 {
+    if(month < 1 || month > 12)
+    {
+        throw std::logic_error(
+              "snapdev::unix_timestamp_month_days() called with "
+            + std::to_string(month)
+            + " which is not a valid month number.");
+    }
+
     if(month == 2)
     {
         return unix_timestamp_february_days(year);
     }
     else
     {
+        // at the moment I don't think this is useful
+        //
+        // anything between and before those dates should not really
+        // happen in our world (we don't work on historic events... and
+        // if you do you probably want your own date handling library)
+        //
+        //if((month == 9 && year == 1752)
+        //|| (month == 10 && year == 1582))
+        //{
+        //    // we cannot handle this nice one here:
+        //    //
+        //    // - the Gregorian calendar went in effect on Oct 1582 when
+        //    //   most of Europe skipped 10 days (Oct 5 to Oct 14 1582
+        //    //   do not officially exist)
+        //    // - The US and UK finally accepted the new Gregorian calendar
+        //    //   in 1752 and dropped days 3 to 13 in September to adjust
+        //    //   to the Gregorian calendar
+        //    //
+        //    throw std::logic_error(
+        //          "snapdev::unix_timestamp_mont_days() called with year 1752 and month of September. That month does not have a practical number of days.");
+        //}
+
         static constexpr signed char const month_days[12] = {
             31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
         };

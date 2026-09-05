@@ -94,7 +94,7 @@ CATCH_TEST_CASE("timestamp", "[time][math]")
 {
     CATCH_START_SECTION("timestamp: verify that the math is working as expected for February")
     {
-        // the Gregorian leap years were introduced around 1600
+        // the Gregorian leap years were introduced in Sept. 1752
         // where we started to see exceptions for the years dividable
         // by 100 (not a leap) or 400 (except those)
         //
@@ -170,6 +170,28 @@ CATCH_TEST_CASE("timestamp", "[time][math]")
             time_t const timestamp(snapdev::unix_timestamp(t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec));
 
             CATCH_REQUIRE(org == timestamp);
+        }
+    }
+    CATCH_END_SECTION()
+}
+
+
+CATCH_TEST_CASE("timestamp_error", "[time][error]")
+{
+    CATCH_START_SECTION("timestamp_error: verify that the month must be between 1 and 12 calling unix_timestamp_month_days()")
+    {
+        for(int month(-12); month <= 24; ++month)
+        {
+            if(month < 1 || month > 12)
+            {
+                CATCH_REQUIRE_THROWS_MATCHES(
+                          snapdev::unix_timestamp_month_days(2000, month)
+                        , std::logic_error
+                        , Catch::Matchers::ExceptionMessage(
+                                  "snapdev::unix_timestamp_month_days() called with "
+                                + std::to_string(month)
+                                + " which is not a valid month number."));
+            }
         }
     }
     CATCH_END_SECTION()
