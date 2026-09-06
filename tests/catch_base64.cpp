@@ -93,6 +93,48 @@ CATCH_TEST_CASE("base64", "[base64][string]")
         }
     }
     CATCH_END_SECTION()
+
+    CATCH_START_SECTION("base64: an empty string is valid and decodes as an empty buffer")
+    {
+        std::string empty;
+        CATCH_REQUIRE(snapdev::base64::decode(std::string(), empty));
+        CATCH_REQUIRE(empty.empty());
+    }
+    CATCH_END_SECTION()
+}
+
+
+CATCH_TEST_CASE("base64_error", "[base64][string][error]")
+{
+    CATCH_START_SECTION("base64_error: verify invalid characters make decoder return false")
+    {
+        for(int c(0); c < 255; ++c)
+        {
+            std::string bad_base64("ABC");
+            bad_base64 += static_cast<char>(c);
+            bad_base64 += "XYZ";
+            std::string ignore;
+
+            // the only valid characters
+            //
+            if(c == '+'
+            || c == '='
+            || c == '/'
+            || (c >= '0' && c <= '9')
+            || (c >= 'A' && c <= 'Z')
+            || (c >= 'a' && c <= 'z'))
+            {
+                // c is not a bad character, it works
+                //
+                CATCH_REQUIRE(snapdev::base64::decode(bad_base64, ignore));
+            }
+            else
+            {
+                CATCH_REQUIRE_FALSE(snapdev::base64::decode(bad_base64, ignore));
+            }
+        }
+    }
+    CATCH_END_SECTION()
 }
 
 

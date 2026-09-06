@@ -5,6 +5,9 @@ snapdev (1.1.42.0~noble) noble; urgency=high
     - add a function to get the number of days in a month
     - compare tm structures against each other and time_t and timespec_ex
     - added test for coverage of existing and new code
+  * Moved my base64 encode() function to snapdev.
+    - wrote tests to verify the encoder
+    - added the decode() function and included that in the test
 
  -- Alexis Wilke <alexis@m2osw.com>  Sat, 05 Sep 2026 08:39:12 -0700
 
