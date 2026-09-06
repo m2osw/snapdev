@@ -17,7 +17,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ##
-## SnapDev headers
+## snapdev headers
 ##
 project(snapdev)
 
@@ -31,6 +31,7 @@ configure_file(
 install(
     FILES
         as_root.h
+        base64.h
         brs.h
         callback_manager.h
         case_insensitive_string.h
