@@ -643,11 +643,14 @@ CATCH_TEST_CASE("timespec_ex_tm", "[time]")
             mon.tm_mon += 100;
             CATCH_REQUIRE_FALSE(snapdev::is_canonical_tm(mon));
 
-            // tweak years, no effect
+            // tweak years, no effects if not February
             //
-            struct tm year(t);
-            year.tm_year += 100;
-            CATCH_REQUIRE(snapdev::is_canonical_tm(year));
+            if(t.tm_mon != 1)
+            {
+                struct tm year(t);
+                year.tm_year += 100;
+                CATCH_REQUIRE(snapdev::is_canonical_tm(year));
+            }
 
             // tweak wday, no effect
             //

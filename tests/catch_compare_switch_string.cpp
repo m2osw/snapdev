@@ -61,90 +61,108 @@ CATCH_TEST_CASE("compare_switch_string", "[string]")
             switch(*s)
             {
             case 'C':
-                if(snapdev::compare_switch_string<"CREATE">(s))
+                if(snapdev::compare_exact_string<"CREAT">(s))
+                {
+                    CATCH_FAIL("no CREAT in our table above; exact compare did not fail as expected.");
+                }
+                if(snapdev::compare_exact_switch_string<"CREAT">(s))
+                {
+                    CATCH_FAIL("no CREAT in our table above; switch compare did not fail as expected.");
+                }
+                if(snapdev::compare_exact_switch_string<"CREATE">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "CREATE") == 0);
-                    CATCH_REQUIRE(snapdev::compare_upper_switch_string<"Create">(s));
+                    CATCH_REQUIRE(snapdev::compare_upper_exact_switch_string<"Create">(s));
+
+                    CATCH_REQUIRE(snapdev::compare_starts_with_switch_string<"CREAT">(s));
+                    CATCH_REQUIRE(snapdev::compare_upper_starts_with_switch_string<"creat">(s));
+                    CATCH_REQUIRE(snapdev::compare_starts_with_switch_string<"CREATE">(s));
+                    CATCH_REQUIRE(snapdev::compare_upper_starts_with_switch_string<"create">(s));
                 }
-                if(snapdev::compare_switch_string<"CREATED">(s))
+                if(snapdev::compare_exact_switch_string<"CREATED">(s))
                 {
-                    CATCH_REQUIRE(strcmp(s, "CREATED") == 0);
+                    CATCH_FAIL("no CREATED in our table above; full compare did not fail as expected.");
                 }
-                if(snapdev::compare_switch_string<"CONTEXT">(s))
+                if(snapdev::compare_exact_switch_string<"CONTEXT">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "CONTEXT") == 0);
-                    CATCH_REQUIRE_FALSE(snapdev::compare_switch_string<"Context">(s));
-                    CATCH_REQUIRE(snapdev::compare_upper_switch_string<"context">(s));
+                    CATCH_REQUIRE_FALSE(snapdev::compare_exact_switch_string<"Context">(s));
+                    CATCH_REQUIRE(snapdev::compare_upper_exact_switch_string<"context">(s));
+
+                    CATCH_REQUIRE(snapdev::compare_perfect_prefix_switch_string<"CONT">(s));
+                    CATCH_REQUIRE(snapdev::compare_upper_perfect_prefix_switch_string<"CONT">(s));
+                    CATCH_REQUIRE_FALSE(snapdev::compare_perfect_prefix_switch_string<"CONTEXT">(s));
+                    CATCH_REQUIRE_FALSE(snapdev::compare_upper_perfect_prefix_switch_string<"CONTEXT">(s));
                 }
-                if(snapdev::compare_switch_string<"COMMENT">(s))
+                if(snapdev::compare_exact_switch_string<"COMMENT">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "COMMENT") == 0);
                 }
-                if(snapdev::compare_upper_switch_string<"CONNECT">(s))
+                if(snapdev::compare_upper_exact_switch_string<"CONNECT">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "Connect") == 0);
                 }
                 break;
 
             case 'F':
-                if(snapdev::compare_switch_string<"FIRST">(s))
+                if(snapdev::compare_exact_switch_string<"FIRST">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "FIRST") == 0);
                 }
-                if(snapdev::compare_switch_string<"FROM">(s))
+                if(snapdev::compare_exact_switch_string<"FROM">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "FROM") == 0);
                 }
-                if(snapdev::compare_switch_string<"FORWARD">(s))
+                if(snapdev::compare_exact_switch_string<"FORWARD">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "FORWARD") == 0);
                 }
                 break;
 
             case 'I':
-                if(snapdev::compare_switch_string<"IN">(s))
+                if(snapdev::compare_exact_switch_string<"IN">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "IN") == 0);
                 }
-                if(snapdev::compare_switch_string<"INDEX">(s))
+                if(snapdev::compare_exact_switch_string<"INDEX">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "INDEX") == 0);
                 }
-                if(snapdev::compare_switch_string<"IMPORT">(s))
+                if(snapdev::compare_exact_switch_string<"IMPORT">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "IMPORT") == 0);
                 }
                 break;
 
             case 'O':
-                if(snapdev::compare_switch_string<"OR">(s))
+                if(snapdev::compare_exact_switch_string<"OR">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "OR") == 0);
                 }
-                if(snapdev::compare_switch_string<"ORDER">(s))
+                if(snapdev::compare_exact_switch_string<"ORDER">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "ORDER") == 0);
                 }
-                if(snapdev::compare_switch_string<"OLDER">(s))
+                if(snapdev::compare_exact_switch_string<"OLDER">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "OLDER") == 0);
                 }
                 break;
 
             case 'S':
-                if(snapdev::compare_switch_string<"SORT">(s))
+                if(snapdev::compare_exact_switch_string<"SORT">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "SORT") == 0);
                 }
-                if(snapdev::compare_switch_string<"SELECT">(s))
+                if(snapdev::compare_exact_switch_string<"SELECT">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "SELECT") == 0);
                 }
-                if(snapdev::compare_switch_string<"SET">(s))
+                if(snapdev::compare_exact_switch_string<"SET">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "SET") == 0);
                 }
-                if(snapdev::compare_switch_string<"SELL">(s))
+                if(snapdev::compare_exact_switch_string<"SELL">(s))
                 {
                     CATCH_REQUIRE(strcmp(s, "SELL") == 0);
                 }
@@ -163,19 +181,19 @@ CATCH_TEST_CASE("compare_switch_string_errors", "[string][error]")
     {
 #ifdef _DEBUG
         CATCH_REQUIRE_THROWS_MATCHES(
-                  snapdev::compare_switch_string<"QUIT">("KUIT")
+                  snapdev::compare_exact_switch_string<"QUIT">("KUIT")
                 , std::runtime_error
                 , Catch::Matchers::ExceptionMessage("first letter invalid: Q <-> KUIT."));
 
         CATCH_REQUIRE_THROWS_MATCHES(
-                  snapdev::compare_upper_switch_string<"QUIT">("KUIT")
+                  snapdev::compare_upper_exact_switch_string<"QUIT">("KUIT")
                 , std::runtime_error
                 , Catch::Matchers::ExceptionMessage("first letter invalid: Q <-> KUIT."));
 #else
       // in release, it thinks the strings are equal (not a bug)
       //
-      CATCH_REQUIRE(snapdev::compare_switch_string<"QUIT">("KUIT"));
-      CATCH_REQUIRE(snapdev::compare_upper_switch_string<"QUIT">("KUIT"));
+      CATCH_REQUIRE(snapdev::compare_exact_switch_string<"QUIT">("KUIT"));
+      CATCH_REQUIRE(snapdev::compare_upper_exact_switch_string<"QUIT">("KUIT"));
 #endif
     }
     CATCH_END_SECTION()

@@ -2000,15 +2000,81 @@ inline bool operator == (time_t a, std::tm const & b)
 
 inline bool operator == (std::tm const & a, snapdev::timespec_ex const & b)
 {
-    snapdev::timespec_ex ta(a);
+    snapdev::timespec_ex const ta(a);
     return ta == b;
 }
 
 
 inline bool operator == (snapdev::timespec_ex const & a, std::tm const & b)
 {
-    snapdev::timespec_ex tb(b);
+    snapdev::timespec_ex const tb(b);
     return a == tb;
+}
+
+
+inline bool operator == (timespec const & a, snapdev::timespec_ex const & b)
+{
+    snapdev::timespec_ex const ta(a);
+    return ta == b;
+}
+
+
+inline bool operator != (timespec const & a, snapdev::timespec_ex const & b)
+{
+    snapdev::timespec_ex const ta(a);
+    return ta != b;
+}
+
+
+inline std::strong_ordering operator <=> (timespec const & a, snapdev::timespec_ex const & b)
+{
+    snapdev::timespec_ex const ta(a);
+    return ta <=> b;
+}
+
+
+inline bool operator == (snapdev::timespec_ex const & a, timespec const & b)
+{
+    snapdev::timespec_ex const tb(b);
+    return a == tb;
+}
+
+
+inline bool operator != (snapdev::timespec_ex const & a, timespec const & b)
+{
+    snapdev::timespec_ex const tb(b);
+    return a != tb;
+}
+
+
+inline std::strong_ordering operator <=> (snapdev::timespec_ex const & a, timespec const & b)
+{
+    snapdev::timespec_ex const tb(b);
+    return a <=> tb;
+}
+
+
+inline bool operator == (timespec const & a, timespec const & b)
+{
+    snapdev::timespec_ex const ta(a);
+    snapdev::timespec_ex const tb(b);
+    return ta == tb;
+}
+
+
+inline bool operator != (timespec const & a, timespec const & b)
+{
+    snapdev::timespec_ex const ta(a);
+    snapdev::timespec_ex const tb(b);
+    return ta != tb;
+}
+
+
+inline std::strong_ordering operator <=> (timespec const & a, timespec const & b)
+{
+    snapdev::timespec_ex const ta(a);
+    snapdev::timespec_ex const tb(b);
+    return ta <=> tb;
 }
 
 

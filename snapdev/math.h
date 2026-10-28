@@ -508,6 +508,8 @@ std::enable_if_t<std::is_floating_point_v<T>, T> random(
  * \tparam T  The type of the integral number to generate.
  * \param[in] min  The minimum value, inclusive.
  * \param[in] max  The maximum value, inclusive.
+ *
+ * \return the randomly generated integer.
  */
 template<typename T>
 std::enable_if_t<std::is_integral_v<T>, T> random(
@@ -516,6 +518,83 @@ std::enable_if_t<std::is_integral_v<T>, T> random(
 {
     std::uniform_int_distribution<T> dis(min, max);
     return dis(get_random_generator());
+}
+
+
+/** \brief Check whether a floating point is defined between bounds, inclusively.
+ *
+ * This function makes sure that \p value is a floating point between
+ * \p low and \p high, including \p low and \p high.
+ *
+ * This function makes sure to use the std::isless() function which makes
+ * sure to check the type of floating point (i.e. the NaN cannot be
+ * properly compared by default).
+ *
+ * \tparam V  The type of value.
+ * \tparam L  The type of the low boundary.
+ * \tparam H  The type of the high boundary.
+ * \param[in] value  The value to check between the \p low and \p high bounds.
+ * \param[in] low  The lowest possible value (inclusive).
+ * \param[in] high  The highest possible value (inclusive).
+ *
+ * \return true if value >= low && value <= high.
+ */
+template<typename V, typename L, typename H>
+constexpr std::enable_if_t<
+           (std::is_floating_point_v<V> || std::is_floating_point_v<L> || std::is_floating_point_v<H>)
+                && (std::is_floating_point_v<V> || std::is_integral_v<V>)
+                && (std::is_floating_point_v<L> || std::is_integral_v<L>)
+                && (std::is_floating_point_v<H> || std::is_integral_v<H>)
+        , bool> is_between(V const value, L const low, H const high) noexcept
+{
+    using float_t = std::common_type_t<V, L, H>;
+
+    return !std::isless(static_cast<float_t>(value), static_cast<float_t>(low))
+        && !std::isless(static_cast<float_t>(high), static_cast<float_t>(value));
+}
+
+
+/** \brief Check whether a value is defined between bounds, inclusively.
+ *
+ * This function makes sure that \p value is an object between
+ * \p low and \p high, including \p low and \p high.
+ *
+ * This function allows you to check for any type that supports the
+ * less than operator. Note that it may require you to create a friend
+ * if you do not have it yet. For example:
+ *
+ * \code
+ * class timespec_ex
+ * {
+ *     ...
+ *     bool operator < (double seconds) const;
+ *     friend bool operator < (double seconds, timespec_ex const & rhs) const;
+ *     ...
+ * \endcode
+ *
+ * If any one of the parameter is a floating point value and the other two
+ * are either a floating point value or an integral value, then the other
+ * is_between() function is used. This ensures NaN do not generate an
+ * exception.
+ *
+ * \tparam V  The type of value.
+ * \tparam L  The type of the low boundary.
+ * \tparam H  The type of the high boundary.
+ * \param[in] value  The value to check between the \p low and \p high bounds.
+ * \param[in] low  The lowest possible value (inclusive).
+ * \param[in] high  The highest possible value (inclusive).
+ *
+ * \return true if value >= low && value <= high.
+ */
+template<typename V, typename L, typename H>
+constexpr std::enable_if_t<
+           !((std::is_floating_point_v<V> || std::is_floating_point_v<L> || std::is_floating_point_v<H>)
+                && (std::is_floating_point_v<V> || std::is_integral_v<V>)
+                && (std::is_floating_point_v<L> || std::is_integral_v<L>)
+                && (std::is_floating_point_v<H> || std::is_integral_v<H>))
+        , bool> is_between(V const & value, L const & low, H const & high)
+{
+    return !(value < low) && !(high < value);
 }
 
 

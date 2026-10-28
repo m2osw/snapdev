@@ -71,7 +71,6 @@ namespace snapdev
     }
 
     std::abort();
-    //std::unreachable(); // not sure if this would be better?
 } // LCOV_EXCL_LINE
 
 
