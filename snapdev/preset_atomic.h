@@ -127,8 +127,7 @@ public:
             if(std::atomic<T>::compare_exchange_weak(
                       current_value
                     , v
-                    , read_modify_write_order
-                    , read_order)) 
+                    , read_modify_write_order))
             {
                 return true;
             }
@@ -143,8 +142,7 @@ public:
             if(std::atomic<T>::compare_exchange_weak(
                       current_value
                     , v
-                    , read_modify_write_order
-                    , read_order)) 
+                    , read_modify_write_order))
             {
                 return true;
             }
@@ -159,8 +157,7 @@ public:
             if(std::atomic<T>::compare_exchange_weak(
                       current_value
                     , v
-                    , read_modify_write_order
-                    , read_order)) 
+                    , read_modify_write_order))
             {
                 return true;
             }
@@ -175,8 +172,7 @@ public:
             if(std::atomic<T>::compare_exchange_weak(
                       current_value
                     , v
-                    , read_modify_write_order
-                    , read_order)) 
+                    , read_modify_write_order))
             {
                 return true;
             }
@@ -204,37 +200,37 @@ public:
     T operator += (T arg) noexcept
     requires std::is_integral_v<T> || std::is_floating_point_v<T>
     {
-        return std::atomic<T>::fetch_add(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_add(arg, read_modify_write_order) + arg;
     }
 
     T operator += (T arg) volatile noexcept
     requires std::is_integral_v<T> || std::is_floating_point_v<T>
     {
-        return std::atomic<T>::fetch_add(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_add(arg, read_modify_write_order) + arg;
     }
 
     T operator -= (T arg) noexcept
     requires std::is_integral_v<T> || std::is_floating_point_v<T>
     {
-        return std::atomic<T>::fetch_sub(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_sub(arg, read_modify_write_order) - arg;
     }
 
     T operator -= (T arg) volatile noexcept
     requires std::is_integral_v<T> || std::is_floating_point_v<T>
     {
-        return std::atomic<T>::fetch_sub(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_sub(arg, read_modify_write_order) - arg;
     }
 
     T operator ++ () noexcept
     requires std::is_integral_v<T> || std::is_floating_point_v<T>
     {
-        return std::atomic<T>::fetch_add(T(1), read_modify_write_order);
+        return std::atomic<T>::fetch_add(T(1), read_modify_write_order) + T(1);
     }
 
     T operator ++ () volatile noexcept
     requires std::is_integral_v<T> || std::is_floating_point_v<T>
     {
-        return std::atomic<T>::fetch_add(T(1), read_modify_write_order);
+        return std::atomic<T>::fetch_add(T(1), read_modify_write_order) + T(1);
     }
 
     T operator ++ (int) noexcept
@@ -252,13 +248,13 @@ public:
     T operator -- () noexcept
     requires std::is_integral_v<T> || std::is_floating_point_v<T>
     {
-        return std::atomic<T>::fetch_sub(T(1), read_modify_write_order);
+        return std::atomic<T>::fetch_sub(T(1), read_modify_write_order) - T(1);
     }
 
     T operator -- () volatile noexcept
     requires std::is_integral_v<T> || std::is_floating_point_v<T>
     {
-        return std::atomic<T>::fetch_sub(T(1), read_modify_write_order);
+        return std::atomic<T>::fetch_sub(T(1), read_modify_write_order) - T(1);
     }
 
     T operator -- (int) noexcept
@@ -276,37 +272,37 @@ public:
     T operator += (std::ptrdiff_t arg) noexcept
     requires std::is_pointer_v<T>
     {
-        return std::atomic<T>::fetch_add(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_add(arg, read_modify_write_order) + arg;
     }
 
     T operator += (std::ptrdiff_t arg) volatile noexcept
     requires std::is_pointer_v<T>
     {
-        return std::atomic<T>::fetch_add(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_add(arg, read_modify_write_order) + arg;
     }
 
     T operator -= (std::ptrdiff_t arg) noexcept
     requires std::is_pointer_v<T>
     {
-        return std::atomic<T>::fetch_sub(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_sub(arg, read_modify_write_order) - arg;
     }
 
     T operator -= (std::ptrdiff_t arg) volatile noexcept
     requires std::is_pointer_v<T>
     {
-        return std::atomic<T>::fetch_sub(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_sub(arg, read_modify_write_order) - arg;
     }
 
     T operator ++ () noexcept
     requires std::is_pointer_v<T>
     {
-        return std::atomic<T>::fetch_add(std::ptrdiff_t(1), read_modify_write_order);
+        return std::atomic<T>::fetch_add(std::ptrdiff_t(1), read_modify_write_order) + std::ptrdiff_t(1);
     }
 
     T operator ++ () volatile noexcept
     requires std::is_pointer_v<T>
     {
-        return std::atomic<T>::fetch_add(std::ptrdiff_t(1), read_modify_write_order);
+        return std::atomic<T>::fetch_add(std::ptrdiff_t(1), read_modify_write_order) + std::ptrdiff_t(1);
     }
 
     T operator ++ (int) noexcept
@@ -324,13 +320,13 @@ public:
     T operator -- () noexcept
     requires std::is_pointer_v<T>
     {
-        return std::atomic<T>::fetch_sub(std::ptrdiff_t(1), read_modify_write_order);
+        return std::atomic<T>::fetch_sub(std::ptrdiff_t(1), read_modify_write_order) - std::ptrdiff_t(1);
     }
 
     T operator -- () volatile noexcept
     requires std::is_pointer_v<T>
     {
-        return std::atomic<T>::fetch_sub(std::ptrdiff_t(1), read_modify_write_order);
+        return std::atomic<T>::fetch_sub(std::ptrdiff_t(1), read_modify_write_order) - std::ptrdiff_t(1);
     }
 
     T operator -- (int) noexcept
@@ -348,37 +344,37 @@ public:
     T operator &= (T arg) noexcept
     requires std::is_integral_v<T>
     {
-        return std::atomic<T>::fetch_and(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_and(arg, read_modify_write_order) & arg;
     }
 
     T operator &= (T arg) volatile noexcept
     requires std::is_integral_v<T>
     {
-        return std::atomic<T>::fetch_and(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_and(arg, read_modify_write_order) & arg;
     }
 
     T operator |= (T arg) noexcept
     requires std::is_integral_v<T>
     {
-        return std::atomic<T>::fetch_or(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_or(arg, read_modify_write_order) | arg;
     }
 
     T operator |= (T arg) volatile noexcept
     requires std::is_integral_v<T>
     {
-        return std::atomic<T>::fetch_or(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_or(arg, read_modify_write_order) | arg;
     }
 
     T operator ^= (T arg) noexcept
     requires std::is_integral_v<T>
     {
-        return std::atomic<T>::fetch_xor(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_xor(arg, read_modify_write_order) ^ arg;
     }
 
     T operator ^= (T arg) volatile noexcept
     requires std::is_integral_v<T>
     {
-        return std::atomic<T>::fetch_xor(arg, read_modify_write_order);
+        return std::atomic<T>::fetch_xor(arg, read_modify_write_order) ^ arg;
     }
 #pragma GCC diagnostic pop
 

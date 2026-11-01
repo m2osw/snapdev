@@ -48,37 +48,85 @@ CATCH_TEST_CASE("preset_atomic", "[atomic]")
         CATCH_REQUIRE(a.get_write_memory_order() == std::memory_order::relaxed);
         CATCH_REQUIRE(a.get_read_modify_write_memory_order() == std::memory_order::relaxed);
 
+        // use a standard integer (b) to verify that we get the same results
+        //
+        int b(3);
         CATCH_REQUIRE(a == 3);
-        a++;
+        CATCH_REQUIRE(b == 3);
+        int r(a++);
+        int s(b++);
         CATCH_REQUIRE(a == 4);
-        ++a;
+        CATCH_REQUIRE(r == 3);
+        CATCH_REQUIRE(b == 4);
+        CATCH_REQUIRE(s == 3);
+        r = ++a;
+        s = ++b;
         CATCH_REQUIRE(a == 5);
-        a--;
+        CATCH_REQUIRE(r == 5);
+        CATCH_REQUIRE(b == 5);
+        CATCH_REQUIRE(s == 5);
+        r = a--;
+        s = b--;
         CATCH_REQUIRE(a == 4);
-        --a;
+        CATCH_REQUIRE(r == 5);
+        CATCH_REQUIRE(b == 4);
+        CATCH_REQUIRE(s == 5);
+        r = --a;
+        s = --b;
         CATCH_REQUIRE(a == 3);
+        CATCH_REQUIRE(r == 3);
+        CATCH_REQUIRE(b == 3);
+        CATCH_REQUIRE(s == 3);
 
         a = 10;
+        b = 10;
         CATCH_REQUIRE(a == 10);
-        a += 5;
+        CATCH_REQUIRE(b == 10);
+        r = a += 5;
+        s = b += 5;
         CATCH_REQUIRE(a == 15);
-        a -= 5;
+        CATCH_REQUIRE(r == 15);
+        CATCH_REQUIRE(b == 15);
+        CATCH_REQUIRE(s == 15);
+        r = a -= 5;
+        s = b -= 5;
         CATCH_REQUIRE(a == 10);
+        CATCH_REQUIRE(r == 10);
+        CATCH_REQUIRE(b == 10);
+        CATCH_REQUIRE(s == 10);
 
         a = 0xFF;
+        b = 0xFF;
         CATCH_REQUIRE(a == 0xFF);
-        a &= 0x55;
+        CATCH_REQUIRE(b == 0xFF);
+        r = a &= 0x55;
+        s = b &= 0x55;
         CATCH_REQUIRE(a == 0x55);
+        CATCH_REQUIRE(r == 0x55);
+        CATCH_REQUIRE(b == 0x55);
+        CATCH_REQUIRE(s == 0x55);
 
         a = 0xAA;
+        b = 0xAA;
         CATCH_REQUIRE(a == 0xAA);
-        a |= 0x55;
+        CATCH_REQUIRE(b == 0xAA);
+        r = a |= 0x55;
+        s = b |= 0x55;
         CATCH_REQUIRE(a == 0xFF);
+        CATCH_REQUIRE(r == 0xFF);
+        CATCH_REQUIRE(b == 0xFF);
+        CATCH_REQUIRE(s == 0xFF);
 
         a = 0xFF;
+        b = 0xFF;
         CATCH_REQUIRE(a == 0xFF);
-        a ^= 0x55;
+        CATCH_REQUIRE(b == 0xFF);
+        r = a ^= 0x55;
+        s = b ^= 0x55;
         CATCH_REQUIRE(a == 0xAA);
+        CATCH_REQUIRE(r == 0xAA);
+        CATCH_REQUIRE(b == 0xAA);
+        CATCH_REQUIRE(s == 0xAA);
 
         // without other threads, these return known results
         //
