@@ -40,6 +40,7 @@
 // libexcept
 //
 #include    <libexcept/exception.h>
+#include    <libexcept/report_signal.h>
 
 
 // C++
@@ -53,6 +54,13 @@
 
 
 
+void init_tests()
+{
+    libexcept::set_collect_stack(libexcept::collect_stack_t::COLLECT_STACK_NO);
+    libexcept::init_report_signal();
+}
+
+
 int main(int argc, char * argv[])
 {
     snapdev::clocale();
@@ -62,7 +70,7 @@ int main(int argc, char * argv[])
             , SNAPDEV_VERSION_STRING
             , argc
             , argv
-            , []() { libexcept::set_collect_stack(libexcept::collect_stack_t::COLLECT_STACK_NO); }
+            , &init_tests
             , nullptr
             , nullptr
         );

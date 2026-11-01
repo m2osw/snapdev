@@ -74,6 +74,7 @@ install(
         ostream_to_buf.h
         pathinfo.h
         poison.h
+        preset_atomic.h
         qcaseinsensitivestring.h
         qstring_extensions.h
         raii_generic_deleter.h

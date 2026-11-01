@@ -55,6 +55,7 @@ if(SnapCatch2_FOUND)
         catch_not_used.cpp
         catch_number_to_string.cpp
         catch_pathinfo.cpp
+        catch_preset_atomic.cpp
         catch_remove_duplicates.cpp
         catch_rm_r.cpp
         catch_safe_object.cpp

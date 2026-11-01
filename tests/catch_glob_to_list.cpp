@@ -44,7 +44,7 @@
 
 CATCH_TEST_CASE("glob_to_list", "[filename][glob][os]")
 {
-    CATCH_START_SECTION("pathinfo: replace existing suffix")
+    CATCH_START_SECTION("glob_to_list: replace existing suffix")
     {
         std::string top_dir(SNAP_CATCH2_NAMESPACE::g_tmp_dir() + "/top");
         int r(system(("rm -rf " + top_dir).c_str()));
