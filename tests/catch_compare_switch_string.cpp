@@ -45,6 +45,14 @@
 
 CATCH_TEST_CASE("compare_switch_string", "[string]")
 {
+    CATCH_START_SECTION("compare_switch_string: simple manual tests")
+    {
+        std::string const s("global-txt-field");
+        CATCH_REQUIRE(snapdev::compare_starts_with_string<"global-">(s));
+        CATCH_REQUIRE(snapdev::compare_starts_with_switch_string<"global-">(s));
+    }
+    CATCH_END_SECTION()
+
     CATCH_START_SECTION("compare_switch_string: verify compare works as expected")
     {
         char const * strings[] = {

@@ -62,6 +62,7 @@
 // C++
 //
 #include    <cstdint>
+#include    <iostream>
 #include    <sstream>
 #include    <stdexcept>
 #include    <utility>
@@ -85,8 +86,8 @@ namespace detail
  *
  * The "exact match" variant is usually what you want: i.e. `a == b`.
  *
- * The "starts with" variant means that this function always returns true.
- * The string must start with these characters and may also be exactly
+ * The "starts with" variant means that this function returns true f
+ * the string starts with these characters and may also be exactly
  * equal.
  *
  * \code
@@ -243,7 +244,7 @@ constexpr bool compare_switch_skip_one(char const * s, char c, ARGS ...args)
         return compare_chars<mode>(s + 1, args...);
     }
 
-    return compare_chars<mode>(s + 1, c, args...);
+    return compare_chars<mode>(s, c, args...);
 }
 
 
